@@ -38,7 +38,7 @@ export function SelectedWork() {
         <div className="hidden lg:block">{viewAll}</div>
       </div>
 
-      <div className="flex flex-col gap-3 md:gap-4">
+      <div className="flex flex-col gap-1.5 md:gap-2">
         {rows.map((row, r) => (
           <Marquee
             key={r}
@@ -49,7 +49,7 @@ export function SelectedWork() {
             className="w-full"
           >
             {row.map((w, i) => (
-              <div key={`${w.image}-${i}`} className="pr-3 md:pr-4">
+              <div key={`${w.image}-${i}`} className="pb-1.5 pr-3 pt-1 md:pr-4">
                 <MarqueeCard {...w} priority={r === 0 && i < 3} />
               </div>
             ))}
