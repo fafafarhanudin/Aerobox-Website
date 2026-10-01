@@ -53,7 +53,8 @@ export function Nav() {
       <div className="flex items-center gap-2 rounded-full border border-line bg-white py-1.5 pl-2.5 pr-3 text-[12px] font-medium leading-4 tracking-[-0.12px]">
         <Clock width={14} height={14} strokeWidth={1.2} className="text-ink-2" aria-hidden="true" />
         <span className="text-ink">
-          Indonesia <LocalTime />
+          <span className="hidden min-[400px]:inline">Indonesia </span>
+          <LocalTime />
         </span>
         <span className="text-ink-3">{site.timeZoneLabel}</span>
       </div>

@@ -15,14 +15,16 @@ const rows = [quotes, [...quotes.slice(3), ...quotes.slice(0, 3)]];
 
 function Quote({ q }: { q: (typeof quotes)[number] }) {
   return (
-    <figure className="mb-2 mr-3 mt-1 flex w-[300px] shrink-0 items-start gap-3 rounded-xl border border-line bg-white py-3.5 pl-2.5 pr-4">
-      <span className={`key key--sm ${q.accent ? "key--accent" : ""}`} aria-hidden="true" style={{ cursor: "default" }}>
-        <span className="key__cap size-7 text-[10px] font-medium leading-3 tracking-[-0.1px]">{q.initials}</span>
-      </span>
-      <div className="flex min-w-0 flex-col gap-1">
-        <blockquote className="text-[14px] font-medium leading-5 tracking-[-0.14px] text-ink">“{q.quote}”</blockquote>
-        <figcaption className="truncate text-[12px] leading-4 tracking-[-0.12px] text-ink-2">{q.by}</figcaption>
-      </div>
+    <figure className="mb-2 mr-2.5 mt-1 flex h-[128px] w-[260px] shrink-0 flex-col justify-between rounded-xl border border-line bg-white p-3.5 md:mr-3 md:h-[136px] md:w-[300px] md:p-4">
+      <blockquote className="line-clamp-3 text-[13px] font-medium leading-[19px] tracking-[-0.13px] text-ink md:text-[14px] md:leading-5 md:tracking-[-0.14px]">
+        “{q.quote}”
+      </blockquote>
+      <figcaption className="flex min-w-0 items-center gap-2.5">
+        <span className={`key key--sm [--r:8px] ${q.accent ? "key--accent" : ""}`} aria-hidden="true" style={{ cursor: "default", "--depth": "3px" } as React.CSSProperties}>
+          <span className="key__cap size-6 text-[9px] font-medium leading-3">{q.initials}</span>
+        </span>
+        <span className="truncate text-[12px] leading-4 tracking-[-0.12px] text-ink-2">{q.by}</span>
+      </figcaption>
     </figure>
   );
 }

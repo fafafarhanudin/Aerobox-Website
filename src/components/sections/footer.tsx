@@ -6,6 +6,7 @@ import { ArrowUp } from "@untitled-ui/icons-react";
 import { Brand, SocialLogo } from "@/components/ui";
 import { LocalTime } from "@/components/local-time";
 import { MiniKeyboard } from "@/components/mini-keyboard";
+import { Wordmark } from "@/components/wordmark";
 import { mailtoHref } from "@/components/email-key";
 import { site, socials, type SocialKey } from "@/lib/site";
 
@@ -61,7 +62,7 @@ export function Footer() {
           <Status />
         </div>
 
-        <div className="grid grid-cols-3 gap-8 md:flex md:justify-between lg:gap-16">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-10 md:flex md:justify-between lg:gap-16">
           <nav aria-label="Sitemap" className="flex flex-col gap-3">
             <p className={colTitle}>Sitemap</p>
             {sitemap.map((l) => (
@@ -79,7 +80,7 @@ export function Footer() {
               </a>
             ))}
           </div>
-          <div className="flex min-w-0 flex-col gap-3">
+          <div className="col-span-2 flex min-w-0 flex-col gap-3 md:col-span-1">
             <p className={colTitle}>Contact</p>
             <a href={site.telegram} target="_blank" rel="noopener noreferrer" className="group flex flex-col gap-0.5">
               <span className={linkCls}>Telegram</span>
@@ -97,10 +98,14 @@ export function Footer() {
         <MiniKeyboard />
       </div>
 
-      <div className="flex items-center justify-center border-t border-line px-5 py-5 md:justify-between md:px-8 lg:px-12">
-        <p className="text-[14px] leading-5 tracking-[-0.14px] text-ink-2">© 2026 Aerobox Design. All rights reserved.</p>
-        <div className="hidden items-center gap-4 md:flex">
-          <p className="text-[14px] leading-5 tracking-[-0.14px] text-ink-2">
+      <Wordmark />
+
+      <div className="flex items-center justify-between gap-4 border-t border-line px-5 py-5 md:px-8 lg:px-12">
+        <p className="text-[13px] leading-5 tracking-[-0.13px] text-ink-2 md:text-[14px] md:tracking-[-0.14px]">
+          © 2026 Aerobox Design. <span className="hidden sm:inline">All rights reserved.</span>
+        </p>
+        <div className="flex items-center gap-4">
+          <p className="hidden text-[14px] leading-5 tracking-[-0.14px] text-ink-2 md:block">
             Local time in Indonesia <LocalTime /> {site.timeZoneLabel}
           </p>
           <button
@@ -110,7 +115,8 @@ export function Footer() {
           >
             <span className="key__cap gap-2 px-3 py-2 text-[14px] font-medium leading-5 tracking-[-0.14px]">
               <ArrowUp width={14} height={14} strokeWidth={1.2} aria-hidden="true" />
-              Back to top
+              <span className="hidden md:inline">Back to top</span>
+              <span className="md:hidden">Top</span>
             </span>
           </button>
         </div>

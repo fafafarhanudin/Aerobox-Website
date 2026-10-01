@@ -50,7 +50,7 @@
 
 @theme {
   --breakpoint-sm: 390px;
-  --breakpoint-md: 810px;
+  --breakpoint-md: 744px;
   --breakpoint-lg: 1200px;
   --breakpoint-xl: 1440px;
 }
@@ -390,7 +390,7 @@ body {
     gap: 24px;
   }
 
-  @media (min-width: 810px) {
+  @media (min-width: 744px) {
     .about-grid {
       grid-template-areas:
         "portrait stats"
@@ -452,9 +452,9 @@ body {
   }
   .eyebrow__led,
   .rgb-board,
-  .rgb-dot,
+  .kb,
   .kb-caret {
-    animation: none;
+    animation: none !important;
   }
   .key,
   .key:active,
@@ -497,8 +497,19 @@ body {
   initial-value: 0;
 }
 
+@property --kb-glow {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0.55;
+}
+
 @keyframes rgb-spin {
   to { --rgb-hue: 360; }
+}
+
+@keyframes kb-breathe {
+  0%, 100% { --kb-glow: 0.18; }
+  50% { --kb-glow: 0.75; }
 }
 
 @keyframes caret-blink {
@@ -512,37 +523,242 @@ body {
 }
 
 @keyframes kb-clear {
-  from { box-shadow: inset 0 1px 2px rgba(12, 14, 20, 0.08), 0 0 0 3px hsl(var(--rgb-hue) 95% 60% / 0.45); }
+  from { box-shadow: inset 0 1px 2px rgba(12, 14, 20, 0.08), 0 0 0 3px hsl(var(--ug-a) / 0.45); }
 }
 
 @layer components {
   .rgb-board {
-    animation: rgb-spin 7s linear infinite;
+    animation: rgb-spin 12s linear infinite;
   }
 
-  .rgb-underglow {
+  /* Lighting modes: every key reads --h (hue), --s (saturation) and --kb-glow (intensity). */
+  .kb {
+    --s: 78%;
+    --ug-a: var(--rgb-hue) 78% 62%;
+    --ug-b: calc(var(--rgb-hue) + 160) 78% 62%;
+  }
+  .kb[data-mode="wave"] .kk {
+    --h: calc(var(--rgb-hue) + var(--o, 0));
+  }
+  .kb[data-mode="breathe"] {
+    animation: rgb-spin 20s linear infinite, kb-breathe 4.5s ease-in-out infinite;
+    --ug-b: var(--rgb-hue) 78% 62%;
+  }
+  .kb[data-mode="breathe"] .kk {
+    --h: var(--rgb-hue);
+  }
+  .kb[data-mode="aurora"] {
+    animation: rgb-spin 18s linear infinite;
+    --ug-a: 175 70% 60%;
+    --ug-b: 255 70% 66%;
+  }
+  .kb[data-mode="aurora"] .kk {
+    --h: calc(215 + 50 * sin((var(--rgb-hue) * 2 + var(--o, 0)) * 1deg));
+  }
+  .kb[data-mode="static"] {
+    animation: none;
+    --ug-a: var(--kb-static) 78% 62%;
+    --ug-b: var(--kb-static) 78% 70%;
+  }
+  .kb[data-mode="static"] .kk {
+    --h: var(--kb-static);
+  }
+  .kb[data-mode="off"] {
+    animation: none;
+    --kb-glow: 0;
+    --ug-a: 230 10% 70%;
+    --ug-b: 230 10% 70%;
+  }
+
+  .kb-underglow {
     position: absolute;
-    inset: 18px 24px -6px;
-    border-radius: 28px;
-    background: linear-gradient(
-      90deg,
-      hsl(var(--rgb-hue) 95% 60%),
-      hsl(calc(var(--rgb-hue) + 90) 95% 60%),
-      hsl(calc(var(--rgb-hue) + 180) 95% 60%),
-      hsl(calc(var(--rgb-hue) + 270) 95% 60%)
-    );
-    filter: blur(28px);
-    opacity: 0.38;
+    inset: 40px 40px 0;
+    border-radius: 40px;
+    background: linear-gradient(90deg, hsl(var(--ug-a)), hsl(var(--ug-b)));
+    filter: blur(36px);
+    opacity: calc(var(--kb-glow) * 0.6);
     pointer-events: none;
+    transition: opacity 600ms var(--motion-easing-out);
   }
 
-  .rgb-dot {
-    width: 6px;
-    height: 6px;
+  .kb-case {
+    position: relative;
+    padding: 14px;
+    border-radius: 26px;
+    border: 1px solid #d6d7dc;
+    background: linear-gradient(180deg, #f6f6f8 0%, #e6e7eb 100%);
+    box-shadow:
+      0 34px 60px -24px rgba(13, 15, 20, 0.32),
+      0 2px 4px rgba(0, 0, 0, 0.06),
+      inset 0 1px 0 #ffffff,
+      inset 0 -3px 0 rgba(0, 0, 0, 0.06);
+  }
+
+  .kb-tray {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    box-sizing: content-box;
+    padding: 10px;
+    border-radius: 16px;
+    background: linear-gradient(180deg, #24262c, #17181c);
+    box-shadow:
+      inset 0 2px 6px rgba(0, 0, 0, 0.55),
+      inset 0 0 0 1px rgba(0, 0, 0, 0.6),
+      0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+
+  .kk {
+    --h: 220;
+    position: relative;
+    flex-shrink: 0;
+    height: 52px;
+    padding: 0;
+    border-radius: 9px;
+    background: linear-gradient(180deg, #f3f3f5 0%, #e1e2e6 55%, #c9cbd1 100%);
+    box-shadow:
+      0 0 0 1px rgba(10, 11, 14, 0.55),
+      0 3px 0 0 #9fa2aa,
+      0 3px 1px 1px rgba(10, 11, 14, 0.45),
+      0 0 14px 1px hsl(var(--h) var(--s) 62% / var(--kb-glow)),
+      0 0 3px 0 hsl(var(--h) var(--s) 70% / var(--kb-glow));
+    cursor: pointer;
+    transform: translateY(-3px);
+    transition:
+      transform 120ms var(--motion-easing-out),
+      box-shadow 500ms var(--motion-easing-out);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .kk[data-half] {
+    height: 25px;
+    border-radius: 7px;
+  }
+
+  .kk__face {
+    position: absolute;
+    inset: 2px 4px 6px;
+    display: flex;
+    border-radius: 7px;
+    background:
+      radial-gradient(120% 95% at 50% 18%, #ffffff 0%, #fbfbfc 42%, #eeeff2 100%);
+    box-shadow:
+      inset 0 1px 0 #ffffff,
+      inset 0 -1px 2px rgba(0, 0, 0, 0.05),
+      0 1px 2px rgba(0, 0, 0, 0.1),
+      0 0 0 0.5px rgba(0, 0, 0, 0.06);
+    color: hsl(var(--h) var(--s) 40%);
+    text-shadow: 0 0 8px hsl(var(--h) var(--s) 62% / var(--kb-glow));
+    font-weight: 500;
+    line-height: 1;
+    transition:
+      inset 90ms var(--motion-easing-press),
+      color 500ms var(--motion-easing-out),
+      text-shadow 500ms var(--motion-easing-out),
+      background 160ms var(--motion-easing-out);
+  }
+
+  .kk[data-half] .kk__face {
+    inset: 1px 3px 3px;
+    border-radius: 5px;
+  }
+
+  .kb[data-mode="off"] .kk__face {
+    color: #3a3c44;
+  }
+
+  .kk__face--alpha,
+  .kk__face--blank {
+    align-items: center;
+    justify-content: center;
+  }
+
+  .kk__face--dual {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .kk__face--mod {
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 6px 8px 7px;
+  }
+
+  .kk__face--right {
+    align-items: flex-end;
+  }
+
+  .kk__main {
+    font-size: 15px;
+  }
+
+  .kk__main--sm {
+    font-size: 13px;
+  }
+
+  .kk__sub {
+    font-size: 10px;
+    opacity: 0.6;
+  }
+
+  .kk__icon {
+    font-size: 12px;
+    opacity: 0.85;
+  }
+
+  .kk__word {
+    font-size: 9.5px;
+    letter-spacing: 0.02em;
+  }
+
+  .kk[data-half] .kk__face {
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+  }
+
+  .kk__led {
+    position: absolute;
+    top: 7px;
+    right: 8px;
+    width: 5px;
+    height: 5px;
     border-radius: 999px;
-    background: hsl(var(--rgb-hue) 95% 55%);
-    box-shadow: 0 0 6px hsl(var(--rgb-hue) 95% 60%);
-    animation: rgb-spin 7s linear infinite;
+    background: #c9cbd1;
+    transition: background 200ms, box-shadow 200ms;
+  }
+
+  .kk[data-on] .kk__led {
+    background: #3ddc84;
+    box-shadow: 0 0 6px #3ddc84;
+  }
+
+  @media (hover: hover) {
+    .kk:hover {
+      transform: translateY(-4px);
+    }
+  }
+
+  .kk:active,
+  .kk[data-pressed],
+  .kk[data-on]:not([aria-label="caps lock"]) {
+    transform: translateY(-1px);
+    box-shadow:
+      0 0 0 1px rgba(10, 11, 14, 0.55),
+      0 1px 0 0 #9fa2aa,
+      0 1px 1px 1px rgba(10, 11, 14, 0.4),
+      0 0 22px 3px hsl(var(--h) var(--s) 62% / calc(var(--kb-glow) + 0.25)),
+      0 0 4px 0 hsl(var(--h) var(--s) 70% / calc(var(--kb-glow) + 0.2));
+    transition-duration: var(--motion-duration-press);
+  }
+
+  .kk:active .kk__face,
+  .kk[data-pressed] .kk__face {
+    inset: 3px 4px 4px;
+    background: radial-gradient(120% 95% at 50% 18%, #ffffff 0%, hsl(var(--h) 80% 96%) 60%, hsl(var(--h) 70% 90%) 100%);
   }
 
   .kb-screen {
@@ -563,8 +779,9 @@ body {
     height: 6px;
     flex-shrink: 0;
     border-radius: 999px;
-    background: hsl(var(--rgb-hue) 95% 55%);
-    box-shadow: 0 0 8px hsl(var(--rgb-hue) 95% 60%);
+    background: hsl(var(--ug-a));
+    box-shadow: 0 0 8px hsl(var(--ug-a));
+    transition: background 500ms, box-shadow 500ms;
   }
 
   .kb-screen__text {
@@ -575,7 +792,7 @@ body {
     overflow: hidden;
     white-space: pre;
     font-family: var(--font-geist-mono), ui-monospace, monospace;
-    font-size: 20px;
+    font-size: 18px;
     line-height: 28px;
     color: var(--color-text-primary);
   }
@@ -590,7 +807,7 @@ body {
     height: 22px;
     margin-left: 2px;
     border-radius: 2px;
-    background: hsl(var(--rgb-hue) 90% 50%);
+    background: hsl(var(--ug-a));
     animation: caret-blink 1s steps(1) infinite;
   }
 
@@ -602,78 +819,34 @@ body {
     color: var(--color-text-tertiary);
   }
 
-  .mini-key {
-    --h: calc(var(--rgb-hue) + var(--o, 0));
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
-    height: 36px;
-    padding: 2px 2px 4px;
-    border-radius: 9px;
-    border: 1px solid hsl(var(--h) 60% 72%);
-    background: linear-gradient(180deg, var(--color-key-secondary-side-top), var(--color-key-secondary-side-bottom));
-    box-shadow:
-      0 0 10px -1px hsl(var(--h) 95% 60% / 0.6),
-      0 1px 1px 0 rgba(0, 0, 0, 0.12),
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.7);
-    cursor: pointer;
-    transition:
-      padding var(--motion-duration-release) var(--motion-easing-out),
-      transform 120ms var(--motion-easing-out);
-  }
-
-  .mini-key__cap {
-    position: relative;
+  .kb-modes {
     display: flex;
     align-items: center;
-    justify-content: center;
-    height: 30px;
-    border-radius: 7px;
-    border: 1px solid #ffffff;
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0) 55%),
-      linear-gradient(180deg, #ffffff, #ecedf0);
-    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1), inset 0 1px 0 0 #ffffff;
-    color: hsl(var(--h) 85% 46%);
-    text-shadow: 0 0 6px hsl(var(--h) 95% 60% / 0.55);
-    font-size: 12px;
-    line-height: 16px;
-    font-weight: 600;
-    transition: background 120ms var(--motion-easing-out);
+    gap: 8px;
+    padding: 6px;
+    border-radius: 999px;
+    border: 1px solid var(--color-border-default);
+    background: #ffffff;
+    box-shadow: 0 1px 2px rgba(12, 14, 20, 0.04);
+  }
+
+  .kb-mode {
+    width: 22px;
+    height: 22px;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.5);
+    transition: transform 160ms var(--motion-easing-out), box-shadow 160ms var(--motion-easing-out);
   }
 
   @media (hover: hover) {
-    .mini-key:hover {
-      transform: translateY(-1px);
+    .kb-mode:hover {
+      transform: scale(1.12);
     }
   }
 
-  .mini-key:active,
-  .mini-key[data-pressed] {
-    padding: 4px 2px 2px;
-    transform: none;
-    transition-duration: var(--motion-duration-press);
-    box-shadow:
-      0 0 16px 1px hsl(var(--h) 95% 60% / 0.85),
-      0 1px 1px 0 rgba(0, 0, 0, 0.18),
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.5);
-  }
-
-  .mini-key:active .mini-key__cap,
-  .mini-key[data-pressed] .mini-key__cap {
-    background: linear-gradient(180deg, #ffffff, hsl(var(--h) 95% 92%));
-  }
-
-  .mini-key[data-on] .mini-key__cap::after {
-    content: "";
-    position: absolute;
-    top: 5px;
-    left: 6px;
-    width: 4px;
-    height: 4px;
-    border-radius: 999px;
-    background: hsl(var(--h) 95% 55%);
-    box-shadow: 0 0 6px hsl(var(--h) 95% 60%);
+  .kb-mode[aria-checked="true"] {
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08), 0 0 0 2px #ffffff, 0 0 0 3.5px var(--color-text-primary);
   }
 }
 
@@ -684,4 +857,53 @@ body {
 @keyframes page-fade {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+@keyframes wordmark-trace {
+  to { stroke-dashoffset: -600; }
+}
+
+@layer components {
+  .wordmark {
+    padding: 8px 12px 0;
+  }
+
+  .wordmark__base,
+  .wordmark__trace {
+    font-family: var(--font-geist-sans), sans-serif;
+    font-weight: 600;
+    font-size: 205px;
+  }
+
+  .wordmark__base {
+    fill: rgba(22, 23, 27, 0.035);
+    stroke: rgba(22, 23, 27, 0.1);
+    stroke-width: 1;
+  }
+
+  .wordmark__trace {
+    fill: none;
+    stroke: url(#wordmark-trace);
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-dasharray: 70 530;
+    animation: wordmark-trace 8s linear infinite;
+  }
+
+  .wordmark__trace--2 {
+    stroke-dasharray: 34 566;
+    animation-duration: 11s;
+    animation-delay: -4s;
+    opacity: 0.7;
+  }
+
+  .wordmark__stop-a { stop-color: hsl(var(--rgb-hue) 78% 62%); }
+  .wordmark__stop-b { stop-color: hsl(calc(var(--rgb-hue) + 120) 78% 62%); }
+  .wordmark__stop-c { stop-color: hsl(calc(var(--rgb-hue) + 240) 78% 62%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wordmark__trace {
+    animation: none;
+  }
 }

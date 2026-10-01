@@ -123,7 +123,7 @@ export function About() {
       </div>
 
       <div className="flex flex-col gap-6">
-        <div className="flex items-end justify-between gap-4">
+        <div className="flex flex-col items-start gap-2 md:flex-row md:items-end md:justify-between md:gap-4">
           <Eyebrow index="05" label="Experience" count={`${roles.length} roles`} />
           <p className="text-[14px] leading-5 tracking-[-0.14px] text-ink-2">Six teams since 2023</p>
         </div>

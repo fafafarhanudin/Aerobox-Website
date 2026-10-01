@@ -27,7 +27,7 @@ export function MarqueeCard({
           src={image}
           alt={`${title} — ${tag}`}
           fill
-          sizes="(min-width: 810px) 448px, 280px"
+          sizes="(min-width: 744px) 448px, 280px"
           className="object-cover"
           priority={priority}
         />
@@ -98,7 +98,7 @@ export function WorkCard({ project, priority }: { project: Project; priority?: b
           src={project.image}
           alt={`${project.title} — ${project.tag}`}
           fill
-          sizes="(min-width: 1200px) 650px, (min-width: 810px) 46vw, 92vw"
+          sizes="(min-width: 1200px) 650px, (min-width: 744px) 46vw, 92vw"
           className="object-cover"
           priority={priority}
         />

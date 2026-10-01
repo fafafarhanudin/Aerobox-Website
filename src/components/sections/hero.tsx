@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Command, CornerDownLeft } from "@untitled-ui/icons-react";
 import { Key, Legend } from "@/components/ui";
+import { FitToWidth } from "@/components/fit-to-width";
 import { disciplines, useDiscipline, type DisciplineId } from "@/components/discipline";
 import { site, socials } from "@/lib/site";
 
@@ -122,12 +123,12 @@ export function Hero() {
         <SlotStatus />
       </div>
 
-      <h1 className="font-heading max-w-[350px] text-balance text-center text-[40px] leading-[46px] tracking-[-0.8px] text-ink md:max-w-[740px] md:text-[48px] md:leading-[54px] md:tracking-[-0.96px] lg:max-w-none lg:text-[60px] lg:leading-[66px] lg:tracking-[-1.2px]">
+      <h1 className="font-heading max-w-[350px] text-balance text-center text-[34px] leading-[40px] tracking-[-0.68px] text-ink md:max-w-[740px] md:text-[48px] md:leading-[54px] md:tracking-[-0.96px] lg:max-w-none lg:text-[60px] lg:leading-[66px] lg:tracking-[-1.2px]">
         Helping companies create better <br className="hidden lg:block" />
         <span className="text-ink-3">digital experiences for their customers.</span>
       </h1>
 
-      <p className="max-w-[720px] text-balance text-center text-[18px] leading-7 tracking-[-0.18px] text-ink-2">
+      <p className="max-w-[720px] text-balance text-center text-[16px] leading-[26px] tracking-[-0.16px] text-ink-2 md:text-[18px] md:leading-7 md:tracking-[-0.18px] lg:max-w-[900px]">
         Web, product, and brand design services for SaaS, AI, B2B, and Web3 teams. Websites, dashboards, mobile apps,
         branding, pitch decks, and animations—all in one unified service.
       </p>
@@ -149,8 +150,8 @@ export function Hero() {
         </Key>
       </div>
 
-      <div className="hidden flex-col items-center gap-5 pt-5 md:flex">
-        <div className="origin-top md:max-lg:scale-[0.97]">
+      <div className="hidden w-full flex-col items-center gap-5 pt-5 md:flex">
+        <FitToWidth>
           <div
             ref={plate}
             {...hoverProps}
@@ -183,7 +184,7 @@ export function Hero() {
               </Key>
             </div>
           </div>
-        </div>
+        </FitToWidth>
         <p className="text-[14px] font-medium leading-5 tracking-[-0.14px] text-ink-2">
           Ten disciplines, one designer. Pick a key.
         </p>
