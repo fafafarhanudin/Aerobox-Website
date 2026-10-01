@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Clock, CornerDownLeft } from "@untitled-ui/icons-react";
+import { Clock, Mail01 } from "@untitled-ui/icons-react";
 import { Brand, Key, Legend, SocialLogo } from "@/components/ui";
 import { LocalTime } from "@/components/local-time";
 import { projects } from "@/data/projects";
@@ -70,14 +70,14 @@ export function Nav() {
         </div>
         <span className="h-6 w-0.5 bg-line" aria-hidden="true" />
         <Key
-          href={site.telegram}
+          href={`mailto:${site.email}`}
           variant="primary"
           size="sm"
           capClassName="gap-2.5 py-2 pl-3.5 pr-2.5 text-[14px] font-medium leading-5 tracking-[-0.14px]"
         >
-          Let&apos;s talk
+          Send email
           <Legend>
-            <CornerDownLeft width={12} height={12} strokeWidth={1.2} />
+            <Mail01 width={12} height={12} strokeWidth={1.2} />
           </Legend>
         </Key>
       </div>
