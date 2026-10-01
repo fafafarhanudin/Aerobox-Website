@@ -98,8 +98,6 @@ export function Footer() {
         <MiniKeyboard />
       </div>
 
-      <Wordmark />
-
       <div className="flex items-center justify-between gap-4 border-t border-line px-5 py-5 md:px-8 lg:px-12">
         <p className="text-[13px] leading-5 tracking-[-0.13px] text-ink-2 md:text-[14px] md:tracking-[-0.14px]">
           © 2026 Aerobox Design. <span className="hidden sm:inline">All rights reserved.</span>
@@ -121,6 +119,7 @@ export function Footer() {
           </button>
         </div>
       </div>
+      <Wordmark />
     </footer>
   );
 }

@@ -576,7 +576,7 @@ body {
     border-radius: 40px;
     background: linear-gradient(90deg, hsl(var(--ug-a)), hsl(var(--ug-b)));
     filter: blur(36px);
-    opacity: calc(var(--kb-glow) * 0.6);
+    opacity: calc(var(--kb-glow) * 0.75);
     pointer-events: none;
     transition: opacity 600ms var(--motion-easing-out);
   }
@@ -601,11 +601,11 @@ body {
     box-sizing: content-box;
     padding: 10px;
     border-radius: 16px;
-    background: linear-gradient(180deg, #24262c, #17181c);
+    background: linear-gradient(180deg, #e4e5e9, #d8d9de);
     box-shadow:
-      inset 0 2px 6px rgba(0, 0, 0, 0.55),
-      inset 0 0 0 1px rgba(0, 0, 0, 0.6),
-      0 1px 0 rgba(255, 255, 255, 0.9);
+      inset 0 1px 3px rgba(12, 14, 20, 0.14),
+      inset 0 0 0 1px rgba(12, 14, 20, 0.06),
+      0 1px 0 rgba(255, 255, 255, 0.95);
   }
 
   .kk {
@@ -617,11 +617,11 @@ body {
     border-radius: 9px;
     background: linear-gradient(180deg, #f3f3f5 0%, #e1e2e6 55%, #c9cbd1 100%);
     box-shadow:
-      0 0 0 1px rgba(10, 11, 14, 0.55),
-      0 3px 0 0 #9fa2aa,
-      0 3px 1px 1px rgba(10, 11, 14, 0.45),
-      0 0 14px 1px hsl(var(--h) var(--s) 62% / var(--kb-glow)),
-      0 0 3px 0 hsl(var(--h) var(--s) 70% / var(--kb-glow));
+      0 0 0 1px hsl(var(--h) 55% 70% / calc(var(--kb-glow) + 0.15)),
+      0 0 0 1px rgba(20, 22, 28, 0.12),
+      0 3px 0 0 #b9bcc4,
+      0 4px 3px 0 rgba(12, 14, 20, 0.16),
+      0 4px 14px 0 hsl(var(--h) var(--s) 62% / var(--kb-glow));
     cursor: pointer;
     transform: translateY(-3px);
     transition:
@@ -747,11 +747,11 @@ body {
   .kk[data-on]:not([aria-label="caps lock"]) {
     transform: translateY(-1px);
     box-shadow:
-      0 0 0 1px rgba(10, 11, 14, 0.55),
-      0 1px 0 0 #9fa2aa,
-      0 1px 1px 1px rgba(10, 11, 14, 0.4),
-      0 0 22px 3px hsl(var(--h) var(--s) 62% / calc(var(--kb-glow) + 0.25)),
-      0 0 4px 0 hsl(var(--h) var(--s) 70% / calc(var(--kb-glow) + 0.2));
+      0 0 0 1px hsl(var(--h) 60% 66% / calc(var(--kb-glow) + 0.3)),
+      0 0 0 1px rgba(20, 22, 28, 0.12),
+      0 1px 0 0 #b9bcc4,
+      0 1px 2px 0 rgba(12, 14, 20, 0.16),
+      0 2px 20px 2px hsl(var(--h) var(--s) 62% / calc(var(--kb-glow) + 0.25));
     transition-duration: var(--motion-duration-press);
   }
 
@@ -860,46 +860,49 @@ body {
 }
 
 @keyframes wordmark-trace {
-  to { stroke-dashoffset: -600; }
+  to { stroke-dashoffset: -1000; }
 }
 
 @layer components {
   .wordmark {
-    padding: 8px 12px 0;
+    padding: 0 10px;
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 45%, transparent 100%);
+    mask-image: linear-gradient(180deg, #000 0%, #000 45%, transparent 100%);
   }
 
   .wordmark__base,
   .wordmark__trace {
     font-family: var(--font-geist-sans), sans-serif;
-    font-weight: 600;
-    font-size: 205px;
+    font-weight: 800;
+    font-size: 192px;
   }
 
   .wordmark__base {
-    fill: rgba(22, 23, 27, 0.035);
-    stroke: rgba(22, 23, 27, 0.1);
-    stroke-width: 1;
+    fill: rgba(22, 23, 27, 0.028);
+    stroke: rgba(22, 23, 27, 0.07);
+    stroke-width: 0.75;
   }
 
   .wordmark__trace {
     fill: none;
     stroke: url(#wordmark-trace);
-    stroke-width: 1.6;
+    stroke-width: 0.9;
     stroke-linecap: round;
-    stroke-dasharray: 70 530;
-    animation: wordmark-trace 8s linear infinite;
+    stroke-dasharray: 140 860;
+    opacity: 0.55;
+    animation: wordmark-trace 16s linear infinite;
   }
 
   .wordmark__trace--2 {
-    stroke-dasharray: 34 566;
-    animation-duration: 11s;
-    animation-delay: -4s;
-    opacity: 0.7;
+    stroke-dasharray: 80 920;
+    animation-duration: 22s;
+    animation-delay: -9s;
+    opacity: 0.35;
   }
 
-  .wordmark__stop-a { stop-color: hsl(var(--rgb-hue) 78% 62%); }
-  .wordmark__stop-b { stop-color: hsl(calc(var(--rgb-hue) + 120) 78% 62%); }
-  .wordmark__stop-c { stop-color: hsl(calc(var(--rgb-hue) + 240) 78% 62%); }
+  .wordmark__stop-a { stop-color: hsl(var(--rgb-hue) 70% 66%); }
+  .wordmark__stop-b { stop-color: hsl(calc(var(--rgb-hue) + 120) 70% 66%); }
+  .wordmark__stop-c { stop-color: hsl(calc(var(--rgb-hue) + 240) 70% 66%); }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,7 +1,7 @@
 export function Wordmark() {
   return (
-    <div className="wordmark rgb-board pointer-events-none select-none overflow-hidden" aria-hidden="true">
-      <svg viewBox="0 0 1000 178" className="block h-auto w-full">
+    <div className="wordmark rgb-board pointer-events-none -mb-px select-none overflow-hidden" aria-hidden="true">
+      <svg viewBox="0 0 1000 104" className="block h-auto w-full">
         <defs>
           <linearGradient id="wordmark-trace" x1="0" y1="0" x2="1" y2="0">
             <stop offset="0%" className="wordmark__stop-a" />
@@ -9,13 +9,13 @@ export function Wordmark() {
             <stop offset="100%" className="wordmark__stop-c" />
           </linearGradient>
         </defs>
-        <text x="500" y="160" textAnchor="middle" textLength="992" lengthAdjust="spacing" className="wordmark__base">
+        <text x="500" y="152" textAnchor="middle" textLength="992" lengthAdjust="spacing" className="wordmark__base">
           AEROBOX
         </text>
-        <text x="500" y="160" textAnchor="middle" textLength="992" lengthAdjust="spacing" className="wordmark__trace">
+        <text x="500" y="152" textAnchor="middle" textLength="992" lengthAdjust="spacing" className="wordmark__trace">
           AEROBOX
         </text>
-        <text x="500" y="160" textAnchor="middle" textLength="992" lengthAdjust="spacing" className="wordmark__trace wordmark__trace--2">
+        <text x="500" y="152" textAnchor="middle" textLength="992" lengthAdjust="spacing" className="wordmark__trace wordmark__trace--2">
           AEROBOX
         </text>
       </svg>
