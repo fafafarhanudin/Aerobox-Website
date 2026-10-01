@@ -1,8 +1,11 @@
-import { Grid01 } from "@untitled-ui/icons-react";
-import { Chip, Key, Legend, chipIcon } from "@/components/ui";
+
+import { Eyebrow, Key, Legend } from "@/components/ui";
 import { Marquee } from "@/components/marquee";
 import { MarqueeCard } from "@/components/project-card";
 import { projects, selectedWork } from "@/data/projects";
+
+const half = Math.ceil(selectedWork.length / 2);
+const rows = [selectedWork.slice(0, half), selectedWork.slice(half)];
 
 export function SelectedWork() {
   const viewAll = (
@@ -24,7 +27,7 @@ export function SelectedWork() {
     >
       <div className="flex items-end justify-between px-5 md:px-0 lg:px-[clamp(48px,8.33vw,120px)]">
         <div className="flex flex-col items-start gap-3">
-          <Chip icon={<Grid01 {...chipIcon} />} label="Portfolio" count={projects.length} />
+          <Eyebrow index="01" label="Portfolio" count={projects.length} />
           <h2 className="font-heading text-[36px] leading-[44px] tracking-[-0.72px] text-ink lg:text-[44px] lg:leading-[52px] lg:tracking-[-0.88px]">
             Selected work
           </h2>
@@ -35,13 +38,24 @@ export function SelectedWork() {
         <div className="hidden lg:block">{viewAll}</div>
       </div>
 
-      <Marquee label="Selected work" duration={400} fade="w-[72px] md:w-40" className="w-full">
-        {selectedWork.map((w, i) => (
-          <div key={`${w.image}-${i}`} className="pr-3 md:pr-4">
-            <MarqueeCard {...w} priority={i < 3} />
-          </div>
+      <div className="flex flex-col gap-3 md:gap-4">
+        {rows.map((row, r) => (
+          <Marquee
+            key={r}
+            label={r === 0 ? "Selected work" : "More selected work"}
+            duration={row.length * 7.5}
+            direction={r === 0 ? "left" : "right"}
+            fade="w-[72px] md:w-40"
+            className="w-full"
+          >
+            {row.map((w, i) => (
+              <div key={`${w.image}-${i}`} className="pr-3 md:pr-4">
+                <MarqueeCard {...w} priority={r === 0 && i < 3} />
+              </div>
+            ))}
+          </Marquee>
         ))}
-      </Marquee>
+      </div>
 
       <div className="flex justify-center px-5 md:px-0 lg:hidden">{viewAll}</div>
     </section>

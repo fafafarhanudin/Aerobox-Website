@@ -8,8 +8,6 @@ export const site = {
     "https://www.upwork.com/freelancers/~0197d12036a1e14224?mp_source=share",
   email: "farhanwork.2009@gmail.com",
   availability: "Available for new projects — Q4 2026",
-  heroStatus: "Open to collaborating on building a startup or a new project-based company.",
-  heroStatusShort: "Open to collaboration on projects with startups/ companies.",
   bookingNote: "Currently booking projects for Q4 2026. Tell me what you're building and I'll reply with next steps.",
   inProgressCount: 2,
   timeZone: "Asia/Jakarta",

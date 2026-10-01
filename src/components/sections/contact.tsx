@@ -1,5 +1,6 @@
-import { CornerDownLeft, Mail01 } from "@untitled-ui/icons-react";
-import { Chip, Key, Legend, chipIcon } from "@/components/ui";
+import { CornerDownLeft } from "@untitled-ui/icons-react";
+import { Eyebrow, Key, Legend } from "@/components/ui";
+import { EmailKey } from "@/components/email-key";
 import { site } from "@/lib/site";
 
 export function Contact() {
@@ -9,7 +10,7 @@ export function Contact() {
       className="flex scroll-mt-4 flex-col items-center gap-8 border-b border-line px-5 py-14 md:px-8 md:py-[72px] lg:px-12 lg:py-[120px]"
     >
       <div className="flex flex-col items-center gap-4">
-        <Chip icon={<Mail01 {...chipIcon} />} label="Contact" />
+        <Eyebrow index="08" label="Contact" tone="live" />
         <h2 className="font-heading text-center text-[36px] leading-[42px] tracking-[-0.32px] text-ink md:text-[48px] md:leading-[56px] lg:text-[64px] lg:leading-[68px]">
           Got something to ship?
           <br />
@@ -28,13 +29,10 @@ export function Contact() {
             <CornerDownLeft width={12} height={12} strokeWidth={1.2} />
           </Legend>
         </Key>
-        <Key
-          href={`mailto:${site.email}`}
+        <EmailKey
+          label="Send an email"
           capClassName="h-12 gap-2.5 pl-[18px] pr-3 text-[16px] font-medium leading-5 tracking-[-0.16px]"
-        >
-          Send an email
-          <Legend>E</Legend>
-        </Key>
+        />
       </div>
     </section>
   );

@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import * as Accordion from "@radix-ui/react-accordion";
-import { CornerDownLeft, HelpCircle, Minus, Plus } from "@untitled-ui/icons-react";
-import { Chip, Key, Legend, chipIcon } from "@/components/ui";
+import {CornerDownLeft, Minus, Plus} from "@untitled-ui/icons-react";
+import { Eyebrow, Key, Legend } from "@/components/ui";
 import { site } from "@/lib/site";
 
 const faqs = [
@@ -41,9 +41,9 @@ export function Faq() {
       id="faq"
       className="flex scroll-mt-4 flex-col gap-8 border-b border-line px-5 py-14 md:gap-10 md:px-8 md:py-[72px] lg:flex-row lg:gap-16 lg:px-[clamp(48px,8.33vw,120px)] lg:py-24"
     >
-      <div className="flex flex-col items-start gap-6 lg:w-[400px] lg:shrink-0">
-        <Chip icon={<HelpCircle {...chipIcon} />} label="FAQ" count={faqs.length} />
-        <h2 className="font-heading text-[28px] leading-[34px] tracking-[-0.28px] text-ink md:text-[36px] md:leading-[52px] lg:text-[44px] lg:tracking-[-0.44px]">
+      <div className="flex flex-col items-start gap-6 lg:w-[440px] lg:shrink-0">
+        <Eyebrow index="07" label="FAQ" count={faqs.length} />
+        <h2 className="font-heading lg:whitespace-nowrap text-[28px] leading-[34px] tracking-[-0.28px] text-ink md:text-[36px] md:leading-[52px] lg:text-[44px] lg:tracking-[-0.44px]">
           Questions, answered
         </h2>
         <p className="text-[16px] leading-[26px] tracking-[-0.16px] text-ink-2">
@@ -65,7 +65,7 @@ export function Faq() {
             className="group rounded-xl px-4 transition-colors duration-150 hover:bg-subtle/60 data-[state=open]:bg-white"
           >
             <Accordion.Header>
-              <Accordion.Trigger className="flex w-full cursor-pointer items-start gap-6 py-6 text-left transition-[padding] duration-[240ms] ease-[cubic-bezier(0.65,0,0.35,1)] group-data-[state=open]:pb-2">
+              <Accordion.Trigger className="flex w-full cursor-pointer items-center gap-6 py-6 group-data-[state=open]:items-start text-left transition-[padding] duration-[240ms] ease-[cubic-bezier(0.65,0,0.35,1)] group-data-[state=open]:pb-2">
                 <span className="flex-1 text-[18px] font-medium leading-[26px] tracking-[-0.18px] text-ink">{f.q}</span>
                 <span className={`key key--sm [--r:8px] ${open === `item-${i}` ? "key--primary" : ""}`} aria-hidden="true">
                   <span className="key__cap size-7 rounded-[4px]">

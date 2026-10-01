@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Clock, Mail01 } from "@untitled-ui/icons-react";
-import { Brand, Key, Legend, SocialLogo } from "@/components/ui";
+import { Clock } from "@untitled-ui/icons-react";
+import { Brand, Key, SocialLogo } from "@/components/ui";
+import { EmailKey } from "@/components/email-key";
 import { LocalTime } from "@/components/local-time";
 import { projects } from "@/data/projects";
 import { site, socials, type SocialKey } from "@/lib/site";
@@ -22,11 +23,11 @@ export function Nav() {
 
   return (
     <header className="flex items-center justify-between border-y border-line px-5 py-4 md:px-6">
-      <div className="flex items-center gap-10 lg:w-[505px] lg:justify-between">
+      <div className="flex items-center gap-10 lg:gap-14">
         <Link href="/" aria-label="Aerobox home" className="rounded-lg">
           <Brand />
         </Link>
-        <nav aria-label="Primary" className="hidden items-center gap-3 lg:flex">
+        <nav aria-label="Primary" className="hidden items-center gap-7 lg:flex">
           <Link
             href="/work"
             aria-current={onWork ? "page" : undefined}
@@ -69,17 +70,12 @@ export function Nav() {
           ))}
         </div>
         <span className="h-6 w-0.5 bg-line" aria-hidden="true" />
-        <Key
-          href={`mailto:${site.email}`}
+        <EmailKey
+          label="Send email"
           variant="primary"
           size="sm"
           capClassName="gap-2.5 py-2 pl-3.5 pr-2.5 text-[14px] font-medium leading-5 tracking-[-0.14px]"
-        >
-          Send email
-          <Legend>
-            <Mail01 width={12} height={12} strokeWidth={1.2} />
-          </Legend>
-        </Key>
+        />
       </div>
     </header>
   );

@@ -70,32 +70,33 @@ export function Legend({ children }: { children: ReactNode }) {
   );
 }
 
-export function Chip({
-  icon,
+export function Eyebrow({
+  index,
   label,
   count,
+  tone = "accent",
   className = "",
 }: {
-  icon?: ReactNode;
+  index?: string;
   label: string;
   count?: ReactNode;
+  tone?: "accent" | "live";
   className?: string;
 }) {
   return (
-    <span className={`chip ${className}`}>
-      {icon}
-      <span>{label}</span>
+    <span className={`eyebrow ${className}`}>
+      <span className={`eyebrow__led eyebrow__led--${tone}`} aria-hidden="true" />
+      {index && <span className="eyebrow__index">{index}</span>}
+      <span className="eyebrow__label">{label}</span>
       {count !== undefined && (
         <>
-          <span className="chip__sep" aria-hidden="true" />
-          <span className="chip__count">{count}</span>
+          <span className="eyebrow__rule" aria-hidden="true" />
+          <span className="eyebrow__count">{count}</span>
         </>
       )}
     </span>
   );
 }
-
-export const chipIcon = { width: 14, height: 14, strokeWidth: 1.2, className: "shrink-0 text-ink-2" };
 
 export function Logomark({ size = 28 }: { size?: number }) {
   const s = size / 28;

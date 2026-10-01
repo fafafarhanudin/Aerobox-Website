@@ -1,6 +1,6 @@
 import Image from "next/image";
-import { Building07 } from "@untitled-ui/icons-react";
-import { Chip, chipIcon } from "@/components/ui";
+
+import { Eyebrow } from "@/components/ui";
 import { Marquee } from "@/components/marquee";
 
 const rows = [
@@ -11,7 +11,7 @@ const rows = [
 export function Clients() {
   return (
     <section aria-label="Clients" className="flex flex-col items-center gap-[38px] border-b border-line py-10">
-      <Chip icon={<Building07 {...chipIcon} />} label="Trusted by 60+ founders and teams" />
+      <Eyebrow label="Trusted by 60+ founders and teams" />
       <div className="flex w-full flex-col gap-6">
         {rows.map((r, i) => (
           <Marquee
@@ -20,6 +20,7 @@ export function Clients() {
             duration={40}
             direction={r.direction}
             fade="w-20 md:w-40"
+            pauseOnHover={false}
             className="h-8"
           >
             <Image

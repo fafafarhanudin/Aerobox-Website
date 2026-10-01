@@ -3,12 +3,12 @@
 import { useEffect, useState } from "react";
 import { site } from "@/lib/site";
 
-const formatter = new Intl.DateTimeFormat("en-GB", {
+const formatter = new Intl.DateTimeFormat("en-US", {
   timeZone: site.timeZone,
-  hour: "2-digit",
+  hour: "numeric",
   minute: "2-digit",
   second: "2-digit",
-  hourCycle: "h23",
+  hour12: true,
 });
 
 export function LocalTime() {
@@ -37,7 +37,7 @@ export function LocalTime() {
 
   return (
     <time suppressHydrationWarning className="tabular-nums">
-      {time ?? "--:--:--"}
+      {time ?? "--:--:-- --"}
     </time>
   );
 }

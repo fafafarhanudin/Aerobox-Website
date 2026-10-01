@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Command, Route } from "@untitled-ui/icons-react";
-import { Chip, chipIcon } from "@/components/ui";
+import {Command} from "@untitled-ui/icons-react";
+import { Eyebrow } from "@/components/ui";
 
 const steps = [
   {
@@ -45,7 +45,7 @@ export function Process() {
     >
       <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <div className="flex flex-col items-start gap-4">
-          <Chip icon={<Route {...chipIcon} />} label="Process" count={`${steps.length} steps`} />
+          <Eyebrow index="03" label="Process" count={`${steps.length} steps`} />
           <h2 className="font-heading text-[36px] leading-[44px] tracking-[-0.36px] text-ink lg:text-[44px] lg:leading-[52px] lg:tracking-[-0.44px]">
             How a project runs,
             <br />

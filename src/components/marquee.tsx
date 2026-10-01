@@ -8,6 +8,7 @@ export function Marquee({
   className = "",
   trackClassName = "",
   label,
+  pauseOnHover = true,
 }: {
   children: ReactNode;
   duration: number;
@@ -16,9 +17,14 @@ export function Marquee({
   className?: string;
   trackClassName?: string;
   label: string;
+  pauseOnHover?: boolean;
 }) {
   return (
-    <div className={`marquee ${className}`} role="region" aria-label={label}>
+    <div
+      className={`marquee ${pauseOnHover ? "marquee--pause" : ""} ${className}`}
+      role="region"
+      aria-label={label}
+    >
       <div
         className={`marquee__track ${trackClassName}`}
         data-direction={direction}

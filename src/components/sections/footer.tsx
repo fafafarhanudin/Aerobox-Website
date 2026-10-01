@@ -6,6 +6,7 @@ import { ArrowUp } from "@untitled-ui/icons-react";
 import { Brand, SocialLogo } from "@/components/ui";
 import { LocalTime } from "@/components/local-time";
 import { MiniKeyboard } from "@/components/mini-keyboard";
+import { mailtoHref } from "@/components/email-key";
 import { site, socials, type SocialKey } from "@/lib/site";
 
 const sitemap = [
@@ -84,7 +85,7 @@ export function Footer() {
               <span className={linkCls}>Telegram</span>
               <span className="text-[12px] leading-4 tracking-[-0.12px] text-ink-2">{site.telegramHandle}</span>
             </a>
-            <a href={`mailto:${site.email}`} className="group flex min-w-0 flex-col gap-0.5">
+            <a href={mailtoHref} className="group flex min-w-0 flex-col gap-0.5">
               <span className={linkCls}>Email</span>
               <span className="break-all text-[12px] leading-4 tracking-[-0.12px] text-ink-2">{site.email}</span>
             </a>

@@ -1,5 +1,5 @@
-import { MessageSmileCircle } from "@untitled-ui/icons-react";
-import { Chip, chipIcon } from "@/components/ui";
+
+import { Eyebrow } from "@/components/ui";
 import { Marquee } from "@/components/marquee";
 
 const quotes = [
@@ -11,28 +11,42 @@ const quotes = [
   { initials: "SL", quote: "He replies fast and always delivers on time. It felt like having a designer on the team.", by: "Sarah L. · Product lead, dev tools" },
 ];
 
+const rows = [quotes, [...quotes.slice(3), ...quotes.slice(0, 3)]];
+
+function Quote({ q }: { q: (typeof quotes)[number] }) {
+  return (
+    <figure className="mb-2 mr-3 mt-1 flex w-[300px] shrink-0 items-start gap-3 rounded-xl border border-line bg-white py-3.5 pl-2.5 pr-4">
+      <span className={`key key--sm ${q.accent ? "key--accent" : ""}`} aria-hidden="true" style={{ cursor: "default" }}>
+        <span className="key__cap size-7 text-[10px] font-medium leading-3 tracking-[-0.1px]">{q.initials}</span>
+      </span>
+      <div className="flex min-w-0 flex-col gap-1">
+        <blockquote className="text-[14px] font-medium leading-5 tracking-[-0.14px] text-ink">“{q.quote}”</blockquote>
+        <figcaption className="truncate text-[12px] leading-4 tracking-[-0.12px] text-ink-2">{q.by}</figcaption>
+      </div>
+    </figure>
+  );
+}
+
 export function Testimonials() {
   return (
     <section aria-label="What clients say" className="flex flex-col items-center gap-4 border-b border-line py-8">
-      <Chip icon={<MessageSmileCircle {...chipIcon} />} label="What clients say" />
-      <Marquee label="Client testimonials" duration={80} direction="right" fade="w-20 md:w-[200px]" className="w-full">
-        {quotes.map((q) => (
-          <figure
-            key={q.initials}
-            className="mb-2 mr-3 mt-1 flex shrink-0 items-center gap-3 rounded-xl border border-line bg-white py-3.5 pl-2.5 pr-[18px]"
+      <Eyebrow index="06" label="What clients say" />
+      <div className="flex w-full flex-col gap-1">
+        {rows.map((row, r) => (
+          <Marquee
+            key={r}
+            label={r === 0 ? "Client testimonials" : "More client testimonials"}
+            duration={60}
+            direction={r === 0 ? "right" : "left"}
+            fade="w-16 md:w-[200px]"
+            className="w-full"
           >
-            <span className={`key key--sm ${q.accent ? "key--accent" : ""}`} aria-hidden="true" style={{ cursor: "default", boxShadow: q.accent ? undefined : "0 4px 8px -2px rgba(12,14,20,.1), 0 1px 1px rgba(0,0,0,.12), inset 0 1px 0 rgba(255,255,255,.7)" }}>
-              <span className="key__cap size-7 text-[10px] font-medium leading-3 tracking-[-0.1px]">{q.initials}</span>
-            </span>
-            <div className="flex flex-col gap-0.5">
-              <blockquote className="w-[344px] text-[14px] font-medium leading-5 tracking-[-0.14px] text-ink">
-                “{q.quote}”
-              </blockquote>
-              <figcaption className="whitespace-nowrap text-[12px] leading-4 tracking-[-0.12px] text-ink-2">{q.by}</figcaption>
-            </div>
-          </figure>
+            {row.map((q) => (
+              <Quote key={q.initials} q={q} />
+            ))}
+          </Marquee>
         ))}
-      </Marquee>
+      </div>
     </section>
   );
 }

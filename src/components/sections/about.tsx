@@ -1,6 +1,5 @@
 import Image from "next/image";
-import { Briefcase01, User01 } from "@untitled-ui/icons-react";
-import { Chip, Key, SocialLogo, chipIcon } from "@/components/ui";
+import { Eyebrow, Key, SocialLogo } from "@/components/ui";
 import { socials, type SocialKey } from "@/lib/site";
 
 const stats = [
@@ -63,7 +62,7 @@ export function About() {
     >
       <div className="about-grid">
         <div className="[grid-area:chip]">
-          <Chip icon={<User01 {...chipIcon} />} label="About" />
+          <Eyebrow index="04" label="About" />
         </div>
 
         <figure className="flex flex-col rounded-[20px] border border-line bg-white p-2 [grid-area:portrait] lg:h-[453px]">
@@ -125,7 +124,7 @@ export function About() {
 
       <div className="flex flex-col gap-6">
         <div className="flex items-end justify-between gap-4">
-          <Chip icon={<Briefcase01 {...chipIcon} />} label="Experience" count={`${roles.length} roles`} />
+          <Eyebrow index="05" label="Experience" count={`${roles.length} roles`} />
           <p className="text-[14px] leading-5 tracking-[-0.14px] text-ink-2">Six teams since 2023</p>
         </div>
         <ul

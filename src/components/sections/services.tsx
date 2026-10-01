@@ -1,7 +1,7 @@
 "use client";
 
-import { LayersThree01 } from "@untitled-ui/icons-react";
-import { Chip, chipIcon } from "@/components/ui";
+
+import { Eyebrow } from "@/components/ui";
 import { disciplines, useDiscipline } from "@/components/discipline";
 
 export function Services() {
@@ -14,7 +14,7 @@ export function Services() {
     >
       <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <div className="flex flex-col items-start gap-4">
-          <Chip icon={<LayersThree01 {...chipIcon} />} label="Services" count={disciplines.length} />
+          <Eyebrow index="02" label="Services" count={disciplines.length} />
           <h2 className="font-heading text-[36px] leading-[44px] tracking-[-0.72px] text-ink lg:text-[44px] lg:leading-[52px] lg:tracking-[-0.88px]">
             One partner,
             <br />

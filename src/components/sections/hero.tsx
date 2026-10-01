@@ -1,18 +1,23 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Command, CornerDownLeft } from "@untitled-ui/icons-react";
 import { Key, Legend } from "@/components/ui";
-import { disciplines, useDiscipline } from "@/components/discipline";
+import { disciplines, useDiscipline, type DisciplineId } from "@/components/discipline";
 import { site, socials } from "@/lib/site";
 
 const rowA = disciplines.slice(0, 5);
 const rowB = disciplines.slice(5);
+const order = disciplines.map((d) => d.id);
 
 const bigCap = "flex-col items-start justify-between whitespace-nowrap px-3.5 py-3";
 
-function DisciplineKey({ d }: { d: (typeof disciplines)[number] }) {
-  const { active, setActive } = useDiscipline();
+const AUTOPLAY_MS = 1400;
+const USER_PAUSE_MS = 6000;
+
+function DisciplineKey({ d, onPick }: { d: (typeof disciplines)[number]; onPick: (id: DisciplineId) => void }) {
+  const { active } = useDiscipline();
   const on = active === d.id;
   return (
     <Key
@@ -21,7 +26,7 @@ function DisciplineKey({ d }: { d: (typeof disciplines)[number] }) {
       pressed={on}
       aria-pressed={on}
       aria-label={d.title}
-      onClick={() => setActive(d.id)}
+      onClick={() => onPick(d.id)}
       capClassName={`${bigCap} size-24`}
     >
       <span className="text-[22px] font-medium leading-7 tracking-[-0.22px]">{d.key}</span>
@@ -32,7 +37,73 @@ function DisciplineKey({ d }: { d: (typeof disciplines)[number] }) {
   );
 }
 
+function useMonthName() {
+  const [month, setMonth] = useState<string | null>(null);
+  useEffect(() => {
+    setMonth(new Intl.DateTimeFormat("en-US", { month: "long", timeZone: site.timeZone }).format(new Date()));
+  }, []);
+  return month ?? "this month";
+}
+
+function SlotStatus() {
+  const month = useMonthName();
+  return (
+    <span className="flex items-center gap-2 rounded-full border border-line bg-white py-1.5 pl-2.5 pr-3 text-[12px] font-medium leading-4 tracking-[-0.12px] text-ink-2">
+      <span className="relative flex size-2 shrink-0" aria-hidden="true">
+        <span className="absolute inset-0 animate-ping rounded-full bg-[#22c55e] opacity-60 motion-reduce:animate-none" />
+        <span className="relative size-2 rounded-full bg-[#22c55e] shadow-[0_0_6px_rgba(34,197,94,.7)]" />
+      </span>
+      <span suppressHydrationWarning>
+        <span className="text-ink">Only 1 project slot left</span> for {month}
+        <span className="hidden md:inline"> — book yours before it&apos;s gone.</span>
+      </span>
+    </span>
+  );
+}
+
+function useAutoplay(plate: React.RefObject<HTMLDivElement | null>) {
+  const { active, setActive } = useDiscipline();
+  const activeRef = useRef(active);
+  const lastUser = useRef(0);
+  const hovering = useRef(false);
+
+  useEffect(() => {
+    activeRef.current = active;
+  }, [active]);
+
+  useEffect(() => {
+    const el = plate.current;
+    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let visible = false;
+    const io = new IntersectionObserver(([e]) => (visible = e.isIntersecting), { threshold: 0.5 });
+    io.observe(el);
+    const id = window.setInterval(() => {
+      if (!visible || hovering.current || document.hidden || Date.now() - lastUser.current < USER_PAUSE_MS) return;
+      const next = order[(order.indexOf(activeRef.current) + 1) % order.length];
+      setActive(next);
+    }, AUTOPLAY_MS);
+    return () => {
+      io.disconnect();
+      window.clearInterval(id);
+    };
+  }, [plate, setActive]);
+
+  return {
+    pick: (id: DisciplineId) => {
+      lastUser.current = Date.now();
+      setActive(id);
+    },
+    hoverProps: {
+      onPointerEnter: () => (hovering.current = true),
+      onPointerLeave: () => (hovering.current = false),
+    },
+  };
+}
+
 export function Hero() {
+  const plate = useRef<HTMLDivElement>(null);
+  const { pick, hoverProps } = useAutoplay(plate);
+
   return (
     <section
       id="top"
@@ -48,21 +119,17 @@ export function Hero() {
         >
           <Image src="/assets/hero/avatar.png" alt="" width={56} height={56} className="size-full rounded-full object-cover" />
         </a>
-        <span className="flex items-center gap-2 rounded-full border border-line bg-white py-1.5 pl-2.5 pr-3 text-[12px] font-medium leading-4 tracking-[-0.12px] text-ink-2">
-          <Image src="/assets/hero/dot.svg" alt="" width={8} height={8} className="shrink-0" />
-          <span className="hidden md:inline">{site.heroStatus}</span>
-          <span className="md:hidden">{site.heroStatusShort}</span>
-        </span>
+        <SlotStatus />
       </div>
 
-      <h1 className="font-heading max-w-[350px] text-center text-[48px] leading-[53px] tracking-[-0.96px] text-ink md:max-w-none md:text-[56px] md:leading-[60px] md:tracking-[-1.12px] lg:text-[72px] lg:leading-[76px] lg:tracking-[-0.72px]">
-        Designing world-class <br className="hidden md:block" />
-        <span className="text-ink-3 lg:tracking-[-0.16px]">digital experiences.</span>
+      <h1 className="font-heading max-w-[350px] text-balance text-center text-[40px] leading-[46px] tracking-[-0.8px] text-ink md:max-w-[740px] md:text-[48px] md:leading-[54px] md:tracking-[-0.96px] lg:max-w-none lg:text-[60px] lg:leading-[66px] lg:tracking-[-1.2px]">
+        Helping companies create better <br className="hidden lg:block" />
+        <span className="text-ink-3">digital experiences for their customers.</span>
       </h1>
 
-      <p className="max-w-[656px] text-center text-[18px] leading-7 tracking-[-0.18px] text-ink-2">
-        Founder of Aerobox Design. Three years designing websites, dashboards, mobile apps and brand systems for 60+
-        SaaS, AI, B2B and Web3 teams.
+      <p className="max-w-[720px] text-balance text-center text-[18px] leading-7 tracking-[-0.18px] text-ink-2">
+        Web, product, and brand design services for SaaS, AI, B2B, and Web3 teams. Websites, dashboards, mobile apps,
+        branding, pitch decks, and animations—all in one unified service.
       </p>
 
       <div className="flex w-full flex-col items-stretch gap-2.5 md:w-auto md:flex-row md:items-end md:gap-3">
@@ -84,19 +151,25 @@ export function Hero() {
 
       <div className="hidden flex-col items-center gap-5 pt-5 md:flex">
         <div className="origin-top md:max-lg:scale-[0.97]">
-          <div className="plate flex flex-col gap-3 rounded-[28px] p-5" role="group" aria-label="Disciplines">
+          <div
+            ref={plate}
+            {...hoverProps}
+            className="plate flex flex-col gap-3 rounded-[28px] p-5"
+            role="group"
+            aria-label="Disciplines"
+          >
             <div className="flex items-end gap-3">
               <Key size="lg" tabIndex={-1} aria-hidden="true" capClassName={`${bigCap} h-24 w-[148px]`}>
                 <Command width={24} height={24} strokeWidth={1.2} className="text-ink" />
                 <span className="text-[12px] font-medium leading-4 tracking-[-0.12px] text-ink-2">command</span>
               </Key>
               {rowA.map((d) => (
-                <DisciplineKey key={d.id} d={d} />
+                <DisciplineKey key={d.id} d={d} onPick={pick} />
               ))}
             </div>
             <div className="flex items-end gap-3">
               {rowB.map((d) => (
-                <DisciplineKey key={d.id} d={d} />
+                <DisciplineKey key={d.id} d={d} onPick={pick} />
               ))}
               <Key
                 href={site.telegram}

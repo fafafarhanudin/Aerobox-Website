@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Archive } from "@untitled-ui/icons-react";
-import { Chip, Key, chipIcon } from "@/components/ui";
+import { Eyebrow, Key } from "@/components/ui";
 import { WorkCard } from "@/components/project-card";
 import { byCategory, categories, newCount, projects, type Category } from "@/data/projects";
 import { site } from "@/lib/site";
@@ -15,7 +14,7 @@ function GroupHeader({ name, meta }: { name: Category; meta?: string }) {
   const text = meta ?? (fresh > 0 ? `${fresh} new from 2026` : undefined);
   return (
     <div className="flex flex-col items-start gap-2 md:flex-row md:items-center md:justify-between">
-      <Chip icon={<Archive {...chipIcon} />} label={name} count={count} />
+      <Eyebrow label={name} count={count} />
       {text && <p className="text-[12px] leading-4 tracking-[-0.12px] text-ink-3">{text}</p>}
     </div>
   );
@@ -68,7 +67,7 @@ export function WorkIndex() {
     <>
       <header className="flex flex-col gap-8 px-5 py-12 md:gap-10 md:px-8 md:py-16 lg:gap-[58px] lg:px-12">
         <div className="flex flex-col items-start gap-4">
-          <Chip icon={<Archive {...chipIcon} />} label="Portfolio" />
+          <Eyebrow index="01" label="All work" count={projects.length} />
           <h1 className="font-heading text-[44px] leading-[48px] tracking-[-0.88px] text-ink md:text-[56px] md:leading-[60px] md:tracking-[-1.12px] lg:text-[72px] lg:leading-[72px] lg:tracking-[-1.44px]">
             All work <span className="text-ink-3">all on one page.</span>
           </h1>
