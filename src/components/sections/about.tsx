@@ -128,7 +128,7 @@ export function About() {
           <p className="text-[14px] leading-5 tracking-[-0.14px] text-ink-2">Six teams since 2023</p>
         </div>
         <ul
-          className="plate grid grid-cols-1 gap-3 rounded-[28px] p-5 md:grid-cols-2 lg:grid-cols-3 lg:gap-x-4 lg:gap-y-6"
+          className="plate grid grid-cols-1 gap-3 rounded-[28px] p-3 min-[560px]:p-5 md:grid-cols-2 lg:grid-cols-3 lg:gap-x-4 lg:gap-y-6"
           style={{ boxShadow: "0 2px 4px rgba(0,0,0,.05), 0 24px 48px rgba(12,14,20,.12), inset 0 1px 0 #fff" }}
         >
           {roles.map((r) => (

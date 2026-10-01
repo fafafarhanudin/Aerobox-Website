@@ -11,7 +11,7 @@ export function Contact() {
     >
       <div className="flex flex-col items-center gap-4">
         <Eyebrow index="08" label="Contact" tone="live" />
-        <h2 className="font-heading text-center text-[36px] leading-[42px] tracking-[-0.32px] text-ink md:text-[48px] md:leading-[56px] lg:text-[64px] lg:leading-[68px]">
+        <h2 className="font-heading text-center text-[30px] leading-[36px] tracking-[-0.3px] text-ink md:text-[48px] md:leading-[56px] lg:text-[64px] lg:leading-[68px]">
           Got something to ship?
           <br />
           <span className="text-ink-3">Let&apos;s make it precise.</span>

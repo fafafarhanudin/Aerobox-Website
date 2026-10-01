@@ -28,7 +28,7 @@ export function SelectedWork() {
       <div className="flex items-end justify-between px-5 md:px-0 lg:px-[clamp(48px,8.33vw,120px)]">
         <div className="flex flex-col items-start gap-3">
           <Eyebrow index="01" label="Portfolio" count={projects.length} />
-          <h2 className="font-heading text-[36px] leading-[44px] tracking-[-0.72px] text-ink lg:text-[44px] lg:leading-[52px] lg:tracking-[-0.88px]">
+          <h2 className="font-heading text-[30px] leading-[36px] md:text-[36px] md:leading-[44px] tracking-[-0.72px] text-ink lg:text-[44px] lg:leading-[52px] lg:tracking-[-0.88px]">
             Selected work
           </h2>
           <p className="text-[16px] leading-[26px] tracking-[-0.16px] text-ink-2">

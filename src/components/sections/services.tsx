@@ -15,7 +15,7 @@ export function Services() {
       <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <div className="flex flex-col items-start gap-4">
           <Eyebrow index="02" label="Services" count={disciplines.length} />
-          <h2 className="font-heading text-[36px] leading-[44px] tracking-[-0.72px] text-ink lg:text-[44px] lg:leading-[52px] lg:tracking-[-0.88px]">
+          <h2 className="font-heading text-[30px] leading-[36px] md:text-[36px] md:leading-[44px] tracking-[-0.72px] text-ink lg:text-[44px] lg:leading-[52px] lg:tracking-[-0.88px]">
             One partner,
             <br />
             ten disciplines
@@ -27,7 +27,7 @@ export function Services() {
         </p>
       </div>
 
-      <ul className="grid grid-cols-1 gap-x-7 md:grid-cols-2 lg:grid-cols-3 lg:gap-x-4 lg:gap-y-3">
+      <ul className="grid grid-cols-1 gap-x-7 min-[560px]:grid-cols-2 lg:grid-cols-3 lg:gap-x-4 lg:gap-y-3">
         {disciplines.map((d, i) => {
           const on = active === d.id;
           return (

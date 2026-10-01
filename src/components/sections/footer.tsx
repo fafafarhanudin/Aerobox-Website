@@ -20,9 +20,9 @@ const sitemap = [
 
 const connect: SocialKey[] = ["x", "linkedin", "dribbble", "behance", "contra", "ondesign", "upwork"];
 
-const colTitle = "text-[12px] font-medium leading-4 tracking-[-0.12px] text-ink-3";
+const colTitle = "mb-1 text-[12px] font-medium leading-4 tracking-[-0.12px] text-ink-3 md:mb-0";
 const linkCls =
-  "text-[14px] font-medium leading-5 tracking-[-0.14px] text-ink underline-offset-4 transition-colors duration-150 hover:text-ink-2";
+  "py-2 text-[14px] font-medium leading-5 tracking-[-0.14px] text-ink underline-offset-4 transition-colors duration-150 hover:text-ink-2 md:py-0";
 
 function Status() {
   return (
@@ -63,7 +63,7 @@ export function Footer() {
         </div>
 
         <div className="grid grid-cols-2 gap-x-6 gap-y-10 md:flex md:justify-between lg:gap-16">
-          <nav aria-label="Sitemap" className="flex flex-col gap-3">
+          <nav aria-label="Sitemap" className="flex flex-col md:gap-3">
             <p className={colTitle}>Sitemap</p>
             {sitemap.map((l) => (
               <Link key={l.label} href={l.href} className={linkCls}>
@@ -71,7 +71,7 @@ export function Footer() {
               </Link>
             ))}
           </nav>
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col md:gap-3">
             <p className={colTitle}>Connect</p>
             {connect.map((s) => (
               <a key={s} href={socials[s].href} target="_blank" rel="noopener noreferrer" className={`flex items-center gap-2 ${linkCls}`}>
