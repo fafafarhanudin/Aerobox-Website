@@ -51,8 +51,8 @@ function SlotStatus() {
   return (
     <span className="flex items-center gap-2 rounded-full border border-line bg-white py-1.5 pl-2.5 pr-3 text-[12px] font-medium leading-4 tracking-[-0.12px] text-ink-2">
       <span className="relative flex size-2 shrink-0" aria-hidden="true">
-        <span className="absolute inset-0 animate-ping rounded-full bg-[#22c55e] opacity-60 motion-reduce:animate-none" />
-        <span className="relative size-2 rounded-full bg-[#22c55e] shadow-[0_0_6px_rgba(34,197,94,.7)]" />
+        <span className="absolute inset-0 animate-ping rounded-full bg-[#2f6bff] opacity-60 motion-reduce:animate-none" />
+        <span className="relative size-2 rounded-full bg-[#2f6bff] shadow-[0_0_6px_rgba(47,107,255,.7)]" />
       </span>
       <span suppressHydrationWarning>
         <span className="text-ink">Only 1 project slot left</span> for {month}

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu02, XClose } from "@untitled-ui/icons-react";
+import { Clock, Menu02, XClose } from "@untitled-ui/icons-react";
 import { Brand, Key, SocialLogo } from "@/components/ui";
 import { EmailKey } from "@/components/email-key";
 import { LocalClock } from "@/components/local-time";
@@ -80,7 +80,12 @@ export function Nav() {
         </nav>
       </div>
 
-      {!assets && <LocalClock className="shrink-0 text-[13px] font-medium leading-5 tracking-[-0.13px] text-ink-2" />}
+      {!assets && (
+        <div className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border border-line bg-white py-1.5 pl-2.5 pr-3.5 text-[12px] font-medium leading-4 tracking-[-0.12px] text-ink-2">
+          <Clock width={14} height={14} strokeWidth={1.8} className="text-ink-2" aria-hidden="true" />
+          <LocalClock />
+        </div>
+      )}
 
       <div className="hidden items-center justify-end gap-4 md:flex">
         {!assets && (

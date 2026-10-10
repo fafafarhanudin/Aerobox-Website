@@ -8,7 +8,7 @@
 <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
 <feOffset/>
 <feGaussianBlur stdDeviation="4"/>
-<feColorMatrix type="matrix" values="0 0 0 0 0.133333 0 0 0 0 0.772549 0 0 0 0 0.368627 0 0 0 0.7 0"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0.184314 0 0 0 0 0.419608 0 0 0 0 1 0 0 0 0.7 0"/>
 <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_0_24"/>
 <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_0_24" result="shape"/>
 <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
@@ -18,8 +18,8 @@
 <feBlend mode="normal" in2="shape" result="effect2_innerShadow_0_24"/>
 </filter>
 <radialGradient id="paint0_radial_0_24" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(12 12) scale(4)">
-<stop stop-color="#86EFAC"/>
-<stop offset="1" stop-color="#16A34A"/>
+<stop stop-color="#A9C2FF"/>
+<stop offset="1" stop-color="#2F6BFF"/>
 </radialGradient>
 </defs>
 </svg>

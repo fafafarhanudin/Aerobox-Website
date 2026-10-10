@@ -79,7 +79,7 @@ export function WorkCard({ project, priority }: { project: Project; priority?: b
   const isLive = project.category === "Live websites";
   const badge = project.live ? (
     <span className="flex shrink-0 items-center gap-1 rounded-full bg-[#e8f8ee] px-1.5 py-0.5 text-[10px] font-medium leading-3 tracking-[-0.1px] text-[#15803d]">
-      <span className="size-1.5 rounded-full bg-[#22c55e]" aria-hidden="true" />
+      <span className="size-1.5 rounded-full bg-[#2f6bff]" aria-hidden="true" />
       Live
     </span>
   ) : project.isNew ? (
