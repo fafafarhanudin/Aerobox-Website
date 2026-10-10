@@ -41,3 +41,9 @@ yarn-error.log*
 next-env.d.ts
 
 !.env.example
+
+# Aerobox Assets library source (built into public/library)
+/library/node_modules
+/library/dist
+/library/data
+/library/.env*.local

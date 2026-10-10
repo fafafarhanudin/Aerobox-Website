@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "library:dev": "npm --prefix library run dev",
+    "library:build": "npm --prefix library ci && npm --prefix library run build && rm -rf public/library && cp -R library/dist public/library"
   },
   "dependencies": {
     "@babel/runtime": "^7.29.7",

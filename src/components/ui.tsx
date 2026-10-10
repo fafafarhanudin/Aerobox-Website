@@ -33,6 +33,14 @@ export function Key(props: KeyAsLink | KeyAsButton) {
   if (props.href !== undefined) {
     const { href, ...anchor } = rest as KeyAsLink;
     const external = /^(https?:|mailto:)/.test(href);
+    // /library is a separate static app, so it needs a full page load rather than <Link>.
+    if (href.startsWith("/library")) {
+      return (
+        <a href={href} className={cls} data-pressed={pressed || undefined} {...anchor}>
+          {cap}
+        </a>
+      );
+    }
     if (external) {
       return (
         <a

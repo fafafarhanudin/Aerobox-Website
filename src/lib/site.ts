@@ -1,6 +1,6 @@
 export const site = {
   name: "Aerobox",
-  url: "https://aerobox.design",
+  url: "https://www.aeroboxstudio.com",
   telegram: process.env.NEXT_PUBLIC_TELEGRAM ?? "https://t.me/hanwork12345",
   telegramHandle: "@hanwork12345",
   upwork:
