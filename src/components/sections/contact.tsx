@@ -10,7 +10,7 @@ export function Contact() {
       className="flex scroll-mt-4 flex-col items-center gap-8 border-b border-line px-5 py-14 md:px-8 md:py-[72px] lg:px-12 lg:py-[120px]"
     >
       <div className="flex flex-col items-center gap-4">
-        <Eyebrow index="08" label="Contact" tone="live" />
+        <Eyebrow index="09" label="Contact" tone="live" />
         <h2 className="font-heading text-center text-[30px] leading-[36px] tracking-[-0.3px] text-ink md:text-[48px] md:leading-[56px] lg:text-[64px] lg:leading-[68px]">
           Got something to ship?
           <br />

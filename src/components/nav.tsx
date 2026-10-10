@@ -12,6 +12,7 @@ import { site, socials, type SocialKey } from "@/lib/site";
 const navSocials: SocialKey[] = ["x", "linkedin", "contra", "dribbble", "ondesign"];
 
 const links = [
+  { label: "Collection", href: "/#collection" },
   { label: "Services", href: "/#services" },
   { label: "About", href: "/#about" },
   { label: "FAQ", href: "/#faq" },

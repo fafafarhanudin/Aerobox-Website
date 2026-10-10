@@ -42,7 +42,7 @@ export function Faq() {
       className="flex scroll-mt-4 flex-col gap-8 border-b border-line px-5 py-14 md:gap-10 md:px-8 md:py-[72px] lg:flex-row lg:gap-16 lg:px-[clamp(48px,8.33vw,120px)] lg:py-24"
     >
       <div className="flex flex-col items-start gap-6 lg:w-[440px] lg:shrink-0">
-        <Eyebrow index="07" label="FAQ" count={faqs.length} />
+        <Eyebrow index="08" label="FAQ" count={faqs.length} />
         <h2 className="font-heading lg:whitespace-nowrap text-[28px] leading-[34px] tracking-[-0.28px] text-ink md:text-[36px] md:leading-[52px] lg:text-[44px] lg:tracking-[-0.44px]">
           Questions, answered
         </h2>

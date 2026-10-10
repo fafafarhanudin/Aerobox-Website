@@ -62,7 +62,7 @@ export function About() {
     >
       <div className="about-grid">
         <div className="[grid-area:chip]">
-          <Eyebrow index="04" label="About" />
+          <Eyebrow index="05" label="About" />
         </div>
 
         <figure className="flex flex-col rounded-[20px] border border-line bg-white p-2 [grid-area:portrait] lg:h-[453px]">
@@ -124,7 +124,7 @@ export function About() {
 
       <div className="flex flex-col gap-6">
         <div className="flex flex-col items-start gap-2 md:flex-row md:items-end md:justify-between md:gap-4">
-          <Eyebrow index="05" label="Experience" count={`${roles.length} roles`} />
+          <Eyebrow index="06" label="Experience" count={`${roles.length} roles`} />
           <p className="text-[14px] leading-5 tracking-[-0.14px] text-ink-2">Six teams since 2023</p>
         </div>
         <ul

@@ -32,7 +32,7 @@ function Quote({ q }: { q: (typeof quotes)[number] }) {
 export function Testimonials() {
   return (
     <section aria-label="What clients say" className="flex flex-col items-center gap-4 border-b border-line py-8">
-      <Eyebrow index="06" label="What clients say" />
+      <Eyebrow index="07" label="What clients say" />
       <div className="flex w-full flex-col gap-1">
         {rows.map((row, r) => (
           <Marquee

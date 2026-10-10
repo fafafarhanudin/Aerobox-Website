@@ -2,6 +2,7 @@ import { DisciplineProvider } from "@/components/discipline";
 import { Hero } from "@/components/sections/hero";
 import { Clients } from "@/components/sections/clients";
 import { SelectedWork } from "@/components/sections/selected-work";
+import { Collection } from "@/components/sections/collection";
 import { Services } from "@/components/sections/services";
 import { Process } from "@/components/sections/process";
 import { About } from "@/components/sections/about";
@@ -15,6 +16,7 @@ export default function Home() {
       <Hero />
       <Clients />
       <SelectedWork />
+      <Collection />
       <Services />
       <Process />
       <About />

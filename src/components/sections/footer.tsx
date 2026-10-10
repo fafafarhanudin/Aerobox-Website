@@ -12,6 +12,7 @@ import { site, socials, type SocialKey } from "@/lib/site";
 
 const sitemap = [
   { label: "Portfolio", href: "/work" },
+  { label: "Collection", href: "/#collection" },
   { label: "Services", href: "/#services" },
   { label: "Process", href: "/#process" },
   { label: "About", href: "/#about" },
