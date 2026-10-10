@@ -93,7 +93,7 @@ function Showcase() {
               </div>
             </div>
             <div className="sc-stage">
-              {k === 0 && <div className="wall">{[...WALL, ...WALL].map((n, i) => <span key={i} className={i % WALL.length === 15 ? 'accent' : ''} style={{ ['--w' as string]: i % 7 }}><Icon name={n} size={22} /></span>)}</div>}
+              {k === 0 && <div className="wall">{[...WALL, ...WALL].map((n, i) => <span key={i} className={i % WALL.length === 15 ? 'accent' : ''} style={{ ['--w' as string]: i % 7 }}><Icon name={n} size={22} stroke={2.2} /></span>)}</div>}
               {k === 1 && <div className="mesh"><i className="b1" /><i className="b2" /><i className="b3" /><i className="b4" /><span className="chip mono"><b>Aurora</b><b>Mesh</b><b>Grain</b></span></div>}
               {k === 2 && <div className="iso-stage"><i className="glow" /><i className="shadow" />
                 <div className="iso-art"><div key={isoI} className="iso-swap" dangerouslySetInnerHTML={{ __html: `<svg viewBox="0 0 240 200" width="264" height="220">${ISO_REEL[isoI].svg}</svg>` }} /></div>
