@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { CloseButton, Modal, Tooltip, copyText, download, useToast, Icon, Key, Legend } from '../ui'
-import { DkChips, DkRow, DkSlider, DockColor, DockDiv, mixHex, DockPop, DockStep, FloatDock, DockDownloadAll, Formats, PageHead, PillTabs, Select, Summary, ViewToggle } from '../pagekit'
+import { DkChips, DkRow, DkSlider, DockColor, DockDiv, mixHex, DockPop, DockStep, FloatDock, Formats, PageHead, PillTabs, Select, Summary, ViewToggle } from '../pagekit'
 import { ISO } from '../data/iso'
 import { pop } from '../lib/confetti'
 import { RequestKey, useRequest } from '../request'
@@ -150,7 +150,6 @@ export default function IsoPage() {
         </DockPop>
         <DockDiv />
         <DockStep label="Size" value={`${Math.round(zoom * 100)}%`} onMinus={() => setZoom(v => ZOOMS[Math.max(0, ZOOMS.indexOf(v) - 1)])} onPlus={() => setZoom(v => ZOOMS[Math.min(ZOOMS.length - 1, ZOOMS.indexOf(v) + 1)])} />
-        <DockDiv /><DockDownloadAll />
       </FloatDock>
     </div>
   )
