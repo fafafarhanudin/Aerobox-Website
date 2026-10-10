@@ -12,11 +12,13 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.29.7",
+    "@neondatabase/serverless": "^1.2.0",
     "@radix-ui/react-accordion": "^1.2.20",
     "@untitled-ui/icons-react": "^0.1.4",
     "next": "15.5.27",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

@@ -17,6 +17,7 @@ const links = [
   { label: "About", href: "/#about" },
   { label: "Collection", href: "/#collection" },
   { label: "FAQ", href: "/#faq" },
+  { label: "Support", href: "/support" },
 ];
 
 const menuLinkCls =
@@ -84,14 +85,14 @@ export function Nav() {
         <span className="hidden whitespace-nowrap text-[12px] font-medium leading-4 tracking-[-0.12px] text-ink-3 xl:inline">
           Other Portofolio
         </span>
-        <div className="hidden items-center gap-2 lg:flex">
+        <div className="hidden items-center gap-2 xl:flex">
           {navSocials.map((s) => (
             <Key key={s} href={socials[s].href} size="sm" aria-label={socials[s].label} capClassName="size-9">
               <SocialLogo name={s} size={20} />
             </Key>
           ))}
         </div>
-        <span className="hidden h-6 w-0.5 bg-line lg:block" aria-hidden="true" />
+        <span className="hidden h-6 w-0.5 bg-line xl:block" aria-hidden="true" />
         <EmailKey
           label="Send email"
           variant="primary"

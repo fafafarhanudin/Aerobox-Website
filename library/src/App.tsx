@@ -36,7 +36,7 @@ export default function App() {
     const k = (e: KeyboardEvent) => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); setPalette(p => !p) } }
     addEventListener('keydown', k); return () => removeEventListener('keydown', k)
   }, [])
-  const modals: Modals = useMemo(() => ({ share: () => setShare(true), support: () => setSupport(true), palette: () => setPalette(true) }), [])
+  const modals: Modals = useMemo(() => ({ share: () => setShare(true), support: () => { window.location.href = '/support' }, palette: () => setPalette(true) }), [])
   return (
     <ToastProvider><RequestProvider>
       <div className="shell">
