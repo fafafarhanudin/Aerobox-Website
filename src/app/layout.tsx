@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { BackToTop } from "@/components/back-to-top";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/components/sections/footer";
 import { site } from "@/lib/site";
@@ -49,6 +50,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <Nav />
           <main>{children}</main>
           <Footer />
+        <BackToTop />
         </div>
       </body>
     </html>

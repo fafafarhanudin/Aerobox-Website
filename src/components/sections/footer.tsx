@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUp } from "@untitled-ui/icons-react";
 import { Brand, SocialLogo } from "@/components/ui";
 import { LocalTime } from "@/components/local-time";
 import { MiniKeyboard } from "@/components/mini-keyboard";
@@ -107,17 +106,6 @@ export function Footer() {
           <p className="hidden text-[14px] leading-5 tracking-[-0.14px] text-ink-2 md:block">
             Local time in Indonesia <LocalTime /> {site.timeZoneLabel}
           </p>
-          <button
-            type="button"
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="key key--sm"
-          >
-            <span className="key__cap gap-2 px-3 py-2 text-[14px] font-medium leading-5 tracking-[-0.14px]">
-              <ArrowUp width={14} height={14} strokeWidth={1.2} aria-hidden="true" />
-              <span className="hidden md:inline">Back to top</span>
-              <span className="md:hidden">Top</span>
-            </span>
-          </button>
         </div>
       </div>
       <Wordmark />
