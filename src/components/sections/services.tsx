@@ -10,7 +10,7 @@ export function Services() {
   return (
     <section
       id="services"
-      className="flex scroll-mt-4 flex-col gap-8 border-b border-line px-5 py-14 md:gap-10 md:px-8 md:py-[72px] lg:px-[clamp(48px,8.33vw,120px)] lg:py-20"
+      className="flex scroll-mt-16 flex-col gap-8 border-b border-line px-5 py-14 md:gap-10 md:px-8 md:py-[72px] lg:px-[clamp(48px,8.33vw,120px)] lg:py-20"
     >
       <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <div className="flex flex-col items-start gap-4">

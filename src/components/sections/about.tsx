@@ -58,7 +58,7 @@ export function About() {
   return (
     <section
       id="about"
-      className="flex scroll-mt-4 flex-col gap-8 border-b border-line px-5 py-14 md:gap-10 md:px-8 md:py-[72px] lg:gap-14 lg:px-[clamp(48px,8.33vw,120px)] lg:py-24"
+      className="flex scroll-mt-16 flex-col gap-8 border-b border-line px-5 py-14 md:gap-10 md:px-8 md:py-[72px] lg:gap-14 lg:px-[clamp(48px,8.33vw,120px)] lg:py-24"
     >
       <div className="about-grid">
         <div className="[grid-area:chip]">
@@ -93,8 +93,8 @@ export function About() {
         </dl>
 
         <p className="text-[14px] leading-[1.4] tracking-[-0.18px] text-[#727272] [grid-area:statement] md:text-[18px]">
-          Im <span className="text-black">Farhan</span> as a founder <span className="text-black">Aerobox Design</span>, ,
-          a UI/UX Designer with over 3 years of experience. I specialize in creating clean, responsive, and user-centric
+          I&apos;m <span className="text-black">Farhan</span>, founder of <span className="text-black">Aerobox Design</span>
+          and a UI/UX Designer with over 3 years of experience. I specialize in creating clean, responsive, and user-centric
           interfaces for websites, dashboards, and mobile apps. My expertise lies in SaaS platforms, Web3 projects, B2B,
           Marketplaces, and product based solutions, always with a strong attention to detail and a commitment to
           improving the user experience. I&apos;ve collaborated with over 60 clients worldwide, helping them transform

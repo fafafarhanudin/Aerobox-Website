@@ -70,7 +70,12 @@ function WallStage() {
   const grid = (copy: number) => (
     <span className="sc-wall__grid" aria-hidden={copy === 1 || undefined}>
       {tiles.map((t, i) => (
-        <Svg key={t.name} html={t.svg} className={`sc-wall__tile${i === 14 ? " is-lit" : ""}`} />
+        <Svg
+          key={t.name}
+          html={t.svg}
+          className={`sc-wall__tile${i === 9 ? " is-lit" : ""}`}
+          style={{ "--w": (i * 5) % 7 } as CSSProperties}
+        />
       ))}
     </span>
   );
@@ -80,6 +85,8 @@ function WallStage() {
         {grid(0)}
         {grid(1)}
       </span>
+      <span className="sc-wall__fade sc-wall__fade--t" />
+      <span className="sc-wall__fade sc-wall__fade--b" />
     </span>
   );
 }
@@ -127,12 +134,13 @@ function ReelStage({ step }: { step: number }) {
       <span className="sc-reel__track" style={{ "--cur": cur } as CSSProperties}>
         {items.map((m, i) => (
           <span key={i} className={`sc-reel__item${i === cur ? " is-on" : ""}`}>
-            <Svg html={m.svg.replace('width="40" height="40"', 'width="56" height="56"')} />
+            <Svg html={m.svg.replace('width="40" height="40"', 'width="64" height="64"')} />
             <span className="sc-reel__name">{m.name}</span>
           </span>
         ))}
       </span>
-      <span className="sc-reel__fade" />
+      <span className="sc-reel__fade sc-reel__fade--l" />
+      <span className="sc-reel__fade sc-reel__fade--r" />
     </span>
   );
 }
@@ -168,7 +176,7 @@ export function Collection() {
     <section
       ref={ref}
       id="collection"
-      className="showcase flex scroll-mt-4 flex-col gap-10 px-5 py-16 md:gap-12 md:px-8 md:py-20 lg:px-[clamp(48px,8.33vw,120px)] lg:pb-16 lg:pt-24"
+      className="showcase flex scroll-mt-16 flex-col gap-10 px-5 py-16 md:gap-12 md:px-8 md:py-20 lg:px-[clamp(48px,8.33vw,120px)] lg:pb-16 lg:pt-24"
       data-playing={visible || undefined}
     >
       <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
@@ -188,7 +196,7 @@ export function Collection() {
           <div className="flex w-full flex-wrap items-center gap-x-5 gap-y-3">
             <Key
               href={ASSETS_URL}
-              variant="accent"
+              variant="secondary"
               className="max-sm:w-full"
               capClassName="h-11 gap-2.5 pl-4 pr-2.5 text-[15px] font-medium leading-5 tracking-[-0.15px]"
             >
@@ -202,7 +210,7 @@ export function Collection() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6">
+      <div className="sc-grid">
         {cards.map((c, i) => {
           const on = i === active;
           return (
@@ -220,21 +228,18 @@ export function Collection() {
               onFocus={() => setActive(i)}
             >
               <span className="sc-meta">
-                <span className="flex flex-col gap-2">
-                  <span className="font-mono text-[12px] leading-4 text-white/40">{c.no}</span>
-                  <span className="text-[22px] font-medium leading-7 tracking-[-0.44px] text-white md:text-[24px] md:leading-[30px] md:tracking-[-0.48px]">
-                    {c.title}
-                  </span>
-                  <span className="text-[14px] leading-[22px] tracking-[-0.14px] text-white/50">{c.desc}</span>
+                <span className="sc-head">
+                  <span className="sc-no">{c.no}</span>
+                  <span className="sc-title">{c.title}</span>
+                  <span className="sc-desc">{c.desc}</span>
                 </span>
-                <span className="flex flex-col gap-3">
-                  <span className="flex items-center justify-between gap-3 font-mono text-[11px] leading-4 text-white/45">
-                    <span>
-                      <span className="text-white/85">{c.count}</span> · {c.formats}
-                    </span>
-                    <span className="sc-open">
-                      Open <ArrowUpRight width={12} height={12} strokeWidth={1.6} />
-                    </span>
+                <span className="sc-foot">
+                  <span className="sc-mono">
+                    <span>{c.count}</span>
+                    <span className="dim">{c.formats}</span>
+                  </span>
+                  <span className="sc-link">
+                    Open library <ArrowUpRight width={14} height={14} strokeWidth={1.6} />
                   </span>
                   <span className="sc-track" aria-hidden="true">
                     <span key={on ? `on-${active}` : "off"} />
@@ -254,8 +259,8 @@ export function Collection() {
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/[0.07] pt-6 font-mono text-[12px] leading-4 text-white/40">
-        <span className="flex items-center gap-2">
-          <span className="size-1.5 rounded-full bg-[#34d399] shadow-[0_0_8px_#34d399]" />
+        <span className="flex items-center">
+          <span className="sc-led" />
           All libraries free · no sign-up · MIT-style licence
         </span>
         <a href={ASSETS_URL} className="transition-colors hover:text-white">

@@ -7,7 +7,7 @@ export function Contact() {
   return (
     <section
       id="contact"
-      className="flex scroll-mt-4 flex-col items-center gap-8 border-b border-line px-5 py-14 md:px-8 md:py-[72px] lg:px-12 lg:py-[120px]"
+      className="flex scroll-mt-16 flex-col items-center gap-8 border-b border-line px-5 py-14 md:px-8 md:py-[72px] lg:px-12 lg:py-[120px]"
     >
       <div className="flex flex-col items-center gap-4">
         <Eyebrow index="09" label="Contact" tone="live" />

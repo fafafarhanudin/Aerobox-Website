@@ -39,7 +39,7 @@ export function Faq() {
   return (
     <section
       id="faq"
-      className="flex scroll-mt-4 flex-col gap-8 border-b border-line px-5 py-14 md:gap-10 md:px-8 md:py-[72px] lg:flex-row lg:gap-16 lg:px-[clamp(48px,8.33vw,120px)] lg:py-24"
+      className="flex scroll-mt-16 flex-col gap-8 border-b border-line px-5 py-14 md:gap-10 md:px-8 md:py-[72px] lg:flex-row lg:gap-16 lg:px-[clamp(48px,8.33vw,120px)] lg:py-24"
     >
       <div className="flex flex-col items-start gap-6 lg:w-[440px] lg:shrink-0">
         <Eyebrow index="08" label="FAQ" count={faqs.length} />
