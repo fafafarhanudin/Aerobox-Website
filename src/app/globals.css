@@ -966,20 +966,26 @@ body {
     cursor: pointer;
     transition: transform 0.4s var(--sc-ease), background-color 0.4s var(--sc-ease), border-color 0.4s var(--sc-ease);
   }
+  /* Spinning ring: a conic gradient fills the 1px border band, an inner cover hides the rest (no mask needed). */
   .sc-card::before {
     content: "";
     position: absolute;
     inset: -1px;
-    z-index: -1;
+    z-index: -2;
     border-radius: inherit;
-    padding: 1px;
     background: conic-gradient(from var(--sc-ang), transparent 0 64%, #2f6bff 76%, #a78bfa 86%, transparent 96%);
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
     opacity: 0;
     transition: opacity 0.5s var(--sc-ease);
     animation: sc-spin 4s linear infinite;
+    pointer-events: none;
+  }
+  .sc-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: 23px;
+    background: inherit;
     pointer-events: none;
   }
   .sc-card.is-on { background: #17181d; border-color: rgba(255, 255, 255, 0.16); }
