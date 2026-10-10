@@ -53,17 +53,17 @@ function Marquee() {
 }
 
 const CARDS = [
-  { no: '01', name: 'Aero Icons', desc: '598 icons, 100 of them drawn in one continuous line, plus avatars and flags.', count: '598 icons', fmt: 'SVG · JSX · FIG', route: 'icons' as const },
-  { no: '02', name: 'Grain Gradients', desc: '206 mesh, linear, radial and conic gradients with fine grain.', count: '206 gradients', fmt: 'CSS · Tailwind · PNG', route: 'gradients' as const },
-  { no: '03', name: 'Isometric', desc: '176 scenes for SaaS, fintech, Web3, tech and marketing pages.', count: '176 templates', fmt: 'SVG · FIG · PNG', route: 'isometric' as const },
-  { no: '04', name: 'Logos', desc: `${WORLD.length} real-world brand logos, plus ${MARKS.length + LOCKUPS.length} placeholder templates, like Logoipsum, for mockups and decks.`, count: `${WORLD.length} brands · ${MARKS.length + LOCKUPS.length} templates`, fmt: 'SVG · PNG', route: 'logos' as const },
+  { no: '01', name: 'Aero Icons', desc: 'Line icons with the soft Aero corner, plus avatars and flags.', count: '598 icons', fmt: 'SVG · JSX · FIG', route: 'icons' as const },
+  { no: '02', name: 'Grain Gradients', desc: 'Mesh, linear, radial and conic gradients with a fine grain.', count: '206 gradients', fmt: 'CSS · Tailwind · PNG', route: 'gradients' as const },
+  { no: '03', name: 'Isometric', desc: 'Scenes for SaaS, fintech, Web3, tech and marketing pages.', count: '176 scenes', fmt: 'SVG · FIG · PNG', route: 'isometric' as const },
+  { no: '04', name: 'Logos', desc: 'Real brand logos and placeholder templates, like Logoipsum.', count: `${WORLD.length} brands · ${MARKS.length + LOCKUPS.length} templates`, fmt: 'SVG · PNG', route: 'logos' as const },
 ]
 const WALL = ['home', 'search', 'layers', 'heart', 'folder', 'chat', 'calendar', 'image', 'bell', 'code', 'cloud', 'shield', 'pin', 'star', 'compass', 'user', 'music', 'camera', 'gift', 'rocket', 'bolt', 'leaf', 'send', 'link', 'palette', 'globe', 'tag', 'coins', 'mail', 'lock', 'brush', 'moon', 'sun', 'flag', 'crop', 'truck']
 // real brands on the Logos card (files from the real-world set, shown as app-style tiles)
 const BRANDS = ['Figma', 'Spotify', 'Stripe', 'Slack', 'Airbnb', 'Claude', 'Discord', 'Netflix', 'Google', 'Supabase'].map(n => WORLD.find(w => w.name === n)).filter(Boolean) as typeof WORLD
 const REEL = [...BRANDS.slice(-1), ...BRANDS, ...BRANDS.slice(0, 1)]
 // the isometric bento card cycles through a hand-picked reel
-const ISO_REEL = ['team-workspace', 'gold-bars', 'robot', 'house', 'data-center', 'lighthouse2', 'shopping-cart', 'mining-rig', 'award-podium', 'satellite-dish', 'forest2', 'help-desk'].map(k => ISO.find(t => t.key === k)).filter(Boolean) as typeof ISO
+const ISO_REEL = ['team-workspace', 'gold-bars', 'robot', 'house', 'data-center', 'lighthouse2', 'shopping-cart', 'mining-rig', 'award-podium', 'bank2', 'forest2', 'help-desk'].map(k => ISO.find(t => t.key === k)).filter(Boolean) as typeof ISO
 
 function Showcase() {
   const [active, setActive] = useState(0); const [hover, setHover] = useState(false); const [tick, setTick] = useState(0)

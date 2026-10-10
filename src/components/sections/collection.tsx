@@ -25,7 +25,7 @@ const cards: CardData[] = [
   {
     no: "01",
     title: "Aero Icons",
-    desc: `${fmt(assetCounts.icons)} icons, 100 of them drawn in one continuous line, plus ${assetCounts.avatars} avatars and ${assetCounts.flags} flags.`,
+    desc: "Line icons with the soft Aero corner, plus avatars and flags.",
     count: `${fmt(assetCounts.icons)} icons`,
     formats: "SVG · JSX · FIG",
     href: `${ASSETS_URL}/#/icons`,
@@ -34,7 +34,7 @@ const cards: CardData[] = [
   {
     no: "02",
     title: "Grain Gradients",
-    desc: `${assetCounts.gradients} mesh, linear, radial and conic gradients with a fine grain.`,
+    desc: "Mesh, linear, radial and conic gradients with a fine grain.",
     count: `${assetCounts.gradients} gradients`,
     formats: "CSS · Tailwind",
     href: `${ASSETS_URL}/#/gradients`,
@@ -43,7 +43,7 @@ const cards: CardData[] = [
   {
     no: "03",
     title: "Isometric",
-    desc: `${assetCounts.isometric} scenes for SaaS, fintech, Web3, tech and marketing pages.`,
+    desc: "Scenes for SaaS, fintech, Web3, tech and marketing pages.",
     count: `${assetCounts.isometric} scenes`,
     formats: "SVG · FIG · PNG",
     href: `${ASSETS_URL}/#/isometric`,
@@ -52,7 +52,7 @@ const cards: CardData[] = [
   {
     no: "04",
     title: "Logos",
-    desc: `${assetCounts.brands} real-world brand logos, plus ${assetCounts.logos} placeholder templates, like Logoipsum, for mockups and decks.`,
+    desc: "Real brand logos and placeholder templates, like Logoipsum.",
     count: `${assetCounts.brands} brands · ${assetCounts.logos} templates`,
     formats: "SVG · PNG",
     href: `${ASSETS_URL}/#/logos`,
