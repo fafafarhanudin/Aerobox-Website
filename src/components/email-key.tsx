@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check, Mail01 } from "@untitled-ui/icons-react";
+import { Check, Mail01 } from "@/components/aero-icons";
 import { Key, Legend } from "@/components/ui";
 import { site } from "@/lib/site";
 

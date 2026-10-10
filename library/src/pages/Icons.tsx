@@ -1,10 +1,11 @@
 import type React from 'react'
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { CloseButton, Icon, Modal, Tooltip, copyText, download, iconSvg, useToast, Key, Legend, ICON_STYLES, gradCss, type Grad, type IconStyle } from '../ui'
+import { CloseButton, Icon, Modal, Tooltip, copyText, download, iconSvg, useToast, Key, Legend, ICON_STYLES, ICON_MOTIONS, TWO_TONE_DEFAULT, gradCss, type Grad, type IconStyle, type IconMotion } from '../ui'
 import { ICONS, ICON_CATS, type Icon as IconT } from '../data/icons'
 import { pop } from '../lib/confetti'
+import { cleanIconSvg } from '../lib/iconexport'
 import { RequestKey, useRequest } from '../request'
-import { ColorPicker, ColorWell, DockDownloadAll, PageHead } from '../pagekit'
+import { ColorPicker, PageHead, Select } from '../pagekit'
 
 /** The Stroke control counts from 1 at the default weight: label 1 = a 1.5 px line, so "1" never looks hairline-thin. */
 const weightLabel = (stroke: number) => +(stroke - 0.5).toFixed(2)
@@ -25,6 +26,15 @@ const GRAD_PRESETS: [string, Grad][] = [
   ['Aurora', { stops: ['#22C55E', '#06B6D4', '#7A5AF8'], angle: 135 }], ['Graphite', { stops: ['#16171B', '#8D909A'], angle: 135 }],
 ]
 const sameGrad = (a?: Grad | null, b?: Grad | null) => !!a && !!b && a.angle === b.angle && a.stops.join() === b.stops.join()
+/* Two colours, no gradient: Two-tone = two line colours (silhouette + details), Duotone = line + fill */
+const LINE2_SWATCHES = ['#2F6BFF', '#7A5AF8', '#0EA5E9', '#15803D', '#F59E0B', '#E5484D']
+const FILL_SWATCHES = ['#B9CCFF', '#D9CCFF', '#BFF0D4', '#FFE1A8', '#FFC9C9', '#E5E5E8']
+const TWO_PAIRS: [string, string, string][] = [['Ink · Blue', '#16171B', '#2F6BFF'], ['Navy · Orange', '#1E3A8A', '#F97316'], ['Grape · Pink', '#5B21B6', '#EC4899'], ['Forest · Lime', '#166534', '#65A30D'], ['Ink · Amber', '#16171B', '#F59E0B'], ['Blue · Cyan', '#1D4ED8', '#06B6D4']]
+const DUO_PAIRS: [string, string, string][] = [['Ink', '#16171B', '#B9CCFF'], ['Ocean', '#1D4ED8', '#BAE6FD'], ['Grape', '#5B21B6', '#F0ABFC'], ['Forest', '#166534', '#BBF7D0'], ['Ember', '#9A3412', '#FDE68A'], ['Rose', '#9F1239', '#FECDD3']]
+/** the second colour each style takes (Duotone's fill is "auto" — the line colour at 20 % — until one is picked) */
+const secondOf = (st: IconStyle, line2: string, fill: string | null) => st === 'Two-tone' ? line2 : st === 'Duotone' ? fill ?? undefined : undefined
+const SPEEDS = [['Slow', 2.6], ['Normal', 1.6], ['Fast', 1]] as const
+const motionNote: Record<string, string> = { Draw: 'Traces every line, then the fills', Pulse: 'Breathes in and out', Bounce: 'Hops and settles', Wiggle: 'A quick shake', Float: 'Drifts gently', Pop: 'A springy tap' }
 
 type Mode = 'icons' | 'avatars' | 'flags'
 // Pixel, 3D and Glass are drawn but not released yet
@@ -54,8 +64,17 @@ export default function IconsPage({ initialQuery = '' }: { initialQuery?: string
   const request = useRequest(); const [mode, setMode] = useState<Mode>('icons')
   const [q, setQ] = useState(initialQuery); const [cat, setCat] = useState('All'); const [sort, setSort] = useState<'Popular' | 'A–Z'>('Popular')
   const [stroke, setStroke] = useState(1.5); const [color, setColor] = useState('#16171B'); const [size, setSize] = useState(24)
-  const [grad, setGrad] = useState<Grad>(GRAD_PRESETS[0][1]); const [useGrad, setUseGrad] = useState(false); const g = useGrad ? grad : undefined
-  const [menu, setMenu] = useState<'' | 'sort' | 'style' | 'grad' | 'color'>(''); const [sel, setSel] = useState<IconT | null>(null); const [iconStyle, setIconStyle] = useState<IconStyle>('Aero')
+  const [grad, setGrad] = useState<Grad>(GRAD_PRESETS[0][1]); const [useGrad, setUseGrad] = useState(false)
+  const [menu, setMenu] = useState<'' | 'sort' | 'style' | 'color' | 'motion' | 'dl'>(''); const [paintTab, setPaintTab] = useState<'solid' | 'grad' | 'second'>('solid'); const [sel, setSel] = useState<IconT | null>(null); const [iconStyle, setIconStyle] = useState<IconStyle>('Aero')
+  const [color2, setColor2] = useState(TWO_TONE_DEFAULT); const [duoFill, setDuoFill] = useState<string | null>(null)
+  const two = iconStyle === 'Two-tone', duo = iconStyle === 'Duotone', pair = two || duo
+  const g = useGrad && !pair ? grad : undefined // the two-colour styles take two solid colours, never a gradient
+  const second = secondOf(iconStyle, color2, duoFill)
+  const tab = pair ? (paintTab === 'grad' ? 'solid' : paintTab) : (paintTab === 'second' ? 'solid' : paintTab)
+  const [motion, setMotion] = useState<IconMotion>({ kind: 'None', speed: 1.6 }); const [play, setPlay] = useState<'Always' | 'Hover'>('Always')
+  const moving = motion.kind !== 'None'
+  // staggered start so a grid of moving icons reads as a wave, not a flash
+  const motionAt = (k: number) => moving ? { ...motion, delay: (k % 12) * .07 } : undefined
   const [dockOn, setDockOn] = useState(true)
   const search = useRef<HTMLInputElement>(null)
   useEffect(() => setQ(initialQuery), [initialQuery])
@@ -83,7 +102,9 @@ export default function IconsPage({ initialQuery = '' }: { initialQuery?: string
     return () => { el.removeEventListener('scroll', upd); removeEventListener('resize', upd); ro.disconnect() }
   }, [])
   useLayoutEffect(() => { const el = navRef.current?.querySelector('.side-item.on') as HTMLElement | null; if (el) setHl({ y: el.offsetTop, h: el.offsetHeight }) }, [cat])
-  const copyIcon = async (i: IconT, el: Element) => { await copyText(iconSvg('u:' + i.name, stroke, color, 24, iconStyle, g), i.name); pop(el, 18); toast(<>Copied <b>{i.name}</b> · {iconStyle}{g ? ' · gradient' : ''}</>) }
+  // Copy / Download: clean SVG (no masks), one vector named after the icon
+  const svgOf = (i: IconT, px: number) => cleanIconSvg('u:' + i.name, { stroke, color, size: px, variant: iconStyle, grad: g, color2: second, motion: moving ? motion : undefined })
+  const copyIcon = async (i: IconT, el: Element) => { await copyText(await svgOf(i, 24), i.name); pop(el, 18); toast(<>Copied <b>{i.name}</b> · {iconStyle}{g ? ' · gradient' : ''}{moving ? ` · ${motion.kind}` : ''}</>) }
   const downloadSet = (el: Element) => {
     const sprite = `<svg xmlns="http://www.w3.org/2000/svg" style="display:none">${filtered.map(i => `<symbol id="${i.name}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">${i.body}</symbol>`).join('')}</svg>`
     download('aerobox-icons.svg', sprite); pop(el, 44); toast(<>Downloaded <b>{filtered.length} icons</b> as a sprite</>)
@@ -91,7 +112,7 @@ export default function IconsPage({ initialQuery = '' }: { initialQuery?: string
   const pickCat = (c: string) => { setCat(c); window.scrollTo({ top: 0, behavior: 'smooth' }) }
   return (
     <div className="page icons-page">
-      <PageHead chip="Icons" count={ICONS.length} fresh={NEW_COUNT} title="Icons" desc="Clean line icons for products, interfaces and design systems. Untitled UI Icons plus Aerobox originals, finished with the Aero break: the line pauses for a short dash, then carries on."
+      <PageHead chip="Icons" count={ICONS.length} fresh={NEW_COUNT} title="Icons" desc="Aero Icons: clean line icons for products, interfaces and design systems, in five styles. Every icon carries the Aero character, from its break in the line to its corners."
         action={<RequestKey kind="icon" legend="I" />} />
 
       <div className="icons-layout">
@@ -104,7 +125,7 @@ export default function IconsPage({ initialQuery = '' }: { initialQuery?: string
                 ? <Tooltip key={st} label={SOON}><button className="style-card locked" aria-disabled onClick={e => { pop(e.currentTarget, 12); toast(SOON) }}>
                     <span className="style-prev"><Icon name="lock" size={14} stroke={1.8} /></span>{st}</button></Tooltip>
                 : <button key={st} className={`style-card ${mode === 'icons' && iconStyle === st ? 'on' : ''}`} onClick={() => { setMode('icons'); setIconStyle(st) }}>
-                    <span className="style-prev"><Icon name="layers" size={16} stroke={stroke} variant={st} /></span>{st}{mode === 'icons' && iconStyle === st && <span className="live-dot" />}
+                    <span className="style-prev"><Icon name="layers" size={16} stroke={stroke} variant={st} /></span>{st}
                   </button>)}
             </div>
           </div>
@@ -142,19 +163,32 @@ export default function IconsPage({ initialQuery = '' }: { initialQuery?: string
               <Key onClick={() => setMenu(m => m === 'sort' ? '' : 'sort')}><span className="dim">Sort</span> {sort} <Icon name="arrow-down" size={14} /></Key>
               <div className={`popover right ${menu === 'sort' ? 'on' : ''}`}>{(['Popular', 'A–Z'] as const).map(s => <button key={s} className={`pop-item ${sort === s ? 'on' : ''}`} onClick={() => { setSort(s); setMenu('') }}>{s}</button>)}</div>
             </div>
+            {/* Download all: pick the style to export — visible, but locked until the full pack ships */}
+            <div className="dd-wrap" onClick={e => e.stopPropagation()}>
+              <Key onClick={() => setMenu(m => m === 'dl' ? '' : 'dl')} aria-expanded={menu === 'dl'} className="dl-all"><Icon name="lock" size={14} /><span className="dl-all-t">Download all</span><Icon name="arrow-down" size={14} /></Key>
+              <div className={`popover right dl-pop ${menu === 'dl' ? 'on' : ''}`}>
+                <div className="dl-pop-head"><b>Download all icons</b><span className="soon">Coming soon</span></div>
+                {ICON_STYLES.filter(st => !LOCKED.has(st)).map(st => (
+                  <button key={st} className="pop-item dl-item" aria-disabled onClick={e => { pop(e.currentTarget, 10); toast(<>Download all · <b>{st}</b> is coming soon</>) }}>
+                    <span className="pi-row"><Icon name="u:folder" size={18} variant={st} color="#16171B" color2={secondOf(st, color2, duoFill)} />{st}</span>
+                    <span className="dl-meta mono">{ICONS.length} SVG</span><Icon name="lock" size={13} />
+                  </button>))}
+                <p className="dl-note">Every icon in the chosen style as SVG, plus a sprite. Unlocks soon.</p>
+              </div>
+            </div>
           </div>
           {mode !== 'icons' && <CollectionGrid key={mode} kind={mode} q={q} size={size} />}
           {mode === 'icons' && groups.map(([title, items]) => (
             <section key={title} className="icon-section">
               <h2>{title} <span className="mono dim">{items.length}</span></h2>
-              <div className="icon-grid">
+              <div className={`icon-grid ${moving ? `is-moving play-${play.toLowerCase()}` : ''}`}>
                 {items.map((i, k) => (
                   <div key={i.name} className="tile" style={{ ['--i' as string]: Math.min(k, 24) }} onClick={() => setSel(i)}>
-                    <span className="tile-ic"><Icon name={'u:' + i.name} size={size} stroke={stroke} color={color} variant={iconStyle} grad={g} /></span>
+                    <span className="tile-ic"><Icon name={'u:' + i.name} size={size} stroke={stroke} color={color} color2={second} variant={iconStyle} grad={g} motion={motionAt(k)} /></span>
                     <span className="tile-name">{i.name}</span>
                     <span className="tile-actions" onClick={e => e.stopPropagation()}>
                       <Tooltip label="Copy SVG"><button onClick={e => copyIcon(i, e.currentTarget)}><Icon name="copy" size={14} /></button></Tooltip>
-                      <Tooltip label="Download"><button onClick={() => { download(`${i.name}.svg`, iconSvg('u:' + i.name, stroke, color, size, iconStyle, g)); toast(<>Downloaded <b>{i.name}.svg</b></>) }}><Icon name="download" size={14} /></button></Tooltip>
+                      <Tooltip label="Download"><button onClick={async () => { download(`${i.name}.svg`, await svgOf(i, size)); toast(<>Downloaded <b>{i.name}.svg</b>{moving ? ' · animated' : ''}</>) }}><Icon name="download" size={14} /></button></Tooltip>
                     </span>
                   </div>
                 ))}
@@ -165,32 +199,64 @@ export default function IconsPage({ initialQuery = '' }: { initialQuery?: string
         </div>
       </div>
 
-      <div className={`dock ${dockOn ? 'on' : ''}`} onClick={e => e.stopPropagation()}>
+      <div className={`dock dock-icons ${dockOn ? 'on' : ''}`} onClick={e => e.stopPropagation()}>
         <div className="dd-wrap">
-          <button className="dock-style" onClick={() => setMenu(m => m === 'style' ? '' : 'style')}><span className="dl">Style</span> {iconStyle} <Icon name="arrow-down" size={14} /></button>
+          <button className={`dock-style ${menu === 'style' ? 'open' : ''}`} onClick={() => setMenu(m => m === 'style' ? '' : 'style')}><span className="dl">Style</span>{iconStyle}<Icon name="chevron-down" size={13} /></button>
           <div className={`popover up dark ${menu === 'style' ? 'on' : ''}`}>{ICON_STYLES.map(st => LOCKED.has(st)
             ? <button key={st} className="pop-item" disabled onClick={() => toast(SOON)}><span className="pi-row"><Icon name="layers" size={16} color="#8D909A" />{st}</span><Icon name="lock" size={13} color="#8D909A" /></button>
             : <button key={st} className={`pop-item ${iconStyle === st ? 'on' : ''}`} onClick={() => { setIconStyle(st); setMode('icons'); setMenu('') }}><span className="pi-row"><Icon name="layers" size={16} variant={st} color="#fff" />{st}</span></button>)}</div>
         </div>
         <span className="dock-div" />
         <div className="dock-step"><span className="dl">Size</span><button onClick={() => setSize(v => Math.max(16, v - 4))} aria-label="Smaller">−</button><b className="mono">{size}</b><button onClick={() => setSize(v => Math.min(36, v + 4))} aria-label="Bigger">+</button></div>
-        <span className="dock-div" />
         <div className="dock-step"><span className="dl">Stroke</span><button onClick={() => setStroke(v => Math.max(1, +(v - 0.25).toFixed(2)))} aria-label="Thinner">−</button><b className="mono">{weightLabel(stroke)}</b><button onClick={() => setStroke(v => Math.min(2.5, +(v + 0.25).toFixed(2)))} aria-label="Thicker">+</button></div>
         <span className="dock-div" />
-        <div className="dock-sw">{DOCK_SWATCHES.map(c => <Tooltip key={c} label={c}><button className={!useGrad && c === color ? 'on' : ''} style={{ background: c }} onClick={() => { setColor(c); setUseGrad(false) }} aria-label={c} /></Tooltip>)}
-          <div className="dd-wrap"><ColorWell on={!useGrad && !DOCK_SWATCHES.includes(color)} color={color} onClick={() => setMenu(m => m === 'color' ? '' : 'color')} />
-            <div className={`popover up dark cpk-pop ${menu === 'color' ? 'on' : ''}`}>{menu === 'color' && <ColorPicker value={color} onChange={c => { setColor(c); setUseGrad(false) }} />}</div></div>
-        </div>
-        <span className="dock-div" />
+        {/* one paint control: Solid / Gradient — or, for the two-colour styles, their two colours */}
         <div className="dd-wrap">
-          <button className={`dock-gbtn ${useGrad ? 'on' : ''}`} onClick={() => { setUseGrad(true); setMenu(m => m === 'grad' ? '' : 'grad') }} aria-expanded={menu === 'grad'}>
-            <i style={{ background: gradCss(grad) }} /><span className="dl">Gradient</span><Icon name="arrow-down" size={14} /></button>
-          <div className={`popover up dark grad-pop ${menu === 'grad' ? 'on' : ''}`}><GradEditor value={grad} onChange={v => { setGrad(v); setUseGrad(true) }} /></div>
+          <button className={`dock-gbtn dock-paint ${menu === 'color' ? 'open' : ''}`} onClick={() => { setPaintTab(g ? 'grad' : 'solid'); setMenu(m => m === 'color' ? '' : 'color') }} aria-expanded={menu === 'color'}>
+            <i className="paint-chip" style={{ background: g ? gradCss(grad) : color }}>{pair && <em style={{ background: second ?? color, opacity: second ? 1 : .35 }} />}</i><span className="dl">Color</span><Icon name="chevron-down" size={13} /></button>
+          <div className={`popover up dark paint-pop ${menu === 'color' ? 'on' : ''}`}>
+            <div className="paint-tabs" role="tablist">{(pair ? ['solid', 'second'] as const : ['solid', 'grad'] as const).map(t =>
+              <button key={t} role="tab" aria-selected={tab === t} className={tab === t ? 'on' : ''} onClick={() => { setPaintTab(t); if (t === 'grad') setUseGrad(true); if (t === 'solid' && !pair) setUseGrad(false) }}>
+                {t === 'grad' ? 'Gradient' : t === 'solid' ? (two ? 'Line 1' : duo ? 'Line' : 'Solid') : two ? 'Line 2' : 'Fill'}</button>)}</div>
+            {pair && <>
+              <div className="ge-label"><span className="dl">Pairs</span></div>
+              <div className="tone-pairs">{(two ? TWO_PAIRS : DUO_PAIRS).map(([n, a, b]) => {
+                const on = a === color && (two ? b === color2 : b === duoFill)
+                return <Tooltip key={n} label={n}><button className={on ? 'on' : ''} onClick={() => { setColor(a); if (two) setColor2(b); else setDuoFill(b) }} aria-label={`${n} pair`}>
+                  <Icon name="u:image-01" size={22} stroke={1.6} color={a} color2={b} variant={iconStyle} /></button></Tooltip>
+              })}</div>
+            </>}
+            {tab === 'solid' && <>
+              <div className="tone-sw">{DOCK_SWATCHES.map(c => <button key={c} className={!g && c === color ? 'on' : ''} style={{ background: c }} onClick={() => { setColor(c); if (!pair) setUseGrad(false) }} aria-label={c} />)}</div>
+              {menu === 'color' && <ColorPicker value={color} onChange={c => { setColor(c); if (!pair) setUseGrad(false) }} />}
+            </>}
+            {tab === 'grad' && <GradEditor value={grad} onChange={v => { setGrad(v); setUseGrad(true) }} />}
+            {tab === 'second' && two && <>
+              <div className="tone-sw">{LINE2_SWATCHES.map(c => <button key={c} className={c === color2 ? 'on' : ''} style={{ background: c }} onClick={() => setColor2(c)} aria-label={c} />)}</div>
+              {menu === 'color' && <ColorPicker value={color2} onChange={setColor2} />}
+            </>}
+            {tab === 'second' && duo && <>
+              <div className="tone-sw"><button className={`auto ${duoFill === null ? 'on' : ''}`} onClick={() => setDuoFill(null)} aria-label="Auto fill" title="Auto: line colour at 20 %" style={{ background: `color-mix(in srgb, ${color} 20%, #fff)` }} />
+                {FILL_SWATCHES.slice(0, 5).map(c => <button key={c} className={c === duoFill ? 'on' : ''} style={{ background: c }} onClick={() => setDuoFill(c)} aria-label={c} />)}</div>
+              {menu === 'color' && <ColorPicker value={duoFill ?? '#B9CCFF'} onChange={setDuoFill} />}
+            </>}
+          </div>
         </div>
-        <span className="dock-div" />
-        <DockDownloadAll />
+        <div className="dd-wrap">
+          <button className={`dock-gbtn ${menu === 'motion' ? 'open' : ''}`} onClick={() => setMenu(m => m === 'motion' ? '' : 'motion')} aria-expanded={menu === 'motion'}>
+            <Icon name="play" size={13} color="#fff" /><span className="dl">Motion</span><b>{moving ? motion.kind : 'Off'}</b><Icon name="chevron-down" size={13} /></button>
+          <div className={`popover up dark motion-pop ${menu === 'motion' ? 'on' : ''}`}>
+            <div className="motion-grid">{ICON_MOTIONS.map(k => (
+              <button key={k} className={motion.kind === k ? 'on' : ''} onClick={() => setMotion(m => ({ ...m, kind: k }))}>
+                <span className="mg-prev"><Icon name="u:heart" size={20} stroke={1.6} color={motion.kind === k ? '#16171B' : '#fff'} color2={motion.kind === k ? '#B9CCFF' : '#5B5E68'} variant={iconStyle} motion={k === 'None' ? undefined : { kind: k, speed: motion.speed }} /></span>
+                <span>{k === 'None' ? 'Off' : k}</span></button>))}</div>
+            {moving && <p className="dk-note">{motionNote[motion.kind]}. Copy and Download keep the animation (CSS inside the SVG).</p>}
+            <div className="dk-row"><span className="dk-label">Speed</span><div className="dk-chips">{SPEEDS.map(([n, v]) => <button key={n} className={motion.speed === v ? 'on' : ''} onClick={() => setMotion(m => ({ ...m, speed: v }))}>{n}</button>)}</div></div>
+            <div className="dk-row"><span className="dk-label">Play</span><div className="dk-chips">{(['Always', 'Hover'] as const).map(p => <button key={p} className={play === p ? 'on' : ''} onClick={() => setPlay(p)}>{p}</button>)}</div></div>
+          </div>
+        </div>
       </div>
-      <IconModal icon={sel} onClose={() => setSel(null)} stroke={stroke} color={color} grad={g} iconStyle={iconStyle} />
+      <IconModal icon={sel} onClose={() => setSel(null)} stroke={stroke} color={color} color2={second} grad={g} iconStyle={iconStyle} motion={moving ? motion : undefined} />
     </div>
   )
 }
@@ -258,32 +324,51 @@ function CollectionGrid({ kind, q, size }: { kind: 'avatars' | 'flags'; q: strin
   )
 }
 
-function IconModal({ icon, onClose, stroke: s0, color: c0, grad: g0, iconStyle }: { icon: IconT | null; onClose: () => void; stroke: number; color: string; grad?: Grad; iconStyle: IconStyle }) {
+function IconModal({ icon, onClose, stroke: s0, color: c0, color2: f0, grad: g0, iconStyle, motion: m0 }: { icon: IconT | null; onClose: () => void; stroke: number; color: string; color2?: string; grad?: Grad; iconStyle: IconStyle; motion?: IconMotion }) {
   const toast = useToast()
+  const two = iconStyle === 'Two-tone', duo = iconStyle === 'Duotone', pair = two || duo
   const [size, setSize] = useState(24); const [stroke, setStroke] = useState(s0); const [color, setColor] = useState(c0); const [grad, setGrad] = useState<Grad | undefined>(g0); const [tab, setTab] = useState<'SVG' | 'React' | 'Vue'>('SVG')
+  const [color2, setColor2] = useState<string | undefined>(f0); const [motion, setMotion] = useState<IconMotion>(m0 ?? { kind: 'None', speed: 1.6 })
   const last = useRef<IconT | null>(null); if (icon) last.current = icon
   const i = icon ?? last.current
-  useEffect(() => { if (icon) { setStroke(s0); setColor(c0); setGrad(g0); setSize(24) } }, [icon, s0, c0, g0])
+  useEffect(() => { if (icon) { setStroke(s0); setColor(c0); setColor2(f0); setGrad(pair ? undefined : g0); setMotion(m0 ?? { kind: 'None', speed: 1.6 }); setSize(24) } }, [icon, s0, c0, f0, g0, m0, pair])
+  const mv = motion.kind !== 'None' ? motion : undefined
+  // the code view shows exactly what Copy SVG gives: clean geometry, one vector named after the icon
+  const opts = { stroke, color, size, variant: iconStyle, grad: pair ? undefined : grad, color2, motion: mv }
+  const svg = (px: number) => cleanIconSvg('u:' + (i?.name ?? ''), { ...opts, size: px })
+  const [clean, setClean] = useState('')
+  useEffect(() => { let live = true; if (i) cleanIconSvg('u:' + i.name, opts).then(v => { if (live) setClean(v) }); return () => { live = false } }, [i?.name, stroke, color, size, iconStyle, grad, color2, mv?.kind, mv?.speed]) // eslint-disable-line react-hooks/exhaustive-deps
   if (!i) return null
   const comp = i.name.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join('')
-  const paintProp = (vue: boolean) => grad ? `${vue ? ':gradient="' : 'gradient={'}{ stops: [${grad.stops.map(c => `'${c}'`).join(', ')}], angle: ${grad.angle} }${vue ? '"' : '}'}` : `color="${color}"`
-  const code = tab === 'SVG' ? iconSvg('u:' + i.name, stroke, color, size, iconStyle, grad) : tab === 'React' ? `import { ${comp} } from "aerobox-icons"\n\n<${comp} size={${size}} strokeWidth={${stroke}} ${paintProp(false)} />` : `<script setup>\nimport { ${comp} } from "aerobox-icons/vue"\n</script>\n\n<${comp} :size="${size}" :stroke-width="${stroke}" ${paintProp(true)} />`
-  const copy = async (what: string, txt: string, el: Element) => { await copyText(txt); pop(el, 22); toast(<>Copied <b>{i.name}</b> as {what}</>) }
+  const paintProp = (vue: boolean) => (grad && !pair ? `${vue ? ':gradient="' : 'gradient={'}{ stops: [${grad.stops.map(c => `'${c}'`).join(', ')}], angle: ${grad.angle} }${vue ? '"' : '}'}` : `color="${color}"`) +
+    (two ? ` color2="${color2 ?? TWO_TONE_DEFAULT}"` : duo && color2 ? ` fill="${color2}"` : '') + (mv ? ` motion="${mv.kind.toLowerCase()}"` : '')
+  const code = tab === 'SVG' ? clean : tab === 'React' ? `import { ${comp} } from "aerobox-icons"\n\n<${comp} size={${size}} strokeWidth={${stroke}} ${paintProp(false)} />` : `<script setup>\nimport { ${comp} } from "aerobox-icons/vue"\n</script>\n\n<${comp} :size="${size}" :stroke-width="${stroke}" ${paintProp(true)} />`
+  const copy = async (what: string, txt: string | Promise<string>, el: Element) => { await copyText(await txt, i.name); pop(el, 22); toast(<>Copied <b>{i.name}</b> as {what}</>) }
+  const g = pair ? undefined : grad
   return (
     <Modal open={!!icon} onClose={onClose} label={`Icon ${i.name}`} width={600}>
       <div className="icon-modal">
-        <div className="im-head"><b>{i.name}</b><span className="badge-n">{i.cat}</span><span className="badge-n">{size}px</span><span className="badge-n">{iconStyle}</span><CloseButton onClick={onClose} /></div>
+        <div className="im-head"><b>{i.name}</b><span className="badge-n">{i.cat}</span><span className="badge-n">{size}px</span><span className="badge-n">{iconStyle}</span>{mv && <span className="badge-n">{mv.kind}</span>}<CloseButton onClick={onClose} /></div>
         <div className="im-preview">
-          <div className="im-big" key={i.name}><Icon name={'u:' + i.name} size={96} stroke={stroke} color={color} variant={iconStyle} grad={grad} /></div>
-          <div className="im-sizes">{[16, 20, 24, 32, 48].map(v => <button key={v} className={v === size ? 'on' : ''} onClick={() => setSize(v)}><Icon name={'u:' + i.name} size={v} stroke={stroke} color={color} variant={iconStyle} grad={grad} /><span className="mono">{v}</span></button>)}</div>
+          <div className="im-big" key={i.name + motion.kind + motion.speed}><Icon name={'u:' + i.name} size={96} stroke={stroke} color={color} color2={color2} variant={iconStyle} grad={g} motion={mv} /></div>
+          <div className="im-sizes">{[16, 20, 24, 32, 48].map(v => <button key={v} className={v === size ? 'on' : ''} onClick={() => setSize(v)}><Icon name={'u:' + i.name} size={v} stroke={stroke} color={color} color2={color2} variant={iconStyle} grad={g} /><span className="mono">{v}</span></button>)}</div>
         </div>
+        {/* compact toolbar: size · stroke · motion · speed on one row, colours on the next */}
         <div className="im-controls">
-          <div className="stepper"><span>Size</span><button onClick={() => setSize(v => Math.max(12, v - 4))}>−</button><b className="mono">{size}</b><button onClick={() => setSize(v => Math.min(64, v + 4))}>+</button></div>
-          <div className="stepper"><span>Stroke</span><button onClick={() => setStroke(v => Math.max(1, +(v - 0.25).toFixed(2)))}>−</button><b className="mono">{weightLabel(stroke)}</b><button onClick={() => setStroke(v => Math.min(3, +(v + 0.25).toFixed(2)))}>+</button></div>
-          <div className="swatches">{SWATCHES.map(c => <button key={c} className={`sw-btn ${!grad && c === color ? 'on' : ''}`} style={{ background: c }} onClick={() => { setColor(c); setGrad(undefined) }} aria-label={c} />)}
-            <span className="sw-div" />
+          <div className="stepper"><span>Size</span><button onClick={() => setSize(v => Math.max(12, v - 4))} aria-label="Smaller">−</button><b className="mono">{size}</b><button onClick={() => setSize(v => Math.min(64, v + 4))} aria-label="Bigger">+</button></div>
+          <div className="stepper"><span>Stroke</span><button onClick={() => setStroke(v => Math.max(1, +(v - 0.25).toFixed(2)))} aria-label="Thinner">−</button><b className="mono">{weightLabel(stroke)}</b><button onClick={() => setStroke(v => Math.min(3, +(v + 0.25).toFixed(2)))} aria-label="Thicker">+</button></div>
+          <Select label="Motion" value={motion.kind} options={ICON_MOTIONS} onChange={k => setMotion(m => ({ ...m, kind: k }))} render={k => k === 'None' ? 'Off' : k} />
+          {mv && <Select label="Speed" value={SPEEDS.find(x => x[1] === motion.speed)?.[0] ?? 'Normal'} options={SPEEDS.map(x => x[0])} onChange={n => setMotion(m => ({ ...m, speed: SPEEDS.find(x => x[0] === n)![1] }))} />}
+        </div>
+        <div className="im-paint">
+          <div className="swatches">{pair && <span className="dl">{two ? 'Line 1' : 'Line'}</span>}{SWATCHES.map(c => <button key={c} className={`sw-btn ${!g && c === color ? 'on' : ''}`} style={{ background: c }} onClick={() => { setColor(c); setGrad(undefined) }} aria-label={c} />)}
+            {!pair && <><span className="sw-div" />
             {(g0 && !GRAD_PRESETS.some(p => sameGrad(p[1], g0)) ? [['Custom', g0] as [string, Grad], ...GRAD_PRESETS.slice(0, 3)] : GRAD_PRESETS.slice(0, 4)).map(([n, p]) =>
-              <Tooltip key={n} label={n}><button className={`sw-btn ${sameGrad(grad, p) ? 'on' : ''}`} style={{ background: gradCss(p) }} onClick={() => setGrad(p)} aria-label={`${n} gradient`} /></Tooltip>)}</div>
+              <Tooltip key={n} label={n}><button className={`sw-btn ${sameGrad(grad, p) ? 'on' : ''}`} style={{ background: gradCss(p) }} onClick={() => setGrad(p)} aria-label={`${n} gradient`} /></Tooltip>)}</>}</div>
+          {pair && <div className="swatches fill-row"><span className="dl">{two ? 'Line 2' : 'Fill'}</span>
+            {duo && <Tooltip label="Auto: line colour at 20 %"><button className={`sw-btn sw-auto ${!color2 ? 'on' : ''}`} style={{ background: `color-mix(in srgb, ${color} 20%, #fff)` }} onClick={() => setColor2(undefined)} aria-label="Auto fill" /></Tooltip>}
+            {(two ? LINE2_SWATCHES : FILL_SWATCHES).map(c => <button key={c} className={`sw-btn ${c === color2 ? 'on' : ''}`} style={{ background: c }} onClick={() => setColor2(c)} aria-label={`${two ? 'Line 2' : 'Fill'} ${c}`} />)}
+            <label className="sw-btn sw-custom"><input type="color" value={(color2 ?? '#B9CCFF').toLowerCase()} onChange={e => setColor2(e.target.value.toUpperCase())} aria-label="Custom colour" /></label></div>}
         </div>
         <div className="code">
           <div className="code-tabs">{(['SVG', 'React', 'Vue'] as const).map(t => <button key={t} className={t === tab ? 'on' : ''} onClick={() => setTab(t)}>{t}</button>)}
@@ -293,9 +378,9 @@ function IconModal({ icon, onClose, stroke: s0, color: c0, grad: g0, iconStyle }
         <div className="im-foot">
           <span className="mono dim"><kbd>esc</kbd> to close</span>
           <div className="row">
-            <Key onClick={() => { download(`${i.name}.svg`, iconSvg('u:' + i.name, stroke, color, size, iconStyle, grad)); toast(<>Downloaded <b>{i.name}.svg</b></>) }}>Download</Key>
-            <Key onClick={e => copy('JSX', `<${comp} size={${size}} strokeWidth={${stroke}} />`, e.currentTarget)}>Copy JSX</Key>
-            <Key variant="primary" onClick={e => copy('SVG', iconSvg('u:' + i.name, stroke, color, size, iconStyle, grad), e.currentTarget)}>Copy SVG <kbd>↵</kbd></Key>
+            <Key onClick={async () => { download(`${i.name}.svg`, await svg(size)); toast(<>Downloaded <b>{i.name}.svg</b>{mv ? ' · animated' : ''}</>) }}>Download</Key>
+            <Key onClick={e => copy('JSX', `<${comp} size={${size}} strokeWidth={${stroke}} ${paintProp(false)} />`, e.currentTarget)}>Copy JSX</Key>
+            <Key variant="primary" onClick={e => copy('SVG', svg(size), e.currentTarget)}>Copy SVG <kbd>↵</kbd></Key>
           </div>
         </div>
       </div>

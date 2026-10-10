@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import * as Accordion from "@radix-ui/react-accordion";
-import {CornerDownLeft, Minus, Plus} from "@untitled-ui/icons-react";
+import {CornerDownLeft, Minus, Plus} from "@/components/aero-icons";
 import { Eyebrow, Key, Legend } from "@/components/ui";
 import { site } from "@/lib/site";
 

@@ -8,9 +8,6 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [{ source: "/library", destination: "/library/index.html" }];
   },
-  experimental: {
-    optimizePackageImports: ["@untitled-ui/icons-react"],
-  },
 };
 
 export default nextConfig;

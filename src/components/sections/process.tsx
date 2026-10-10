@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {Command} from "@untitled-ui/icons-react";
+import {Command} from "@/components/aero-icons";
 import { Eyebrow } from "@/components/ui";
 
 const steps = [

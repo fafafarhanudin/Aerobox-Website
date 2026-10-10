@@ -3,12 +3,12 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Clock, Menu02, XClose } from "@untitled-ui/icons-react";
+import { Clock, Menu02, XClose } from "@/components/aero-icons";
 import { Brand, Key, SocialLogo } from "@/components/ui";
 import { EmailKey } from "@/components/email-key";
 import { LocalClock } from "@/components/local-time";
 import { projects } from "@/data/projects";
-import { site, socials, type SocialKey } from "@/lib/site";
+import { socials, type SocialKey } from "@/lib/site";
 
 const navSocials: SocialKey[] = ["x", "linkedin", "contra", "dribbble", "ondesign"];
 

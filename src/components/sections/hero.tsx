@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { Command, CornerDownLeft } from "@untitled-ui/icons-react";
+import { Command, CornerDownLeft } from "@/components/aero-icons";
 import { Key, Legend } from "@/components/ui";
 import { FitToWidth } from "@/components/fit-to-width";
 import { disciplines, useDiscipline, type DisciplineId } from "@/components/discipline";

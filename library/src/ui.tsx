@@ -9,8 +9,10 @@ import { AeroboxLogo } from './logo'
 // interface glyphs by plain name; library icons under a `u:` key so the two sets never collide
 const DATA = new Map([...UI_ICONS.map(i => [i.name, i] as const), ...ICONS.map(i => ['u:' + i.name, i] as const)])
 export const libKey = (name: string) => 'u:' + name
-export type IconStyle = 'Aero' | 'Duotone' | 'Filled' | 'Sharp' | 'Pixel' | '3D' | 'Glass'
-export const ICON_STYLES: IconStyle[] = ['Aero', 'Duotone', 'Filled', 'Sharp', 'Pixel', '3D', 'Glass']
+export type IconStyle = 'Aero' | 'Duotone' | 'Two-tone' | 'Filled' | 'Sharp' | 'Pixel' | '3D' | 'Glass'
+export const ICON_STYLES: IconStyle[] = ['Aero', 'Duotone', 'Two-tone', 'Filled', 'Sharp', 'Pixel', '3D', 'Glass']
+/** second line colour of the Two-tone style (details and accents) */
+export const TWO_TONE_DEFAULT = '#2F6BFF'
 /* Pixel style: the outline is rasterised once on a 16×16 grid, then emitted as merged pixel runs */
 const pixCache = new Map<string, string>()
 function pixels(name: string, stroke: number) {
@@ -121,13 +123,46 @@ const gradDef = (g: Grad, id: string) => {
   return `<defs><linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="${f2(12 - sn * h)}" y1="${f2(12 + cs * h)}" x2="${f2(12 + sn * h)}" y2="${f2(12 - cs * h)}">` +
     g.stops.map((c, i) => `<stop offset="${f2(i / (g.stops.length - 1))}" stop-color="${c}"/>`).join('') + `</linearGradient></defs>`
 }
-function build(name: string, style: IconStyle, stroke: number, color: string, uid: string, grad?: Grad) {
-  if (!grad) return paint(name, style, stroke, color, uid)
-  const r = paint(name, style, stroke, `url(#g${uid})`, uid)
+function build(name: string, style: IconStyle, stroke: number, color: string, uid: string, grad?: Grad, color2?: string) {
+  if (!grad) return paint(name, style, stroke, color, uid, color2)
+  const r = paint(name, style, stroke, `url(#g${uid})`, uid, color2)
   return { root: r.root, inner: gradDef(grad, `g${uid}`) + r.inner }
 }
-/** root attributes + inner markup for one icon in one style (stroke-only except the Filled masks) */
-function paint(name: string, style: IconStyle, stroke: number, color: string, uid: string) {
+/* Solid geometry: `parts` lists every subpath once, closed ones first in nesting order —
+   'c' fills (even depth), 'h' holes (odd depth) — then the open strokes 'o'. Painting the closed
+   parts in that order into a mask gives the silhouette with its holes and islands. */
+type Part = [string, string]
+/** a closed part as a fill: an outline opened for a badge carries its rebuilt corner in data-x */
+export const fillEl = (el: string) => { const x = el.match(/ data-x="([^"]*)"/); return x ? el.replace(/ d="([^"]*)"/, (_, d) => ` d="${d}L${x[1]}"`).replace(x[0], '') : el }
+const closedOf = (parts: Part[]) => parts.filter(p => p[0] === 'c' || p[0] === 'h').map(([k, el]) => [k, fillEl(el)] as Part)
+/** small badges ('n': plus, minus, check, x on a corner) grouped into the boxes their notches are cut from */
+export function badgeBoxes(els: string[]) {
+  const boxes = els.map(el => { const n = (el.match(/-?\d*\.?\d+(?:e-?\d+)?/g) ?? []).map(Number), xs = n.filter((_, i) => i % 2 === 0), ys = n.filter((_, i) => i % 2 === 1); return { x0: Math.min(...xs), y0: Math.min(...ys), x1: Math.max(...xs), y1: Math.max(...ys) } })
+  const out: typeof boxes = []
+  for (const b of boxes) {
+    const hit = out.find(o => o.x0 - 1 <= b.x1 && b.x0 - 1 <= o.x1 && o.y0 - 1 <= b.y1 && b.y0 - 1 <= o.y1)
+    if (hit) Object.assign(hit, { x0: Math.min(hit.x0, b.x0), y0: Math.min(hit.y0, b.y0), x1: Math.max(hit.x1, b.x1), y1: Math.max(hit.y1, b.y1) }); else out.push({ ...b })
+  }
+  // square notches: a thin minus still gets a clean corner cut, not a slot
+  return out.map(b => { const cx = (b.x0 + b.x1) / 2, cy = (b.y0 + b.y1) / 2, h = Math.max(b.x1 - b.x0, b.y1 - b.y0) / 2; return { x0: cx - h, y0: cy - h, x1: cx + h, y1: cy + h } })
+}
+/** tint mask: closed areas only, no strokes (Duotone wash, Two-tone fill) */
+const areaMask = (id: string, parts: Part[]) => `<mask id="${id}" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"><rect width="24" height="24" fill="#000"/>` +
+  closedOf(parts).map(([k, el]) => `<g fill="${k === 'c' ? '#fff' : '#000'}">${el}</g>`).join('') + `</mask>`
+/** size of a part (parts are absolute M/L/C paths, so the numbers come in x y pairs) */
+const span = (el: string) => { const n = (el.match(/-?\d*\.?\d+(?:e-?\d+)?/g) ?? []).map(Number); const xs = n.filter((_, i) => i % 2 === 0), ys = n.filter((_, i) => i % 2 === 1); return xs.length ? Math.hypot(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys)) : 0 }
+/** Two-tone split: the main silhouette in colour 1, details and accents in colour 2 */
+export function toneSplit(parts: Part[], lines?: string[]) {
+  // `lines` = the same parts with the Aero break cut in; the split is measured on the whole parts
+  const el = (i: number) => lines?.[i] ?? parts[i][1]
+  if (parts.length < 2) return { main: parts.map((_, i) => el(i)), accent: [] as string[] }
+  const sz = parts.map(p => span(p[1])), top = Math.max(...sz), lead = sz.indexOf(top)
+  const isMain = (i: number) => i === lead || ((parts[i][0] === 'c' || parts[i][0] === 'e') && sz[i] >= top * .9)
+  return { main: parts.map((_, i) => i).filter(isMain).map(el), accent: parts.map((_, i) => i).filter(i => !isMain(i)).map(el) }
+}
+export const iconData = (name: string) => DATA.get(name)
+/** root attributes + inner markup for one icon in one style */
+function paint(name: string, style: IconStyle, stroke: number, color: string, uid: string, color2?: string) {
   const ic = DATA.get(name)
   if (!ic) return { root: 'fill="none"', inner: '' }
   const line = `stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round"`
@@ -144,32 +179,86 @@ function paint(name: string, style: IconStyle, stroke: number, color: string, ui
       `<g fill="#fff" fill-opacity=".6" stroke="none">${closed}</g><g fill="none" stroke="${color}" ${line}>${ic.body}</g>` +
       `<g fill="none" stroke="#fff" stroke-opacity=".9" stroke-width="${f(stroke * .34)}" stroke-linecap="round" transform="translate(-.18 -.22)">${closed}</g>` }
   }
+  const parts = ic.parts as Part[], closed = closedOf(parts)
   if (style === 'Duotone') {
-    const els = signed(name, ic.body, stroke, ic.parts.map(p => p[0])).match(EL) ?? []
-    return { root: `fill="none" stroke="${color}" ${line}`, inner: ic.parts.map(([k], i) => k === 'c' ? withAttrs(els[i], `fill="${color}" fill-opacity=".2"`) : els[i]).join('') }
+    const body = signed(name, ic.body, stroke, parts.map(p => p[0]))
+    if (!closed.length) return { root: `fill="none" stroke="${color}" ${line}`, inner: body }
+    // the wash is the chosen fill colour, or the line colour at 20 % when none is picked
+    const wash = color2 ? `fill="${color2}"` : `fill="${color}" fill-opacity=".2"`
+    return { root: 'fill="none"', inner: `<defs>${areaMask(`d${uid}`, parts)}</defs><rect width="24" height="24" ${wash} mask="url(#d${uid})"/><g fill="none" stroke="${color}" ${line}>${body}</g>` }
+  }
+  if (style === 'Two-tone') {
+    // lines only, in two colours: the main silhouette and its details
+    const { main, accent } = toneSplit(parts, ic.lines)
+    return { root: `fill="none" ${line}`, inner: `<g stroke="${color}">${main.join('')}</g>` + (accent.length ? `<g stroke="${color2 ?? TWO_TONE_DEFAULT}">${accent.join('')}</g>` : '') }
   }
   if (style === 'Filled') {
-    const outer = ic.parts.filter(p => p[0] === 'c').map(p => p[1]).join(''), holes = ic.parts.filter(p => p[0] === 'h').map(p => p[1]).join(''), open = ic.parts.filter(p => p[0] === 'o').map(p => p[1]).join('')
-    const m1 = `f1${uid}`, m2 = `f2${uid}`
-    const inner = `<defs><mask id="${m1}" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"><rect width="24" height="24" fill="#000"/><g fill="#fff">${outer}</g>` +
-      `<g fill="#000" stroke="#000" ${line}>${holes}</g><g fill="none" stroke="#000" ${line}>${open}</g><g fill="none" stroke="#fff" ${line}>${outer}</g></mask>` +
-      `<mask id="${m2}" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"><rect width="24" height="24" fill="#fff"/><g fill="#000" stroke="#000" ${line}>${outer}</g></mask></defs>` +
-      (outer ? `<rect width="24" height="24" fill="${color}" mask="url(#${m1})"/>` : '') + `<g fill="none" stroke="${color}" ${line} mask="url(#${m2})">${open}</g>`
+    // 'e' = a stroke along the edge of a fill (ground line, lid): solid on top, never cut out
+    // 'b' = a badge crossing the outline (plus on a file, slash of an "off" icon): gap ring cut, then painted solid
+    // 'n' = a small badge in a corner: a clean rounded notch is cut around it, then it is painted solid
+    const open = parts.filter(p => p[0] === 'o').map(p => p[1]).join(''), edge = parts.filter(p => p[0] === 'e' || p[0] === 'b' || p[0] === 'n').map(p => p[1]).join(''), badge = parts.filter(p => p[0] === 'b').map(p => p[1]).join('')
+    const pad = stroke / 2 + Math.max(1, stroke * .8)
+    const notch = (paint: string) => badgeBoxes(parts.filter(p => p[0] === 'n').map(p => p[1])).map(b => `<rect x="${f(b.x0 - pad)}" y="${f(b.y0 - pad)}" width="${f(b.x1 - b.x0 + 2 * pad)}" height="${f(b.y1 - b.y0 + 2 * pad)}" rx="${f(pad * .6)}" fill="${paint}"/>`).join('')
+    if (!closed.length) return { root: `fill="none" stroke="${color}" ${line}`, inner: open + edge }
+    // each fill first cuts a gap ring around itself, so overlapping shapes stay readable (copy, layers, files)
+    const ring = `stroke-width="${f(stroke + 2 * Math.max(1, stroke * .8))}" stroke-linejoin="round"`
+    const m1 = `f1${uid}`, m2 = `f2${uid}`, box = 'maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"'
+    const ops = (on: string, off: string) => closed.map(([k, el]) => k === 'c'
+      ? `<g fill="none" stroke="${off}" ${ring}>${el}</g><g fill="${on}" stroke="${on}" ${line}>${el}</g>`
+      : `<g fill="${off}" stroke="${off}" ${line}>${el}</g>`).join('')
+    const inner = `<defs><mask id="${m1}" ${box}><rect width="24" height="24" fill="#000"/>${ops('#fff', '#000')}<g fill="none" stroke="#000" ${line}>${open}</g>${badge ? `<g fill="none" stroke="#000" ${ring.replace('stroke-linejoin="round"', 'stroke-linejoin="round" stroke-linecap="round"')}>${badge}</g>` : ''}${notch('#000')}</mask>` +
+      `<mask id="${m2}" ${box}><rect width="24" height="24" fill="#fff"/>${ops('#000', '#fff')}${notch('#fff')}</mask></defs>` +
+      `<rect width="24" height="24" fill="${color}" mask="url(#${m1})"/>` + (open ? `<g fill="none" stroke="${color}" ${line} mask="url(#${m2})">${open}</g>` : '') +
+      (edge ? `<g fill="none" stroke="${color}" ${line}>${edge}</g>` : '')
     return { root: 'fill="none"', inner }
   }
   return { root: `fill="none" stroke="${color}" ${line}`, inner: signed(name, ic.body, stroke, ic.parts.map(p => p[0])) }
 }
 
 /* ---------- Aero icon (4 styles, weight adjustable) ---------- */
-export function Icon({ name, size = 20, stroke = 1.9, color = 'currentColor', variant = 'Aero', grad, className, style }: { name: string; size?: number; stroke?: number; color?: string; variant?: IconStyle; grad?: Grad; className?: string; style?: CSSProperties }) {
+export function Icon({ name, size = 20, stroke = 1.9, color = 'currentColor', color2, variant = 'Aero', grad, motion, className, style }: { name: string; size?: number; stroke?: number; color?: string; color2?: string; variant?: IconStyle; grad?: Grad; motion?: IconMotion; className?: string; style?: CSSProperties }) {
   const uid = useId().replace(/[^a-zA-Z0-9_-]/g, '')
-  const { root, inner } = build(name, variant, stroke, color, uid, grad)
+  const { root, inner } = build(name, variant, stroke, color, uid, grad, color2)
   const attrs = Object.fromEntries([...root.matchAll(/([a-z-]+)="([^"]*)"/g)].map(([, k, v]) => [k.replace(/-([a-z])/g, (_, c) => c.toUpperCase()), v]))
-  return <svg className={className} style={style} width={size} height={size} viewBox="0 0 24 24" aria-hidden {...attrs} dangerouslySetInnerHTML={{ __html: inner }} />
+  const html = motion && motion.kind !== 'None' ? animate(inner, motion, `m${uid}`) : inner
+  return <svg className={className} style={style} width={size} height={size} viewBox="0 0 24 24" aria-hidden {...attrs} dangerouslySetInnerHTML={{ __html: html }} />
 }
-export const iconSvg = (name: string, stroke = 1.5, color = 'currentColor', size = 24, variant: IconStyle = 'Aero', grad?: Grad) => {
-  const { root, inner } = build(name, variant, stroke, color, `${name}-${Math.random().toString(36).slice(2, 7)}`, grad)
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" ${root}>${inner}</svg>`
+export const iconSvg = (name: string, stroke = 1.5, color = 'currentColor', size = 24, variant: IconStyle = 'Aero', grad?: Grad, color2?: string, motion?: IconMotion) => {
+  const uid = `${name.replace(/\W/g, '')}-${Math.random().toString(36).slice(2, 7)}`
+  const { root, inner } = build(name, variant, stroke, color, uid, grad, color2)
+  const html = motion && motion.kind !== 'None' ? animate(inner, motion, `m${uid}`) : inner
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" ${root}>${html}</svg>`
+}
+
+/* ---------- icon motion: CSS keyframes that live inside the SVG, so a copied or downloaded icon keeps moving ---------- */
+export type IconMotionKind = 'None' | 'Draw' | 'Pulse' | 'Bounce' | 'Wiggle' | 'Float' | 'Pop'
+export const ICON_MOTIONS: IconMotionKind[] = ['None', 'Draw', 'Pulse', 'Bounce', 'Wiggle', 'Float', 'Pop']
+export type IconMotion = { kind: IconMotionKind; speed: number; delay?: number }
+const MOTION_KF: Record<Exclude<IconMotionKind, 'None' | 'Draw'>, string> = {
+  Pulse: '0%,100%{transform:scale(1)}50%{transform:scale(.86)}',
+  Bounce: '0%,100%{transform:translateY(0);animation-timing-function:cubic-bezier(.33,0,.66,0)}45%{transform:translateY(-3px);animation-timing-function:cubic-bezier(.33,1,.66,1)}70%{transform:translateY(0)}82%{transform:translateY(-.8px)}',
+  Wiggle: '0%,100%{transform:rotate(0)}15%{transform:rotate(-12deg)}30%{transform:rotate(10deg)}45%{transform:rotate(-7deg)}60%{transform:rotate(4deg)}75%{transform:rotate(0)}',
+  Float: '0%,100%{transform:translate(0,0) rotate(0)}33%{transform:translate(.6px,-1.6px) rotate(3deg)}66%{transform:translate(-.6px,-.8px) rotate(-2deg)}',
+  Pop: '0%{transform:scale(1)}12%{transform:scale(.8)}30%{transform:scale(1.14)}45%{transform:scale(.96)}60%,100%{transform:scale(1)}',
+}
+/** wraps an icon body in an animated group; Draw traces every stroke with pathLength=1 dashes */
+export function animate(inner: string, m: IconMotion, id: string) {
+  const dur = `${f2(m.speed)}s`, delay = m.delay ? ` ${f2(m.delay)}s` : ''
+  const split = inner.match(/^(<defs>[\s\S]*?<\/defs>)?([\s\S]*)$/)!, defs = split[1] ?? '', body = split[2]
+  if (m.kind === 'Draw') {
+    // strokes are traced; full-canvas fill rects (Filled, Duotone wash, Two-tone fill) fade in behind them
+    const isFill = (el: string) => el.startsWith('<rect width="24" height="24"') || (/ fill="(?!none)/.test(el) && !/ stroke="/.test(el))
+    const traced = body.replace(EL, el => isFill(el) ? withAttrs(el, `class="${id}f"`)
+      : /stroke-dasharray/.test(el) ? el : withAttrs(el, `pathLength="1" class="${id}d"`))
+    const css = `.${id}d{stroke-dasharray:1 1;stroke-dashoffset:1;animation:${id}k ${dur} cubic-bezier(.65,0,.35,1)${delay} infinite}` +
+      `.${id}f{animation:${id}o ${dur} ease${delay} infinite}` +
+      `@keyframes ${id}k{0%{stroke-dashoffset:1}55%,85%{stroke-dashoffset:0}100%{stroke-dashoffset:-1}}@keyframes ${id}o{0%,35%{opacity:0}55%,85%{opacity:1}100%{opacity:0}}` +
+      `@media (prefers-reduced-motion:reduce){.${id}d,.${id}f{animation:none;stroke-dashoffset:0;opacity:1}}`
+    return `<style>${css}</style>${defs}${traced}`
+  }
+  const css = `.${id}{transform-box:view-box;transform-origin:12px 12px;animation:${id}k ${dur} ease-in-out${delay} infinite}` +
+    `@keyframes ${id}k{${MOTION_KF[m.kind as keyof typeof MOTION_KF]}}@media (prefers-reduced-motion:reduce){.${id}{animation:none}}`
+  return `<style>${css}</style>${defs}<g class="${id}">${body}</g>`
 }
 
 export function XLogo({ size = 14, color = 'currentColor' }: { size?: number; color?: string }) {

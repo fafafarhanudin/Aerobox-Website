@@ -97,6 +97,33 @@ export function DkChips<T extends string | number>({ options, value, onChange, l
 export function DkSwitch({ on, onChange }: { on: boolean; onChange: (v: boolean) => void }) {
   return <button className={`dk-switch ${on ? 'on' : ''}`} role="switch" aria-checked={on} onClick={() => onChange(!on)}><i /></button>
 }
+/** panel title row: icon + name + reset (the "Dither ↻" header) */
+export function DkHead({ icon, title, onReset }: { icon?: ReactNode; title: string; onReset?: () => void }) {
+  return <div className="dk-head">{icon}<b>{title}</b>{onReset && <Tooltip label="Reset to default"><button className="dk-headbtn" onClick={onReset} aria-label={`Reset ${title}`}><Icon name="refresh" size={15} color="#7FA3FF" /></button></Tooltip>}</div>
+}
+/** compact dropdown inside a dark dock panel */
+export function DkSelect<T extends string | number>({ value, options, onChange, render }: { value: T; options: T[]; onChange: (v: T) => void; render: (v: T) => ReactNode }) {
+  const [open, setOpen] = useState(false)
+  useEffect(() => { if (!open) return; const c = () => setOpen(false); const id = setTimeout(() => addEventListener('click', c)); return () => { clearTimeout(id); removeEventListener('click', c) } }, [open])
+  return (
+    <div className="dk-select">
+      <button className={open ? 'open' : ''} onClick={() => setOpen(o => !o)}>{render(value)}<Icon name="chevron-down" size={14} /></button>
+      {open && <div className="dk-select-list">{options.map(o => <button key={String(o)} className={o === value ? 'on' : ''} onClick={() => { onChange(o); setOpen(false) }}>{render(o)}</button>)}</div>}
+    </div>
+  )
+}
+/** colour + hex + opacity, as one field (the "Mono color FFFFFF 100 %" row) */
+export function DkColorField({ color, opacity, onColor, onOpacity }: { color: string; opacity: number; onColor: (c: string) => void; onOpacity: (v: number) => void }) {
+  const [hex, setHex] = useState(color.replace('#', '')); useEffect(() => setHex(color.replace('#', '').toUpperCase()), [color])
+  return (
+    <div className="dk-color">
+      <label className="dk-color-chip" style={{ background: color }}><input type="color" value={color.toLowerCase()} onChange={e => onColor(e.target.value.toUpperCase())} aria-label="Colour" /></label>
+      <input className="dk-color-hex mono" value={hex} maxLength={6} spellCheck={false} aria-label="Hex"
+        onChange={e => { const v = e.target.value.replace(/[^0-9a-f]/gi, '').toUpperCase().slice(0, 6); setHex(v); if (v.length === 6) onColor('#' + v) }} onBlur={() => setHex(color.replace('#', '').toUpperCase())} />
+      <span className="dk-color-op"><input className="mono" type="number" min={0} max={100} value={opacity} onChange={e => onOpacity(Math.max(0, Math.min(100, +e.target.value || 0)))} aria-label="Opacity" /><i>%</i></span>
+    </div>
+  )
+}
 export function DockStep({ label, value, onMinus, onPlus }: { label: string; value: ReactNode; onMinus: () => void; onPlus: () => void }) {
   return <div className="dock-step"><span className="dl">{label}</span><button onClick={onMinus} aria-label={`Less ${label}`}>−</button><b className="mono">{value}</b><button onClick={onPlus} aria-label={`More ${label}`}>+</button></div>
 }

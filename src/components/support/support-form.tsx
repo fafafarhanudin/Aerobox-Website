@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useId, useState } from "react";
-import { ArrowRight, Check, Lock01 } from "@untitled-ui/icons-react";
+import { ArrowRight, Check, Lock01 } from "@/components/aero-icons";
 import { Key, Legend } from "@/components/ui";
 import {
   EMAIL_MAX,

@@ -11,6 +11,8 @@ export function creditSvg(svg: string, name = 'Aerobox asset'): string {
   const open = src.indexOf('>') + 1, close = src.lastIndexOf('</svg>')
   if (open <= 0 || close < open) return svg
   const n = esc(pretty(name))
+  if (src.includes('data-aero-icon=')) // icons: no wrapper group — the vector inside is already named after the icon
+    return `<!-- ${n} · Aerobox Assets · ${CREDIT_URL} -->\n` + src.slice(0, open).replace(/^<svg/, '<svg data-credit="aerobox-assets"') + `<title>${n}</title>` + src.slice(open)
   return `<!-- ${n} · Aerobox Assets · ${CREDIT_URL} -->\n` +
     src.slice(0, open).replace(/^<svg/, '<svg data-credit="aerobox-assets"') +
     `<title>${n} · Aerobox Assets</title><desc>Free asset by Aerobox Assets — ${CREDIT_URL}</desc>` +

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowUp } from "@untitled-ui/icons-react";
+import { ArrowUp } from "@/components/aero-icons";
 
 export function BackToTop() {
   const [show, setShow] = useState(false);

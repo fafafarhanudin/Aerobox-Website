@@ -1,4 +1,5 @@
 import { creditPng } from './credit'
+import { ditherPixels, type Dither } from './dither'
 // Renders the CSS gradients we generate (linear / radial / conic layers) onto a canvas → PNG.
 type Stop = { c: string; p?: number }
 const splitTop = (s: string) => { const out: string[] = []; let d = 0, cur = ''; for (const ch of s) { if (ch === '(') d++; if (ch === ')') d--; if (ch === ',' && d === 0) { out.push(cur.trim()); cur = '' } else cur += ch } if (cur.trim()) out.push(cur.trim()); return out }
@@ -34,8 +35,8 @@ export function paintGradient(ctx: CanvasRenderingContext2D, css: string, W: num
     ctx.restore()
   }
 }
-export async function gradientPng(css: string, { grain = false, dark = false, blur = 0, W = 1600, H = 1200, tune = '', grainAmt = 32 } = {}): Promise<Blob> {
-  const c = document.createElement('canvas'); c.width = W; c.height = H; const ctx = c.getContext('2d')!
+export async function gradientPng(css: string, { grain = false, dark = false, blur = 0, W = 1600, H = 1200, tune = '', grainAmt = 32, dither, ditherCell = 2 }: { grain?: boolean; dark?: boolean; blur?: number; W?: number; H?: number; tune?: string; grainAmt?: number; dither?: Dither; ditherCell?: number } = {}): Promise<Blob> {
+  const c = document.createElement('canvas'); c.width = W; c.height = H; const ctx = c.getContext('2d', { willReadFrequently: true })!
   paintGradient(ctx, css, W, H)
   if (blur || tune) {
     const t = document.createElement('canvas'); t.width = W; t.height = H; const tc = t.getContext('2d')!
@@ -43,7 +44,9 @@ export async function gradientPng(css: string, { grain = false, dark = false, bl
     if (blur) tc.drawImage(c, -W * .1, -H * .1, W * 1.2, H * 1.2); else tc.drawImage(c, 0, 0)
     ctx.clearRect(0, 0, W, H); ctx.drawImage(t, 0, 0)
   }
-  if (grain) {
+  // dither replaces the grain (both are a texture; the preview shows only the dither too)
+  if (dither?.on) ctx.putImageData(ditherPixels(ctx.getImageData(0, 0, W, H), dither, ditherCell), 0, 0)
+  else if (grain) {
     const img = ctx.getImageData(0, 0, W, H), d = img.data, amt = (dark ? 16 : 13) * grainAmt / 32
     for (let i = 0; i < d.length; i += 4) { const n = (Math.random() - .5) * amt * 2; d[i] += n; d[i + 1] += n; d[i + 2] += n }
     ctx.putImageData(img, 0, 0)

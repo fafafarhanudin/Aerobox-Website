@@ -1,4 +1,4 @@
-import { CornerDownLeft } from "@untitled-ui/icons-react";
+import { CornerDownLeft } from "@/components/aero-icons";
 import { Eyebrow, Key, Legend } from "@/components/ui";
 import { EmailKey } from "@/components/email-key";
 import { site } from "@/lib/site";
