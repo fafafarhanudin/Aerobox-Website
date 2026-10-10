@@ -51,10 +51,27 @@ export default function App() {
       </main>
       <Footer modals={modals} route={route} />
       </div>
+      <FloatingButtons />
       <ShareModal open={share} onClose={() => setShare(false)} />
       <SupportModal open={support} onClose={() => setSupport(false)} />
       <Palette open={palette} onClose={() => setPalette(false)} />
     </RequestProvider></ToastProvider>
+  )
+}
+
+/* ---------------- Floating: main site (left) + back to top (right) ---------------- */
+function FloatingButtons() {
+  const [top, setTop] = useState(false)
+  useEffect(() => { const s = () => setTop(scrollY > 600); s(); addEventListener('scroll', s, { passive: true }); return () => removeEventListener('scroll', s) }, [])
+  return (
+    <>
+      <a className="float-btn float-main" href="/" aria-label="Back to the main site" title="Back to aeroboxstudio.com">
+        <span className="key key--sm"><span className="key__cap"><Icon name="arrow-left" size={14} stroke={1.6} /><span className="fb-label">Main site</span></span></span>
+      </a>
+      <button className={`float-btn float-top ${top ? 'on' : ''}`} aria-label="Back to top" tabIndex={top ? 0 : -1} onClick={() => scrollTo({ top: 0, behavior: 'smooth' })}>
+        <span className="key key--sm"><span className="key__cap"><Icon name="arrow-up" size={14} stroke={1.6} /><span className="fb-label">Back to top</span></span></span>
+      </button>
+    </>
   )
 }
 
@@ -75,7 +92,6 @@ function Nav({ route, modals }: { route: Route; modals: Modals }) {
   return (
     <header className={`nav ${scrolled ? 'scrolled' : ''}`}>
       <div className="nav-left">
-        <a className="nav-back" href="/" aria-label="Back to the main site" title="Back to aeroboxstudio.com"><Icon name="arrow-left" size={16} stroke={1.6} /><span>Main site</span></a>
         <span className="brand">
           <Tooltip label="Open the gift" side="bottom"><NavLogo /></Tooltip>
           <a href="#/">{BRAND}</a>
@@ -167,7 +183,7 @@ function Footer({ modals, route }: { modals: Modals; route: Route }) {
       </div>
       <div className="footer-bottom">
         <span>© 2026 Aerobox Assets. Designed and built by <a href={SOCIALS[0][2]} target="_blank" rel="noreferrer">Farhan</a>.</span>
-        <div className="row"><span className="ft-time">Local time in Indonesia <LocalTime /> GMT+7</span><Key size="sm" onClick={() => scrollTo({ top: 0, behavior: 'smooth' })}><Icon name="arrow-up" size={14} /> Back to top</Key></div>
+        <div className="row"><span className="ft-time">Local time in Indonesia <LocalTime /> GMT+7</span></div>
       </div>
       <div className="ft-wordmark" aria-hidden>
         <svg viewBox="0 0 1000 120"><defs><linearGradient id="ftw" x1="0" x2="1"><stop offset="0" stopColor="#2F6BFF" /><stop offset=".5" stopColor="#7A5AF8" /><stop offset="1" stopColor="#EC4899" /></linearGradient></defs>

@@ -1547,3 +1547,24 @@ html, body { overflow-x: clip; }
   .sup-qr { max-width: 300px; margin: 0 auto; }
   .share-step .og-wrap, .share-step .xp-card { max-width: 100%; }
 }
+
+/* floating: back to main site (bottom left) + back to top (bottom right) */
+.nav-back { display: none !important; }
+.float-btn { position: fixed; bottom: 24px; z-index: 85; display: block; padding: 0; border: 0; background: none; cursor: pointer; transition: opacity .3s var(--ease), translate .35s var(--ease), bottom .35s var(--ease); }
+.float-main { left: 24px; }
+.float-top { right: 24px; opacity: 0; translate: 0 12px; pointer-events: none; }
+.float-top.on { opacity: 1; translate: 0 0; pointer-events: auto; }
+.float-btn .key__cap { gap: 8px; height: 40px; padding: 0 14px; font-size: 14px; font-weight: 500; white-space: nowrap; }
+body:has(.dock.on) .float-btn { bottom: 96px; }
+@media (max-width: 760px) {
+  .float-btn { bottom: 16px; }
+  .float-main { left: 16px; }
+  .float-top { right: 16px; }
+  .float-btn .key__cap { width: 44px; height: 44px; padding: 0; justify-content: center; }
+  .fb-label { display: none; }
+  body:has(.dock.on) .float-btn { bottom: 176px; }
+}
+@media (max-width: 760px) {
+  .dock:not(.center) { left: 12px; right: 12px; width: auto; max-width: none; transform: translateY(160%); }
+  .dock.on:not(.center) { transform: none; animation: none; }
+}
