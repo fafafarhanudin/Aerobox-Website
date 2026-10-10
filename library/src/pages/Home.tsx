@@ -3,6 +3,7 @@ import type React from 'react'
 import { BrandMark, Icon, Mark, Tooltip, XLogo, copyText, useReveal, useToast, Key, Legend } from '../ui'
 import { OGCard, SITE, intentUrl, SHARE_LINES } from '../share'
 import { MARKS } from '../data/logos'
+import { ICONS } from '../data/icons'
 import { LOCKUPS } from '../data/lockups'
 import { WORLD } from '../data/world'
 import { ISO } from '../data/iso'
@@ -53,12 +54,12 @@ function Marquee() {
 }
 
 const CARDS = [
-  { no: '01', name: 'Aero Icons', desc: 'Line icons with the soft Aero corner, plus avatars and flags.', count: '598 icons', fmt: 'SVG · JSX · FIG', route: 'icons' as const },
+  { no: '01', name: 'Aero Icons', desc: 'Line icons finished with the Aero dot, plus avatars and flags.', count: `${ICONS.length.toLocaleString('en-US')} icons`, fmt: 'SVG · JSX · FIG', route: 'icons' as const },
   { no: '02', name: 'Grain Gradients', desc: 'Mesh, linear, radial and conic gradients with a fine grain.', count: '206 gradients', fmt: 'CSS · Tailwind · PNG', route: 'gradients' as const },
   { no: '03', name: 'Isometric', desc: 'Scenes for SaaS, fintech, Web3, tech and marketing pages.', count: '176 scenes', fmt: 'SVG · FIG · PNG', route: 'isometric' as const },
   { no: '04', name: 'Logos', desc: 'Real brand logos and placeholder templates, like Logoipsum.', count: `${WORLD.length} brands · ${MARKS.length + LOCKUPS.length} templates`, fmt: 'SVG · PNG', route: 'logos' as const },
 ]
-const WALL = ['home', 'search', 'layers', 'heart', 'folder', 'chat', 'calendar', 'image', 'bell', 'code', 'cloud', 'shield', 'pin', 'star', 'compass', 'user', 'music', 'camera', 'gift', 'rocket', 'bolt', 'leaf', 'send', 'link', 'palette', 'globe', 'tag', 'coins', 'mail', 'lock', 'brush', 'moon', 'sun', 'flag', 'crop', 'truck']
+const WALL = ['home-02', 'search-md', 'layers-three-01', 'heart', 'folder', 'message-circle-01', 'calendar', 'image-01', 'bell-01', 'code-01', 'cloud-01', 'shield-01', 'marker-pin-01', 'star-01', 'compass', 'user-01', 'music-note-01', 'camera-01', 'gift-01', 'rocket-01', 'zap', 'feather', 'send-01', 'link-01', 'palette', 'globe-01', 'tag-01', 'coins-01', 'mail-01', 'lock-01', 'brush-01', 'moon-01', 'sun', 'flag-01', 'crop-01', 'truck-01']
 // real brands on the Logos card (files from the real-world set, shown as app-style tiles)
 const BRANDS = ['Figma', 'Spotify', 'Stripe', 'Slack', 'Airbnb', 'Claude', 'Discord', 'Netflix', 'Google', 'Supabase'].map(n => WORLD.find(w => w.name === n)).filter(Boolean) as typeof WORLD
 const REEL = [...BRANDS.slice(-1), ...BRANDS, ...BRANDS.slice(0, 1)]
@@ -96,7 +97,7 @@ function Showcase() {
               </div>
             </div>
             <div className="sc-stage">
-              {k === 0 && <div className="wall">{[...WALL, ...WALL].map((n, i) => <span key={i} className={i % WALL.length === 15 ? 'accent' : ''} style={{ ['--w' as string]: i % 7 }}><Icon name={n} size={22} stroke={1.5} /></span>)}</div>}
+              {k === 0 && <div className="wall">{[...WALL, ...WALL].map((n, i) => <span key={i} className={i % WALL.length === 15 ? 'accent' : ''} style={{ ['--w' as string]: i % 7 }}><Icon name={'u:' + n} size={22} stroke={1.5} /></span>)}</div>}
               {k === 1 && <div className="mesh"><i className="b1" /><i className="b2" /><i className="b3" /><i className="b4" /><span className="chip mono"><b>Aurora</b><b>Mesh</b><b>Grain</b></span></div>}
               {k === 2 && <div className="iso-stage"><i className="floor" /><i className="glow" /><i className="shadow" />
                 <div className="iso-art"><div key={isoI} className="iso-swap" dangerouslySetInnerHTML={{ __html: `<svg viewBox="0 0 240 200" width="264" height="220">${ISO_REEL[isoI].svg}</svg>` }} /></div>

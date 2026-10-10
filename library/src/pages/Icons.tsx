@@ -11,12 +11,11 @@ const weightLabel = (stroke: number) => +(stroke - 0.5).toFixed(2)
 import { AVATARS, FLAGS, PHOTOS, type FlagT } from '../data/collections'
 
 const SWATCHES = ['#16171B', '#6B6E78', '#2F6BFF', '#7C3AED', '#15803D', '#F59E0B', '#E5484D']
-const SHORT: Record<string, string> = { 'Communication & Social': 'Social', 'Security & Commerce': 'Security' }
+const SHORT: Record<string, string> = { 'Finance & eCommerce': 'Finance', 'Alerts & feedback': 'Alerts', 'Media & devices': 'Media' }
 
-const CAT_ICON: Record<string, string> = { All: 'layers', Layout: 'sidebar-left', General: 'grid', 'Arrows & Actions': 'arrow-right', Communication: 'chat', 'Files & Media': 'folder',
-  'Security & Commerce': 'shield', 'Charts & Data': 'chart-bar', 'Dev & System': 'code', Navigation: 'compass', 'Communication & Social': 'share', 'Media & Devices': 'monitor',
-  Commerce: 'bag', 'Editor & Text': 'pencil', 'Weather & Nature': 'sun', 'Alerts & Feedback': 'info', Users: 'team', 'Files & Docs': 'file-text', Time: 'alarm',
-  'Maps & Travel': 'map', Finance: 'bank', SaaS: 'workflow', Symbols: 'infinity', 'Home & Living': 'lamp', 'Food & Drink': 'pizza', Animals: 'cat', Science: 'flask', Fashion: 'shirt', Tools: 'wrench', Objects: 'paper-plane', Badges: 'plus-circle', 'Text & Editor': 'text-left', Security: 'lock-open', 'Devices & Tech': 'cpu', 'Health & Life': 'activity', Interface: 'toggle', 'Media & Comms': 'cast' }
+const CAT_ICON: Record<string, string> = { All: 'layers', General: 'u:grid-01', Arrows: 'u:arrow-right', Layout: 'u:layout-left', Users: 'u:user-01', Communication: 'u:message-chat-circle', 'Alerts & feedback': 'u:bell-01',
+  'Media & devices': 'u:monitor-01', Files: 'u:file-04', Images: 'u:image-01', Editor: 'u:pencil-01', Charts: 'u:bar-chart-01', 'Finance & eCommerce': 'u:wallet-02', Development: 'u:code-02', Security: 'u:shield-01',
+  Time: 'u:clock', 'Maps & travel': 'u:map-01', Weather: 'u:sun', Education: 'u:graduation-hat-01', Shapes: 'u:square' }
 const NEW_COUNT = ICONS.filter(i => i.new).length
 const DOCK_SWATCHES = ['#16171B', '#A3A5AD', '#2F6BFF', '#7A5AF8', '#15803D', '#F59E0B']
 const GRAD_PRESETS: [string, Grad][] = [
@@ -84,7 +83,7 @@ export default function IconsPage({ initialQuery = '' }: { initialQuery?: string
     return () => { el.removeEventListener('scroll', upd); removeEventListener('resize', upd); ro.disconnect() }
   }, [])
   useLayoutEffect(() => { const el = navRef.current?.querySelector('.side-item.on') as HTMLElement | null; if (el) setHl({ y: el.offsetTop, h: el.offsetHeight }) }, [cat])
-  const copyIcon = async (i: IconT, el: Element) => { await copyText(iconSvg(i.name, stroke, color, 24, iconStyle, g), i.name); pop(el, 18); toast(<>Copied <b>{i.name}</b> · {iconStyle}{g ? ' · gradient' : ''}</>) }
+  const copyIcon = async (i: IconT, el: Element) => { await copyText(iconSvg('u:' + i.name, stroke, color, 24, iconStyle, g), i.name); pop(el, 18); toast(<>Copied <b>{i.name}</b> · {iconStyle}{g ? ' · gradient' : ''}</>) }
   const downloadSet = (el: Element) => {
     const sprite = `<svg xmlns="http://www.w3.org/2000/svg" style="display:none">${filtered.map(i => `<symbol id="${i.name}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">${i.body}</symbol>`).join('')}</svg>`
     download('aerobox-icons.svg', sprite); pop(el, 44); toast(<>Downloaded <b>{filtered.length} icons</b> as a sprite</>)
@@ -92,7 +91,7 @@ export default function IconsPage({ initialQuery = '' }: { initialQuery?: string
   const pickCat = (c: string) => { setCat(c); window.scrollTo({ top: 0, behavior: 'smooth' }) }
   return (
     <div className="page icons-page">
-      <PageHead chip="Icons" count={ICONS.length} fresh={NEW_COUNT} title="Icons" desc="Clean line icons for products, interfaces and design systems. Every icon shares one stroke weight and the Aero corner."
+      <PageHead chip="Icons" count={ICONS.length} fresh={NEW_COUNT} title="Icons" desc="Clean line icons for products, interfaces and design systems. Built on Untitled UI Icons and finished with the Aero dot: one quiet mark in the open space of every icon."
         action={<RequestKey kind="icon" legend="I" />} />
 
       <div className="icons-layout">
@@ -115,7 +114,7 @@ export default function IconsPage({ initialQuery = '' }: { initialQuery?: string
               {(['avatars', 'flags'] as const).map(m => (
                 <button key={m} className={`style-card ${mode === m ? 'on' : ''}`} onClick={() => setMode(v => v === m ? 'icons' : m)}>
                   <span className="style-prev">{m === 'avatars' ? <Coll html={AVATARS[8].svg} size={20} vb={64} /> : <FlagIcon f={FLAGS.find(f => f.code === 'indonesia')!} t="Radius" size={18} />}</span>
-                  {m === 'avatars' ? 'Avatars' : 'Flags'}<span className="sc-n mono">{m === 'avatars' ? AVATARS.length : FLAGS.length}</span>
+                  {m === 'avatars' ? 'Avatars' : 'Flags'}<span className="sc-n mono">{m === 'avatars' ? AVATARS.length + PHOTOS.length : FLAGS.length}</span>
                 </button>))}
             </div>
           </div>
@@ -151,11 +150,11 @@ export default function IconsPage({ initialQuery = '' }: { initialQuery?: string
               <div className="icon-grid">
                 {items.map((i, k) => (
                   <div key={i.name} className="tile" style={{ ['--i' as string]: Math.min(k, 24) }} onClick={() => setSel(i)}>
-                    <span className="tile-ic"><Icon name={i.name} size={size} stroke={stroke} color={color} variant={iconStyle} grad={g} /></span>
+                    <span className="tile-ic"><Icon name={'u:' + i.name} size={size} stroke={stroke} color={color} variant={iconStyle} grad={g} /></span>
                     <span className="tile-name">{i.name}</span>
                     <span className="tile-actions" onClick={e => e.stopPropagation()}>
                       <Tooltip label="Copy SVG"><button onClick={e => copyIcon(i, e.currentTarget)}><Icon name="copy" size={14} /></button></Tooltip>
-                      <Tooltip label="Download"><button onClick={() => { download(`${i.name}.svg`, iconSvg(i.name, stroke, color, size, iconStyle, g)); toast(<>Downloaded <b>{i.name}.svg</b></>) }}><Icon name="download" size={14} /></button></Tooltip>
+                      <Tooltip label="Download"><button onClick={() => { download(`${i.name}.svg`, iconSvg('u:' + i.name, stroke, color, size, iconStyle, g)); toast(<>Downloaded <b>{i.name}.svg</b></>) }}><Icon name="download" size={14} /></button></Tooltip>
                     </span>
                   </div>
                 ))}
@@ -211,7 +210,7 @@ function CollectionGrid({ kind, q, size }: { kind: 'avatars' | 'flags'; q: strin
   const all: It[] = !av ? FLAGS.map(f => ({ id: f.code, name: f.name, flag: f, tags: {} })) : photo ? PHOTOS.map(p => ({ id: p.id, name: p.name, img: p.src, tags: tagsOf(p) })) : AVATARS.map(a => ({ id: a.id, name: a.name, html: a.svg, tags: tagsOf(a) }))
   const items = all.filter(it => it.name.toLowerCase().includes(q.trim().toLowerCase()) && (!av || Object.entries(flt).every(([k, v]) => v === 'All' || it.tags[k] === v)))
   const svgOf = (id: string, px?: number) => av ? avatarSvg(id, px ?? 64) : flagSvg(id, ft, px ?? 64)
-  const file = (id: string) => photo ? `avatar-${id}.jpg` : `${av ? 'avatar' : 'flag'}-${id}${av ? '' : '-' + ft.toLowerCase()}.svg`
+  const file = (id: string) => photo ? `avatar-${id}.${PHOTOS.find(p => p.id === id)?.src.split('.').pop() ?? 'jpg'}` : `${av ? 'avatar' : 'flag'}-${id}${av ? '' : '-' + ft.toLowerCase()}.svg`
   const save = async (it: It) => {
     if (it.img) { const b = await (await fetch(it.img)).blob(); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = file(it.id); a.click() }
     else download(file(it.id), svgOf(it.id, av ? 128 : 96))
@@ -268,15 +267,15 @@ function IconModal({ icon, onClose, stroke: s0, color: c0, grad: g0, iconStyle }
   if (!i) return null
   const comp = i.name.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join('')
   const paintProp = (vue: boolean) => grad ? `${vue ? ':gradient="' : 'gradient={'}{ stops: [${grad.stops.map(c => `'${c}'`).join(', ')}], angle: ${grad.angle} }${vue ? '"' : '}'}` : `color="${color}"`
-  const code = tab === 'SVG' ? iconSvg(i.name, stroke, color, size, iconStyle, grad) : tab === 'React' ? `import { ${comp} } from "aerobox-icons"\n\n<${comp} size={${size}} strokeWidth={${stroke}} ${paintProp(false)} />` : `<script setup>\nimport { ${comp} } from "aerobox-icons/vue"\n</script>\n\n<${comp} :size="${size}" :stroke-width="${stroke}" ${paintProp(true)} />`
+  const code = tab === 'SVG' ? iconSvg('u:' + i.name, stroke, color, size, iconStyle, grad) : tab === 'React' ? `import { ${comp} } from "aerobox-icons"\n\n<${comp} size={${size}} strokeWidth={${stroke}} ${paintProp(false)} />` : `<script setup>\nimport { ${comp} } from "aerobox-icons/vue"\n</script>\n\n<${comp} :size="${size}" :stroke-width="${stroke}" ${paintProp(true)} />`
   const copy = async (what: string, txt: string, el: Element) => { await copyText(txt); pop(el, 22); toast(<>Copied <b>{i.name}</b> as {what}</>) }
   return (
     <Modal open={!!icon} onClose={onClose} label={`Icon ${i.name}`} width={600}>
       <div className="icon-modal">
         <div className="im-head"><b>{i.name}</b><span className="badge-n">{i.cat}</span><span className="badge-n">{size}px</span><span className="badge-n">{iconStyle}</span><CloseButton onClick={onClose} /></div>
         <div className="im-preview">
-          <div className="im-big" key={i.name}><Icon name={i.name} size={96} stroke={stroke} color={color} variant={iconStyle} grad={grad} /></div>
-          <div className="im-sizes">{[16, 20, 24, 32, 48].map(v => <button key={v} className={v === size ? 'on' : ''} onClick={() => setSize(v)}><Icon name={i.name} size={v} stroke={stroke} color={color} variant={iconStyle} grad={grad} /><span className="mono">{v}</span></button>)}</div>
+          <div className="im-big" key={i.name}><Icon name={'u:' + i.name} size={96} stroke={stroke} color={color} variant={iconStyle} grad={grad} /></div>
+          <div className="im-sizes">{[16, 20, 24, 32, 48].map(v => <button key={v} className={v === size ? 'on' : ''} onClick={() => setSize(v)}><Icon name={'u:' + i.name} size={v} stroke={stroke} color={color} variant={iconStyle} grad={grad} /><span className="mono">{v}</span></button>)}</div>
         </div>
         <div className="im-controls">
           <div className="stepper"><span>Size</span><button onClick={() => setSize(v => Math.max(12, v - 4))}>−</button><b className="mono">{size}</b><button onClick={() => setSize(v => Math.min(64, v + 4))}>+</button></div>
@@ -294,9 +293,9 @@ function IconModal({ icon, onClose, stroke: s0, color: c0, grad: g0, iconStyle }
         <div className="im-foot">
           <span className="mono dim"><kbd>esc</kbd> to close</span>
           <div className="row">
-            <Key onClick={() => { download(`${i.name}.svg`, iconSvg(i.name, stroke, color, size, iconStyle, grad)); toast(<>Downloaded <b>{i.name}.svg</b></>) }}>Download</Key>
+            <Key onClick={() => { download(`${i.name}.svg`, iconSvg('u:' + i.name, stroke, color, size, iconStyle, grad)); toast(<>Downloaded <b>{i.name}.svg</b></>) }}>Download</Key>
             <Key onClick={e => copy('JSX', `<${comp} size={${size}} strokeWidth={${stroke}} />`, e.currentTarget)}>Copy JSX</Key>
-            <Key variant="primary" onClick={e => copy('SVG', iconSvg(i.name, stroke, color, size, iconStyle, grad), e.currentTarget)}>Copy SVG <kbd>↵</kbd></Key>
+            <Key variant="primary" onClick={e => copy('SVG', iconSvg('u:' + i.name, stroke, color, size, iconStyle, grad), e.currentTarget)}>Copy SVG <kbd>↵</kbd></Key>
           </div>
         </div>
       </div>

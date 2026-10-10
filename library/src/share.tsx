@@ -29,7 +29,7 @@ export function OGCard({ width = 512 }: { width?: number }) {
         <span className="og-domain">aeroboxstudio.com/library</span>
         <div className="og-panel">
           <div className="og-ph"><span><BrandMark size={18} /> Aerobox Icons</span><span className="x">×</span></div>
-          <div className="og-search"><Icon name="search" size={14} /> Search 598 icons</div>
+          <div className="og-search"><Icon name="search" size={14} /> Search 1,172 icons</div>
           <div className="og-tabs"><span className="on">Aero</span><span>Duotone</span><span>Filled</span><span>Sharp</span></div>
           <div className="og-grid">
             {['heart', 'bell', 'home', 'layers', 'lock', 'search', 'settings', 'star', 'trash', 'chat', 'folder', 'mail', 'camera', 'calendar', 'chart-pie'].map(n =>

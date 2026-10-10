@@ -3,9 +3,12 @@ import { creditSvg } from './lib/credit'
 import { createContext, useCallback, useContext, useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode, type CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
 import { ICONS } from './data/icons'
+import { UI_ICONS } from './data/icons-ui'
 import { AeroboxLogo } from './logo'
 
-const DATA = new Map(ICONS.map(i => [i.name, i]))
+// interface glyphs by plain name; library icons under a `u:` key so the two sets never collide
+const DATA = new Map([...UI_ICONS.map(i => [i.name, i] as const), ...ICONS.map(i => ['u:' + i.name, i] as const)])
+export const libKey = (name: string) => 'u:' + name
 export type IconStyle = 'Aero' | 'Duotone' | 'Filled' | 'Sharp' | 'Pixel' | '3D' | 'Glass'
 export const ICON_STYLES: IconStyle[] = ['Aero', 'Duotone', 'Filled', 'Sharp', 'Pixel', '3D', 'Glass']
 /* Pixel style: the outline is rasterised once on a 16×16 grid, then emitted as merged pixel runs */

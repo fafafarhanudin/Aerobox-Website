@@ -25,7 +25,7 @@ const cards: CardData[] = [
   {
     no: "01",
     title: "Aero Icons",
-    desc: "Line icons with the soft Aero corner, plus avatars and flags.",
+    desc: "Line icons finished with the Aero dot, plus avatars and flags.",
     count: `${fmt(assetCounts.icons)} icons`,
     formats: "SVG · JSX · FIG",
     href: `${ASSETS_URL}/#/icons`,

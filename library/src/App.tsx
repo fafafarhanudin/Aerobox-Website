@@ -261,7 +261,7 @@ function Palette({ open, onClose }: { open: boolean; onClose: () => void }) {
     if (!s) return pages
     return [
       ...pages.filter(p => p.label.toLowerCase().includes(s)),
-      ...ICONS.filter(x => x.name.includes(s)).slice(0, 6).map(x => ({ kind: 'Icon', label: x.name, icon: x.name, run: () => go('icons', x.name) })),
+      ...ICONS.filter(x => x.name.includes(s)).slice(0, 6).map(x => ({ kind: 'Icon', label: x.name, icon: 'u:' + x.name, run: () => go('icons', x.name) })),
       ...GRADIENTS.filter(x => x.name.toLowerCase().includes(s)).slice(0, 4).map(x => ({ kind: 'Gradient', label: x.name, swatch: x.css, run: () => go('gradients') })),
       ...MARKS.filter(x => x.name.toLowerCase().includes(s)).slice(0, 4).map(x => ({ kind: 'Logo', label: x.name, icon: 'star', run: () => go('logos') })),
     ]
