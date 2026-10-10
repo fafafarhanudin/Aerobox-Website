@@ -5,6 +5,9 @@ import { ICONS, ICON_CATS, type Icon as IconT } from '../data/icons'
 import { pop } from '../lib/confetti'
 import { RequestKey, useRequest } from '../request'
 import { ColorPicker, ColorWell, DockDownloadAll, PageHead } from '../pagekit'
+
+/** The Stroke control counts from 1 at the default weight: label 1 = a 1.5 px line, so "1" never looks hairline-thin. */
+const weightLabel = (stroke: number) => +(stroke - 0.5).toFixed(2)
 import { AVATARS, FLAGS, PHOTOS, type FlagT } from '../data/collections'
 
 const SWATCHES = ['#16171B', '#6B6E78', '#2F6BFF', '#7C3AED', '#15803D', '#F59E0B', '#E5484D']
@@ -173,7 +176,7 @@ export default function IconsPage({ initialQuery = '' }: { initialQuery?: string
         <span className="dock-div" />
         <div className="dock-step"><span className="dl">Size</span><button onClick={() => setSize(v => Math.max(16, v - 4))} aria-label="Smaller">−</button><b className="mono">{size}</b><button onClick={() => setSize(v => Math.min(36, v + 4))} aria-label="Bigger">+</button></div>
         <span className="dock-div" />
-        <div className="dock-step"><span className="dl">Stroke</span><button onClick={() => setStroke(v => Math.max(1, +(v - 0.25).toFixed(2)))} aria-label="Thinner">−</button><b className="mono">{stroke}</b><button onClick={() => setStroke(v => Math.min(2.5, +(v + 0.25).toFixed(2)))} aria-label="Thicker">+</button></div>
+        <div className="dock-step"><span className="dl">Stroke</span><button onClick={() => setStroke(v => Math.max(1, +(v - 0.25).toFixed(2)))} aria-label="Thinner">−</button><b className="mono">{weightLabel(stroke)}</b><button onClick={() => setStroke(v => Math.min(2.5, +(v + 0.25).toFixed(2)))} aria-label="Thicker">+</button></div>
         <span className="dock-div" />
         <div className="dock-sw">{DOCK_SWATCHES.map(c => <Tooltip key={c} label={c}><button className={!useGrad && c === color ? 'on' : ''} style={{ background: c }} onClick={() => { setColor(c); setUseGrad(false) }} aria-label={c} /></Tooltip>)}
           <div className="dd-wrap"><ColorWell on={!useGrad && !DOCK_SWATCHES.includes(color)} color={color} onClick={() => setMenu(m => m === 'color' ? '' : 'color')} />
@@ -277,7 +280,7 @@ function IconModal({ icon, onClose, stroke: s0, color: c0, grad: g0, iconStyle }
         </div>
         <div className="im-controls">
           <div className="stepper"><span>Size</span><button onClick={() => setSize(v => Math.max(12, v - 4))}>−</button><b className="mono">{size}</b><button onClick={() => setSize(v => Math.min(64, v + 4))}>+</button></div>
-          <div className="stepper"><span>Stroke</span><button onClick={() => setStroke(v => Math.max(1, +(v - 0.25).toFixed(2)))}>−</button><b className="mono">{stroke}</b><button onClick={() => setStroke(v => Math.min(3, +(v + 0.25).toFixed(2)))}>+</button></div>
+          <div className="stepper"><span>Stroke</span><button onClick={() => setStroke(v => Math.max(1, +(v - 0.25).toFixed(2)))}>−</button><b className="mono">{weightLabel(stroke)}</b><button onClick={() => setStroke(v => Math.min(3, +(v + 0.25).toFixed(2)))}>+</button></div>
           <div className="swatches">{SWATCHES.map(c => <button key={c} className={`sw-btn ${!grad && c === color ? 'on' : ''}`} style={{ background: c }} onClick={() => { setColor(c); setGrad(undefined) }} aria-label={c} />)}
             <span className="sw-div" />
             {(g0 && !GRAD_PRESETS.some(p => sameGrad(p[1], g0)) ? [['Custom', g0] as [string, Grad], ...GRAD_PRESETS.slice(0, 3)] : GRAD_PRESETS.slice(0, 4)).map(([n, p]) =>
