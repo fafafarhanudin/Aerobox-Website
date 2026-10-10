@@ -1626,10 +1626,10 @@ body:has(.dock.on) .float-btn { bottom: 96px; }
 .hero-floats .f1, .hero-floats .f4 { color: var(--ink); }
 
 /* every hover action bar uses the same dark pill as Copy gradient / Download PNG */
-.tile-actions, .lt-actions, .wl-actions, .il-actions { padding: 3px; gap: 0; border-radius: 10px; background: rgba(22, 23, 27, .92); box-shadow: 0 8px 20px -8px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 255, 255, .08); backdrop-filter: blur(10px) saturate(1.4); }
-.tile-actions button, .lt-actions button, .wl-actions button, .wl-actions a, .il-actions button, .il-actions a { color: rgba(255, 255, 255, .78); border-radius: 7px; }
-.tile-actions button:hover, .lt-actions button:hover, .wl-actions button:hover, .wl-actions a:hover, .il-actions button:hover, .il-actions a:hover { background: rgba(255, 255, 255, .1); color: #fff; }
-.tile-actions .tt-anchor + .tt-anchor, .lt-actions .tt-anchor + .tt-anchor, .wl-actions .tt-anchor + .tt-anchor, .il-actions .tt-anchor + .tt-anchor { border-left: 1px solid rgba(255, 255, 255, .14); padding-left: 0; margin-left: 1px; }
+.tile-actions, .lt-actions, .wl-actions { padding: 3px; gap: 0; border-radius: 10px; background: rgba(22, 23, 27, .92); box-shadow: 0 8px 20px -8px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 255, 255, .08); backdrop-filter: blur(10px) saturate(1.4); }
+.tile-actions button, .lt-actions button, .wl-actions button, .wl-actions a { color: rgba(255, 255, 255, .78); border-radius: 7px; }
+.tile-actions button:hover, .lt-actions button:hover, .wl-actions button:hover, .wl-actions a:hover { background: rgba(255, 255, 255, .1); color: #fff; }
+.tile-actions .tt-anchor + .tt-anchor, .lt-actions .tt-anchor + .tt-anchor, .wl-actions .tt-anchor + .tt-anchor { border-left: 1px solid rgba(255, 255, 255, .14); padding-left: 0; margin-left: 1px; }
 .tile-actions { box-shadow: 0 8px 20px -8px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 255, 255, .08); }
 .hero-floats .float::before { display: none; }
 .lt-actions button:has(span), .wl-actions button:has(span) { width: auto; padding: 0 10px; gap: 6px; font-size: 12px; font-weight: 500; letter-spacing: -.12px; display: inline-flex; align-items: center; height: 28px; white-space: nowrap; }
