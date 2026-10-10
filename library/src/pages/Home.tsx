@@ -54,7 +54,7 @@ function Marquee() {
 }
 
 const CARDS = [
-  { no: '01', name: 'Aero Icons', desc: 'Line icons finished with the Aero dot, plus avatars and flags.', count: `${ICONS.length.toLocaleString('en-US')} icons`, fmt: 'SVG · JSX · FIG', route: 'icons' as const },
+  { no: '01', name: 'Aero Icons', desc: 'Line icons with the Aero break, plus avatars and flags.', count: `${ICONS.length.toLocaleString('en-US')} icons`, fmt: 'SVG · JSX · FIG', route: 'icons' as const },
   { no: '02', name: 'Grain Gradients', desc: 'Mesh, linear, radial and conic gradients with a fine grain.', count: '206 gradients', fmt: 'CSS · Tailwind · PNG', route: 'gradients' as const },
   { no: '03', name: 'Isometric', desc: 'Scenes for SaaS, fintech, Web3, tech and marketing pages.', count: '176 scenes', fmt: 'SVG · FIG · PNG', route: 'isometric' as const },
   { no: '04', name: 'Logos', desc: 'Real brand logos and placeholder templates, like Logoipsum.', count: `${WORLD.length} brands · ${MARKS.length + LOCKUPS.length} templates`, fmt: 'SVG · PNG', route: 'logos' as const },

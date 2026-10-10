@@ -91,7 +91,7 @@ export default function IconsPage({ initialQuery = '' }: { initialQuery?: string
   const pickCat = (c: string) => { setCat(c); window.scrollTo({ top: 0, behavior: 'smooth' }) }
   return (
     <div className="page icons-page">
-      <PageHead chip="Icons" count={ICONS.length} fresh={NEW_COUNT} title="Icons" desc="Clean line icons for products, interfaces and design systems. Built on Untitled UI Icons and finished with the Aero dot: one quiet mark in the open space of every icon."
+      <PageHead chip="Icons" count={ICONS.length} fresh={NEW_COUNT} title="Icons" desc="Clean line icons for products, interfaces and design systems. Untitled UI Icons plus Aerobox originals, finished with the Aero break: the line pauses for a short dash, then carries on."
         action={<RequestKey kind="icon" legend="I" />} />
 
       <div className="icons-layout">
