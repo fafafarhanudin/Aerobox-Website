@@ -3,6 +3,8 @@ import type React from 'react'
 import { BrandMark, Icon, Mark, Tooltip, XLogo, copyText, useReveal, useToast, Key, Legend } from '../ui'
 import { OGCard, SITE, intentUrl, SHARE_LINES } from '../share'
 import { MARKS } from '../data/logos'
+import { LOCKUPS } from '../data/lockups'
+import { WORLD } from '../data/world'
 import { ISO } from '../data/iso'
 import { go, type Modals } from '../App'
 import { pop } from '../lib/confetti'
@@ -31,7 +33,7 @@ function Hero() {
       </form>
       <div className="hero-floats" aria-hidden>
         {[['layers', -1], ['heart', 1], ['star', -1], ['bolt', 1], ['palette', -1], ['rocket', 1]].map(([n, d], k) =>
-          <span key={n as string} className={`float f${k}`} style={{ ['--d' as string]: d }}><Icon name={n as string} size={22} /></span>)}
+          <span key={n as string} className={`float f${k}`} style={{ ['--d' as string]: d }}><Icon name={n as string} size={k === 2 || k === 5 ? 18 : 22} stroke={1.7} /></span>)}
       </div>
     </section>
   )
@@ -54,12 +56,14 @@ const CARDS = [
   { no: '01', name: 'Aero Icons', desc: '598 icons, 100 of them drawn in one continuous line, plus avatars and flags.', count: '598 icons', fmt: 'SVG · JSX · FIG', route: 'icons' as const },
   { no: '02', name: 'Grain Gradients', desc: '206 mesh, linear, radial and conic gradients with fine grain.', count: '206 gradients', fmt: 'CSS · Tailwind · PNG', route: 'gradients' as const },
   { no: '03', name: 'Isometric', desc: '176 scenes for SaaS, fintech, Web3, tech and marketing pages.', count: '176 templates', fmt: 'SVG · FIG · PNG', route: 'isometric' as const },
-  { no: '04', name: 'Logo Marks', desc: '68 placeholder marks built from constructed geometry.', count: '68 templates', fmt: 'SVG · PNG', route: 'logos' as const },
+  { no: '04', name: 'Logos', desc: `${WORLD.length} real-world brand logos, plus ${MARKS.length + LOCKUPS.length} placeholder templates, like Logoipsum, for mockups and decks.`, count: `${WORLD.length} brands · ${MARKS.length + LOCKUPS.length} templates`, fmt: 'SVG · PNG', route: 'logos' as const },
 ]
 const WALL = ['home', 'search', 'layers', 'heart', 'folder', 'chat', 'calendar', 'image', 'bell', 'code', 'cloud', 'shield', 'pin', 'star', 'compass', 'user', 'music', 'camera', 'gift', 'rocket', 'bolt', 'leaf', 'send', 'link', 'palette', 'globe', 'tag', 'coins', 'mail', 'lock', 'brush', 'moon', 'sun', 'flag', 'crop', 'truck']
-const REEL = ['Swirl', 'Orbit', 'Kitefly', 'Quanta', 'Swirl', 'Orbit', 'Kitefly'].map(n => MARKS.find(m => m.name === n)!)
+// real brands on the Logos card (files from the real-world set, shown as app-style tiles)
+const BRANDS = ['Figma', 'Spotify', 'Stripe', 'Slack', 'Airbnb', 'Claude', 'Discord', 'Netflix', 'Google', 'Supabase'].map(n => WORLD.find(w => w.name === n)).filter(Boolean) as typeof WORLD
+const REEL = [...BRANDS.slice(-1), ...BRANDS, ...BRANDS.slice(0, 1)]
 // the isometric bento card cycles through a hand-picked reel
-const ISO_REEL = ['factory', 'server-cluster', 'robot', 'crypto-coin', 'data-center', 'gold-bars', 'drone', 'analytics-board', 'diamond', 'to-the-moon'].map(k => ISO.find(t => t.key === k)).filter(Boolean) as typeof ISO
+const ISO_REEL = ['team-workspace', 'gold-bars', 'robot', 'house', 'data-center', 'lighthouse2', 'shopping-cart', 'mining-rig', 'award-podium', 'satellite-dish', 'forest2', 'help-desk'].map(k => ISO.find(t => t.key === k)).filter(Boolean) as typeof ISO
 
 function Showcase() {
   const [active, setActive] = useState(0); const [hover, setHover] = useState(false); const [tick, setTick] = useState(0)
@@ -68,7 +72,7 @@ function Showcase() {
   const [reel, setReel] = useState(1)
   const [isoI, setIsoI] = useState(0)
   useEffect(() => { const id = window.setInterval(() => setIsoI(i => (i + 1) % ISO_REEL.length), 2400); return () => window.clearInterval(id) }, [])
-  useEffect(() => { const id = window.setInterval(() => setReel(r => r >= 5 ? 1 : r + 1), 1400); return () => window.clearInterval(id) }, [])
+  useEffect(() => { const id = window.setInterval(() => setReel(r => r >= BRANDS.length ? 1 : r + 1), 1400); return () => window.clearInterval(id) }, [])
   return (
     <section className="showcase reveal" ref={ref}>
       <div className="sc-top">
@@ -89,16 +93,15 @@ function Showcase() {
               <div className="sc-foot">
                 <div className="mono"><span>{c.count}</span><span className="dim">{c.fmt}</span></div>
                 <span className="sc-link">Open library <Icon name="arrow-up-right" size={16} /></span>
-                <div className="sc-track"><i key={active === k ? `run${tick}` : 'idle'} className={active === k ? (hover ? 'full' : 'run') : ''} /></div>
               </div>
             </div>
             <div className="sc-stage">
-              {k === 0 && <div className="wall">{[...WALL, ...WALL].map((n, i) => <span key={i} className={i % WALL.length === 15 ? 'accent' : ''} style={{ ['--w' as string]: i % 7 }}><Icon name={n} size={22} stroke={2.2} /></span>)}</div>}
+              {k === 0 && <div className="wall">{[...WALL, ...WALL].map((n, i) => <span key={i} className={i % WALL.length === 15 ? 'accent' : ''} style={{ ['--w' as string]: i % 7 }}><Icon name={n} size={22} stroke={1.5} /></span>)}</div>}
               {k === 1 && <div className="mesh"><i className="b1" /><i className="b2" /><i className="b3" /><i className="b4" /><span className="chip mono"><b>Aurora</b><b>Mesh</b><b>Grain</b></span></div>}
-              {k === 2 && <div className="iso-stage"><i className="glow" /><i className="shadow" />
+              {k === 2 && <div className="iso-stage"><i className="floor" /><i className="glow" /><i className="shadow" />
                 <div className="iso-art"><div key={isoI} className="iso-swap" dangerouslySetInnerHTML={{ __html: `<svg viewBox="0 0 240 200" width="264" height="220">${ISO_REEL[isoI].svg}</svg>` }} /></div>
                 <span key={'n' + isoI} className="iso-name mono">{ISO_REEL[isoI].name}</span></div>}
-              {k === 3 && <div className="reel" style={{ transform: `translateX(${-reel * 150 + 85}px)`, transition: reel === 1 ? 'none' : undefined }}>{REEL.map((m, i) => <div key={i} className={`reel-item ${i === reel ? 'on' : ''}`}><Mark svg={m.svg} size={72} /><span>{m.name}</span></div>)}</div>}
+              {k === 3 && <div className="reel" style={{ transform: `translateX(${-reel * 150 + 85}px)`, transition: reel === 1 ? 'none' : undefined }}>{REEL.map((w, i) => <div key={i} className={`reel-item ${i === reel ? 'on' : ''}`}><span className="brand-tile"><img src={`/library/world/${w.files.light}`} alt="" width={36} height={36} /></span><span>{w.name}</span></div>)}</div>}
               <span className="dim-layer" />
             </div>
           </article>

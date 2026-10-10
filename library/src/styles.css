@@ -1601,3 +1601,36 @@ body:has(.dock.on) .float-btn { bottom: 96px; }
   .dock, .dock.center, .dock:not(.center) { left: 16px; right: 80px; width: auto; max-width: none; flex-wrap: wrap; justify-content: center; overflow: visible; transform: translateY(160%); animation: none; }
   .dock.on, .dock.center.on, .dock.on:not(.center) { transform: none; animation: none; }
 }
+
+/* showcase: real-brand tiles on the Logos card */
+.reel-item .brand-tile { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 16px 20px 16px 16px; background: linear-gradient(180deg, #fff, #f1f2f5); box-shadow: inset 0 1px 0 #fff, 0 1px 0 rgba(255, 255, 255, .06), 0 10px 24px -10px rgba(0, 0, 0, .6); }
+.reel-item .brand-tile img { width: 34px; height: 34px; object-fit: contain; }
+.reel-item span:last-child { font-size: 15px; }
+
+/* showcase: calmer isometric stage — a faint floor grid, a soft halo, a real contact shadow */
+.iso-stage .floor { position: absolute; left: 50%; top: 58%; width: 240px; height: 140px; transform: translate(-50%, -50%); opacity: .5; pointer-events: none;
+  background: repeating-linear-gradient(30deg, rgba(255, 255, 255, .05) 0 1px, transparent 1px 22px), repeating-linear-gradient(150deg, rgba(255, 255, 255, .05) 0 1px, transparent 1px 22px);
+  -webkit-mask: radial-gradient(closest-side, #000 30%, transparent); mask: radial-gradient(closest-side, #000 30%, transparent); }
+.iso-stage .glow { left: 70px; right: 70px; bottom: 54px; height: 40px; background: rgba(77, 124, 254, .16); filter: blur(30px); }
+.iso-stage .shadow { left: 90px; right: 90px; bottom: 46px; height: 16px; background: rgba(0, 0, 0, .45); filter: blur(8px); }
+
+/* hero: floating asset tiles — glassy keycaps with the Aero corner, accent icons, depth */
+.hero-floats .float { width: 56px; height: 56px; border-radius: 16px 22px 16px 16px; color: var(--accent);
+  background: linear-gradient(180deg, rgba(255, 255, 255, .96), rgba(246, 247, 250, .9)); border: 1px solid rgba(22, 23, 27, .06);
+  box-shadow: inset 0 1px 0 #fff, inset 0 -2px 0 rgba(22, 23, 27, .04), 0 1px 2px rgba(16, 24, 40, .06), 0 14px 28px -12px rgba(16, 24, 40, .18), 0 28px 48px -28px rgba(47, 107, 255, .35);
+  backdrop-filter: blur(8px); }
+.hero-floats .float::before { content: ''; position: absolute; inset: 9px; border-radius: 10px 14px 10px 10px; background: radial-gradient(120% 120% at 30% 20%, rgba(47, 107, 255, .1), rgba(47, 107, 255, 0) 70%); }
+.hero-floats .float svg { position: relative; }
+.hero-floats .f2, .hero-floats .f5 { width: 44px; height: 44px; border-radius: 13px 18px 13px 13px; opacity: .78; filter: blur(.3px); }
+.hero-floats .f2::before, .hero-floats .f5::before { inset: 7px; }
+.hero-floats .f1, .hero-floats .f4 { color: var(--ink); }
+
+/* every hover action bar uses the same dark pill as Copy gradient / Download PNG */
+.tile-actions, .lt-actions, .wl-actions, .il-actions { padding: 3px; gap: 0; border-radius: 10px; background: rgba(22, 23, 27, .92); box-shadow: 0 8px 20px -8px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 255, 255, .08); backdrop-filter: blur(10px) saturate(1.4); }
+.tile-actions button, .lt-actions button, .wl-actions button, .wl-actions a, .il-actions button, .il-actions a { color: rgba(255, 255, 255, .78); border-radius: 7px; }
+.tile-actions button:hover, .lt-actions button:hover, .wl-actions button:hover, .wl-actions a:hover, .il-actions button:hover, .il-actions a:hover { background: rgba(255, 255, 255, .1); color: #fff; }
+.tile-actions .tt-anchor + .tt-anchor, .lt-actions .tt-anchor + .tt-anchor, .wl-actions .tt-anchor + .tt-anchor, .il-actions .tt-anchor + .tt-anchor { border-left: 1px solid rgba(255, 255, 255, .14); padding-left: 0; margin-left: 1px; }
+.tile-actions { box-shadow: 0 8px 20px -8px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 255, 255, .08); }
+.hero-floats .float::before { display: none; }
+.lt-actions button:has(span), .wl-actions button:has(span) { width: auto; padding: 0 10px; gap: 6px; font-size: 12px; font-weight: 500; letter-spacing: -.12px; display: inline-flex; align-items: center; height: 28px; white-space: nowrap; }
+.lt-actions button, .wl-actions button, .wl-actions a { height: 28px; }

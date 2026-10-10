@@ -1105,7 +1105,9 @@ body {
 
   /* 03 · isometric */
   .sc-iso { position: absolute; inset: 0; display: grid; place-items: center; }
-  .sc-iso__glow { position: absolute; left: 40px; right: 40px; bottom: 30px; height: 60px; border-radius: 50%; background: rgba(77, 124, 254, 0.32); filter: blur(26px); }
+  .sc-iso__glow { position: absolute; left: 70px; right: 70px; bottom: 54px; height: 40px; border-radius: 50%; background: rgba(77, 124, 254, 0.16); filter: blur(30px); }
+  .sc-brand { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 16px 20px 16px 16px; background: linear-gradient(180deg, #fff, #f1f2f5); box-shadow: inset 0 1px 0 #fff, 0 10px 24px -10px rgba(0, 0, 0, 0.6); }
+  .sc-brand img { width: 34px; height: 34px; object-fit: contain; }
   .sc-iso__shadow { position: absolute; left: 75px; right: 75px; bottom: 40px; height: 26px; border-radius: 50%; background: rgba(0, 0, 0, 0.5); filter: blur(10px); animation: sc-shrink 2.4s ease-in-out infinite; }
   .sc-iso__art {
     position: absolute;

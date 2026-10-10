@@ -122,9 +122,9 @@ function WorldLogos({ toggle }: { toggle: React.ReactNode }) {
                 <span className="wl-logo"><ToneImg src={fileOf(w, tone === 'Original' ? th : 'Light', variant)} tone={tone} alt={w.name} className={variant === 'Wordmark' && w.files.wm ? 'wm' : ''} /></span>
                 <b>{w.name}</b><span>{w.sub}</span>
                 <div className="wl-actions" onClick={e => e.stopPropagation()}>
-                  <Tooltip label="Copy SVG"><button onClick={async e => { const el = e.currentTarget; await copyText(await grab(w, th)); pop(el, 18); toast(<>Copied <b>{w.name}</b> SVG</>) }}><Icon name="copy" size={15} /></button></Tooltip>
+                  <Tooltip label="Copy SVG"><button onClick={async e => { const el = e.currentTarget; await copyText(await grab(w, th)); pop(el, 18); toast(<>Copied <b>{w.name}</b> SVG</>) }}><Icon name="copy" size={15} /><span>Copy SVG</span></button></Tooltip>
                   <Tooltip label={th === 'Dark' ? 'Light preview' : 'Dark preview'}><button onClick={() => setFlip(f => ({ ...f, [w.name]: !f[w.name] }))}><Icon name="sun" size={15} /></button></Tooltip>
-                  <Tooltip label="Download SVG"><button onClick={() => dl(w)}><Icon name="download" size={15} /></button></Tooltip>
+                  <Tooltip label="Download SVG"><button onClick={() => dl(w)}><Icon name="download" size={15} /><span>Download</span></button></Tooltip>
                   <Tooltip label="Preview"><button onClick={() => setSel(w)}><Icon name="eye" size={15} /></button></Tooltip>
                   <Tooltip label="Brand site"><a href={w.url} target="_blank" rel="noreferrer"><Icon name="external-link" size={15} /></a></Tooltip>
                 </div>
@@ -224,8 +224,8 @@ function Templates({ toggle }: { toggle: React.ReactNode }) {
               <div className="lt-lockup"><Mark svg={tsv(l.svg)} size={30} /><Wordmark l={l} dark={dk} tone={tone} /></div>
               {credit}
               <div className="lt-actions" onClick={e => e.stopPropagation()}>
-                <Tooltip label="Copy SVG"><button onClick={async e => { const el = e.currentTarget; await copyText(lockupSvg(l, dk, tone), l.name); pop(el, 18); toast(<>Copied <b>{l.name}</b></>) }}><Icon name="copy" size={15} /></button></Tooltip>
-                <Tooltip label="Download"><button onClick={() => { download(`${l.name.toLowerCase()}.svg`, lockupSvg(l, dk, tone)); toast(<>Downloaded <b>{l.name}</b></>) }}><Icon name="download" size={15} /></button></Tooltip>
+                <Tooltip label="Copy SVG"><button onClick={async e => { const el = e.currentTarget; await copyText(lockupSvg(l, dk, tone), l.name); pop(el, 18); toast(<>Copied <b>{l.name}</b></>) }}><Icon name="copy" size={15} /><span>Copy SVG</span></button></Tooltip>
+                <Tooltip label="Download"><button onClick={() => { download(`${l.name.toLowerCase()}.svg`, lockupSvg(l, dk, tone)); toast(<>Downloaded <b>{l.name}</b></>) }}><Icon name="download" size={15} /><span>Download</span></button></Tooltip>
                 <Tooltip label="Preview"><button onClick={() => setLsel(l)}><Icon name="eye" size={15} /></button></Tooltip>
               </div>
             </div>
@@ -240,8 +240,8 @@ function Templates({ toggle }: { toggle: React.ReactNode }) {
               <div className="lt-lockup"><Mark svg={tsv(m.svg)} size={34} /><span style={{ color: tone !== 'Original' ? toneInk(tone) : undefined, fontFamily: `'${font === 'Mixed' ? FONTS[k % FONTS.length] : font}', Geist, sans-serif` }}>{m.name}</span></div>
               {credit}
               <div className="lt-actions" onClick={e => e.stopPropagation()}>
-                <Tooltip label="Copy SVG"><button onClick={e => copySvg(m, e.currentTarget)}><Icon name="copy" size={15} /></button></Tooltip>
-                <Tooltip label="Download"><button onClick={() => { download(`${m.name.toLowerCase()}.svg`, tsv(m.svg)); toast(<>Downloaded <b>{m.name}</b></>) }}><Icon name="download" size={15} /></button></Tooltip>
+                <Tooltip label="Copy SVG"><button onClick={e => copySvg(m, e.currentTarget)}><Icon name="copy" size={15} /><span>Copy SVG</span></button></Tooltip>
+                <Tooltip label="Download"><button onClick={() => { download(`${m.name.toLowerCase()}.svg`, tsv(m.svg)); toast(<>Downloaded <b>{m.name}</b></>) }}><Icon name="download" size={15} /><span>Download</span></button></Tooltip>
                 <Tooltip label="Preview"><button onClick={() => setSel(m)}><Icon name="eye" size={15} /></button></Tooltip>
               </div>
             </div>

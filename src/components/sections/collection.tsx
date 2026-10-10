@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { ArrowUpRight } from "@untitled-ui/icons-react";
 import { Eyebrow, Key } from "@/components/ui";
-import { ASSETS_URL, assetCounts, isoReel, markReel, wallIcons } from "@/data/collection";
+import { ASSETS_URL, assetCounts, brandReel, isoReel, wallIcons } from "@/data/collection";
 
 const fmt = (n: number) => n.toLocaleString("en-US");
 const total = assetCounts.icons + assetCounts.avatars + assetCounts.flags + assetCounts.gradients + assetCounts.isometric + assetCounts.logos;
@@ -51,9 +51,9 @@ const cards: CardData[] = [
   },
   {
     no: "04",
-    title: "Logo Marks",
-    desc: `${assetCounts.marks} placeholder marks and ${assetCounts.lockups} lockups built from constructed geometry.`,
-    count: `${assetCounts.logos} logos`,
+    title: "Logos",
+    desc: `${assetCounts.brands} real-world brand logos, plus ${assetCounts.logos} placeholder templates, like Logoipsum, for mockups and decks.`,
+    count: `${assetCounts.brands} brands · ${assetCounts.logos} templates`,
     formats: "SVG · PNG",
     href: `${ASSETS_URL}/#/logos`,
     stage: "reel",
@@ -126,15 +126,18 @@ function IsoStage({ step }: { step: number }) {
 }
 
 function ReelStage({ step }: { step: number }) {
-  // Three copies so the centred item always has neighbours on both sides.
-  const items = [...markReel, ...markReel, ...markReel];
-  const cur = markReel.length + (step % markReel.length);
+  // Three copies so the centred brand always has neighbours on both sides.
+  const items = [...brandReel, ...brandReel, ...brandReel];
+  const cur = brandReel.length + (step % brandReel.length);
   return (
     <span className="sc-reel">
       <span className="sc-reel__track" style={{ "--cur": cur } as CSSProperties}>
         {items.map((m, i) => (
           <span key={i} className={`sc-reel__item${i === cur ? " is-on" : ""}`}>
-            <Svg html={m.svg.replace('width="40" height="40"', 'width="64" height="64"')} />
+            <span className="sc-brand">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={m.src} alt="" width={34} height={34} loading="lazy" />
+            </span>
             <span className="sc-reel__name">{m.name}</span>
           </span>
         ))}
@@ -240,9 +243,6 @@ export function Collection() {
                   </span>
                   <span className="sc-link">
                     Open library <ArrowUpRight width={14} height={14} strokeWidth={2} />
-                  </span>
-                  <span className="sc-track" aria-hidden="true">
-                    <span key={on ? `on-${active}` : "off"} />
                   </span>
                 </span>
               </span>

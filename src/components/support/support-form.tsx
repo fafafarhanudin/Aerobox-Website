@@ -188,13 +188,13 @@ export function SupportForm({ available }: { available: Record<Region, boolean> 
         </fieldset>
 
         {!open && region === "ID" && (
-          <div className="mt-auto flex items-center gap-3 rounded-xl bg-subtle p-2.5">
+          <div className="mt-auto flex items-center gap-4 rounded-xl bg-subtle p-3">
             <Image
               src="/library/qris-code.png"
               alt="QRIS code for Aerobox Design"
-              width={76}
-              height={76}
-              className="size-[76px] shrink-0 rounded-lg bg-white [image-rendering:pixelated]"
+              width={132}
+              height={132}
+              className="size-[112px] shrink-0 rounded-lg bg-white p-1.5 [image-rendering:pixelated] md:size-[132px]"
             />
             <p className="text-[12px] leading-[18px] text-ink-2">
               <span className="block text-[13px] font-medium text-ink">Pay now with QRIS</span>
