@@ -15,11 +15,16 @@ const navSocials: SocialKey[] = ["x", "linkedin", "contra", "dribbble", "ondesig
 const links = [
   { label: "Services", href: "/#services" },
   { label: "About", href: "/#about" },
-  { label: "Collection", href: "/#collection" },
+  { label: "Library Assets", href: "/library" },
 ];
 
 const menuLinkCls =
   "flex items-center justify-between rounded-xl px-3 py-3 text-[16px] font-medium leading-6 tracking-[-0.16px] text-ink transition-colors duration-150 hover:bg-subtle";
+
+/** /library is a separate static app, so it needs a full page load instead of client-side <Link>. */
+function NavLink({ href, ...rest }: React.ComponentProps<"a"> & { href: string }) {
+  return href.startsWith("/library") ? <a href={href} {...rest} /> : <Link href={href} {...rest} />;
+}
 
 export function Nav() {
   const pathname = usePathname();
@@ -69,13 +74,13 @@ export function Nav() {
             </span>
           </Link>
           {links.map((l) => (
-            <Link
+            <NavLink
               key={l.label}
               href={l.href}
               className="-mx-2 rounded-lg px-2 py-1 text-[14px] font-medium leading-5 tracking-[-0.14px] text-ink-2 transition-colors duration-150 hover:bg-subtle hover:text-ink"
             >
               {l.label}
-            </Link>
+            </NavLink>
           ))}
         </nav>
       </div>
@@ -133,9 +138,9 @@ export function Nav() {
               </span>
             </Link>
             {links.map((l) => (
-              <Link key={l.label} href={l.href} className={menuLinkCls} onClick={() => setOpen(false)}>
+              <NavLink key={l.label} href={l.href} className={menuLinkCls} onClick={() => setOpen(false)}>
                 {l.label}
-              </Link>
+              </NavLink>
             ))}
           </nav>
           {!assets && (
