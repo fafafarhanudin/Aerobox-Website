@@ -231,13 +231,13 @@ export function SupportForm({ available }: { available: Record<Region, boolean> 
         >
           {busy ? "Opening secure checkout…" : `Continue with ${amount && amountOk ? formatAmount(amount, r.currency) : "checkout"}`}
           <Legend>
-            <ArrowRight width={12} height={12} strokeWidth={1.6} />
+            <ArrowRight width={12} height={12} strokeWidth={2} />
           </Legend>
         </Key>
       ) : (
         <div className="flex flex-col gap-4 rounded-2xl bg-subtle p-4">
           <p className="flex gap-2.5 text-[14px] leading-5 tracking-[-0.14px] text-ink-2">
-            <InfoCircle width={18} height={18} strokeWidth={1.4} className="mt-px shrink-0 text-ink-3" />
+            <InfoCircle width={18} height={18} strokeWidth={1.8} className="mt-px shrink-0 text-ink-3" />
             <span>
               Online checkout for {r.label === "Indonesia" ? "Indonesia" : "international supporters"} is being set up.
               {region === "ID" ? " Until then you can support right away with QRIS." : " Check back soon."}

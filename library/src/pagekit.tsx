@@ -4,7 +4,7 @@ import { Icon, Tooltip, useToast } from './ui'
 
 /** "← Back to main site" link that sits above the page eyebrow */
 export function BackToSite() {
-  return <a className="back-site" href="/"><Icon name="arrow-left" size={14} stroke={1.6} />Back to main site</a>
+  return <a className="back-site" href="/"><Icon name="arrow-left" size={14} stroke={2} />Back to main site</a>
 }
 
 /* Page header: chip + title + description + right-hand action (matches the Figma page headers) */

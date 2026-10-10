@@ -24,7 +24,7 @@ export function BackToTop() {
       }`}
     >
       <span className="key__cap gap-2 px-3 py-2 text-[14px] font-medium leading-5 tracking-[-0.14px]">
-        <ArrowUp width={14} height={14} strokeWidth={1.2} aria-hidden="true" />
+        <ArrowUp width={14} height={14} strokeWidth={1.8} aria-hidden="true" />
         <span className="hidden md:inline">Back to top</span>
         <span className="md:hidden">Top</span>
       </span>

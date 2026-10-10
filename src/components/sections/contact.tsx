@@ -26,7 +26,7 @@ export function Contact() {
         >
           Send a message
           <Legend>
-            <CornerDownLeft width={12} height={12} strokeWidth={1.2} />
+            <CornerDownLeft width={12} height={12} strokeWidth={1.8} />
           </Legend>
         </Key>
         <EmailKey

@@ -66,7 +66,7 @@ function FloatingButtons() {
   return (
     <>
       <button className={`float-btn float-top ${top ? 'on' : ''}`} aria-label="Back to top" tabIndex={top ? 0 : -1} onClick={() => scrollTo({ top: 0, behavior: 'smooth' })}>
-        <span className="key key--sm"><span className="key__cap"><Icon name="arrow-up" size={14} stroke={1.6} /><span className="fb-label">Back to top</span></span></span>
+        <span className="key key--sm"><span className="key__cap"><Icon name="arrow-up" size={14} stroke={2} /><span className="fb-label">Back to top</span></span></span>
       </button>
     </>
   )
@@ -121,7 +121,7 @@ function Nav({ route, modals }: { route: Route; modals: Modals }) {
               <span key={label} className="nav-menu-link is-soon">{label}<small>Coming soon</small></span>
             ))}
             <a href="#/sponsor" className={`nav-menu-link ${route === 'sponsor' ? 'active' : ''}`} onClick={() => setMenu(false)}>Become a sponsor</a>
-            <a href="/" className="nav-menu-link nav-menu-back"><span>Back to aeroboxstudio.com</span><Icon name="arrow-up-right" size={16} stroke={1.6} /></a>
+            <a href="/" className="nav-menu-link nav-menu-back"><span>Back to aeroboxstudio.com</span><Icon name="arrow-up-right" size={16} stroke={2} /></a>
           </nav>
           <div className="nav-menu-keys">
             <Key className="nav-menu-share" onClick={() => { setMenu(false); modals.share() }}><XLogo size={13} /> Share on X</Key>

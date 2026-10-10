@@ -16,8 +16,6 @@ const links = [
   { label: "Services", href: "/#services" },
   { label: "About", href: "/#about" },
   { label: "Collection", href: "/#collection" },
-  { label: "FAQ", href: "/#faq" },
-  { label: "Support", href: "/support" },
 ];
 
 const menuLinkCls =
@@ -113,7 +111,7 @@ export function Nav() {
         onClick={() => setOpen((v) => !v)}
         className="grid size-10 shrink-0 place-items-center rounded-xl border border-line bg-white text-ink transition-colors hover:bg-subtle lg:hidden"
       >
-        {open ? <XClose width={20} height={20} strokeWidth={1.4} /> : <Menu02 width={20} height={20} strokeWidth={1.4} />}
+        {open ? <XClose width={20} height={20} strokeWidth={1.8} /> : <Menu02 width={20} height={20} strokeWidth={1.8} />}
       </button>
       </div>
 

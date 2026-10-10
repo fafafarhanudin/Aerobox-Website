@@ -42,7 +42,7 @@ export function EmailKey({
     >
       <span aria-live="polite">{copied ? "Email copied" : label}</span>
       <Legend>
-        {copied ? <Check width={12} height={12} strokeWidth={1.6} /> : <Mail01 width={12} height={12} strokeWidth={1.2} />}
+        {copied ? <Check width={12} height={12} strokeWidth={2} /> : <Mail01 width={12} height={12} strokeWidth={1.8} />}
       </Legend>
     </Key>
   );

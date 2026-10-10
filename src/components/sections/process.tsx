@@ -74,7 +74,7 @@ export function Process() {
               <div className="flex flex-col gap-5">
                 <div className="flex items-center gap-1.5">
                   <StaticKey variant="primary">
-                    <Command width={16} height={16} strokeWidth={1.2} />
+                    <Command width={16} height={16} strokeWidth={1.8} />
                   </StaticKey>
                   <span className="text-[14px] font-medium leading-5 text-ink-2">+</span>
                   <StaticKey variant={on ? "accent" : "primary"}>{i + 1}</StaticKey>

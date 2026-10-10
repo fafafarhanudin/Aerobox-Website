@@ -202,7 +202,7 @@ export function Collection() {
             >
               Browse all assets
               <span className="legend" aria-hidden="true">
-                <ArrowUpRight width={12} height={12} strokeWidth={1.6} />
+                <ArrowUpRight width={12} height={12} strokeWidth={2} />
               </span>
             </Key>
             <span className="font-mono text-[12px] leading-4 text-white/35">v2.0 · updated weekly</span>
@@ -239,7 +239,7 @@ export function Collection() {
                     <span className="dim">{c.formats}</span>
                   </span>
                   <span className="sc-link">
-                    Open library <ArrowUpRight width={14} height={14} strokeWidth={1.6} />
+                    Open library <ArrowUpRight width={14} height={14} strokeWidth={2} />
                   </span>
                   <span className="sc-track" aria-hidden="true">
                     <span key={on ? `on-${active}` : "off"} />

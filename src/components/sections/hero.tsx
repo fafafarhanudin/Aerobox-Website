@@ -141,7 +141,7 @@ export function Hero() {
         >
           Send a message
           <Legend>
-            <CornerDownLeft width={12} height={12} strokeWidth={1.2} />
+            <CornerDownLeft width={12} height={12} strokeWidth={1.8} />
           </Legend>
         </Key>
         <Key href="/work" capClassName="h-12 gap-2.5 pl-[18px] pr-3 text-[16px] font-medium leading-5 tracking-[-0.16px]">
@@ -161,7 +161,7 @@ export function Hero() {
           >
             <div className="flex items-end gap-3">
               <Key size="lg" tabIndex={-1} aria-hidden="true" capClassName={`${bigCap} h-24 w-[148px]`}>
-                <Command width={24} height={24} strokeWidth={1.2} className="text-ink" />
+                <Command width={24} height={24} strokeWidth={1.8} className="text-ink" />
                 <span className="text-[12px] font-medium leading-4 tracking-[-0.12px] text-ink-2">command</span>
               </Key>
               {rowA.map((d) => (
@@ -179,7 +179,7 @@ export function Hero() {
                 aria-label="Let's talk on Telegram"
                 capClassName={`${bigCap} h-24 w-[148px]`}
               >
-                <CornerDownLeft width={24} height={24} strokeWidth={1.2} className="text-white" />
+                <CornerDownLeft width={24} height={24} strokeWidth={1.8} className="text-white" />
                 <span className="text-[12px] font-medium leading-4 tracking-[-0.12px] text-[#a9abb3]">return</span>
               </Key>
             </div>

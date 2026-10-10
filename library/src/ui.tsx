@@ -158,7 +158,7 @@ function paint(name: string, style: IconStyle, stroke: number, color: string, ui
 }
 
 /* ---------- Aero icon (4 styles, weight adjustable) ---------- */
-export function Icon({ name, size = 20, stroke = 1.5, color = 'currentColor', variant = 'Aero', grad, className, style }: { name: string; size?: number; stroke?: number; color?: string; variant?: IconStyle; grad?: Grad; className?: string; style?: CSSProperties }) {
+export function Icon({ name, size = 20, stroke = 1.9, color = 'currentColor', variant = 'Aero', grad, className, style }: { name: string; size?: number; stroke?: number; color?: string; variant?: IconStyle; grad?: Grad; className?: string; style?: CSSProperties }) {
   const uid = useId().replace(/[^a-zA-Z0-9_-]/g, '')
   const { root, inner } = build(name, variant, stroke, color, uid, grad)
   const attrs = Object.fromEntries([...root.matchAll(/([a-z-]+)="([^"]*)"/g)].map(([, k, v]) => [k.replace(/-([a-z])/g, (_, c) => c.toUpperCase()), v]))

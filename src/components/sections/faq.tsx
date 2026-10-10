@@ -52,7 +52,7 @@ export function Faq() {
         <Key href={site.telegram} capClassName="h-12 gap-2.5 pl-[18px] pr-3 text-[16px] font-medium leading-5 tracking-[-0.16px]">
           Send a message
           <Legend>
-            <CornerDownLeft width={12} height={12} strokeWidth={1.2} />
+            <CornerDownLeft width={12} height={12} strokeWidth={1.8} />
           </Legend>
         </Key>
       </div>
@@ -69,8 +69,8 @@ export function Faq() {
                 <span className="flex-1 text-[18px] font-medium leading-[26px] tracking-[-0.18px] text-ink">{f.q}</span>
                 <span className={`key key--sm [--r:8px] ${open === `item-${i}` ? "key--primary" : ""}`} aria-hidden="true">
                   <span className="key__cap size-7 rounded-[4px]">
-                    <Plus width={14} height={14} strokeWidth={1.2} className="text-ink group-data-[state=open]:hidden" />
-                    <Minus width={14} height={14} strokeWidth={1.2} className="hidden text-white group-data-[state=open]:block" />
+                    <Plus width={14} height={14} strokeWidth={1.8} className="text-ink group-data-[state=open]:hidden" />
+                    <Minus width={14} height={14} strokeWidth={1.8} className="hidden text-white group-data-[state=open]:block" />
                   </span>
                 </span>
               </Accordion.Trigger>
