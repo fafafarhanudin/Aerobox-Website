@@ -2,11 +2,17 @@ import type React from 'react'
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
 import { Icon, Tooltip, useToast } from './ui'
 
+/** "← Back to main site" link that sits above the page eyebrow */
+export function BackToSite() {
+  return <a className="back-site" href="/"><Icon name="arrow-left" size={14} stroke={1.6} />Back to main site</a>
+}
+
 /* Page header: chip + title + description + right-hand action (matches the Figma page headers) */
 export function PageHead({ chip, count, title, desc, action, fresh }: { chip: string; count: number | string; title: ReactNode; desc: string; action?: ReactNode; fresh?: number }) {
   return (
     <header className="ph">
       <div>
+        <BackToSite />
         <div className="ph-eyebrow">
           <span className="ph-chip"><Icon name="grid" size={13} />{chip}<i>·</i><b className="mono">{count}</b></span>
           {!!fresh && <span className="ph-new"><i />{fresh} new</span>}

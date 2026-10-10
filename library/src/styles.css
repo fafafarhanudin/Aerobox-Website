@@ -1568,3 +1568,16 @@ body:has(.dock.on) .float-btn { bottom: 96px; }
   .dock:not(.center) { left: 12px; right: 12px; width: auto; max-width: none; transform: translateY(160%); }
   .dock.on:not(.center) { transform: none; animation: none; }
 }
+/* desktop: sit level with the floating dock */
+@media (min-width: 761px) { body:has(.dock.on) .float-btn { bottom: 30px; } }
+
+/* back link above the eyebrow + more air between the header and the content */
+.back-site { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 20px; font-size: 13px; font-weight: 500; letter-spacing: -.13px; color: var(--ink-2); transition: color .2s; }
+.back-site svg { transition: transform .25s var(--ease); }
+.back-site:hover { color: var(--ink); }
+.back-site:hover svg { transform: translateX(-3px); }
+.sp-copy > .back-site { display: flex; width: fit-content; }
+.ph { margin-bottom: 48px; }
+.page > .toolbar2, .page > .summary { margin-top: 0; }
+@media (max-width: 760px) { .ph { margin-bottom: 32px; } .back-site { margin-bottom: 16px; } }
+.float-main { display: none !important; }

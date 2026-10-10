@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Icon, Key, Legend, Tooltip, useToast } from '../ui'
 import { party, pop } from '../lib/confetti'
+import { BackToSite } from '../pagekit'
 
 const PLACEMENTS: [string, string, string][] = [
   ['dock', 'Customize dock', 'A quiet line in the floating dock every icon visitor sees.'],
@@ -34,6 +35,7 @@ export default function SponsorPage() {
     <div className="page sponsor-page">
       <div className="sp-grid">
         <div className="sp-copy">
+          <BackToSite />
           <span className="ph-chip"><Icon name="star" size={13} />Sponsorship</span>
           <h1>Become a sponsor</h1>
           <p className="lead">Put your product in front of the designers and developers browsing Aerobox Assets. Tell us a little about it and we will reply with placement options, availability and pricing.</p>

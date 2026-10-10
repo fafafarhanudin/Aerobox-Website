@@ -65,9 +65,6 @@ function FloatingButtons() {
   useEffect(() => { const s = () => setTop(scrollY > 600); s(); addEventListener('scroll', s, { passive: true }); return () => removeEventListener('scroll', s) }, [])
   return (
     <>
-      <a className="float-btn float-main" href="/" aria-label="Back to the main site" title="Back to aeroboxstudio.com">
-        <span className="key key--sm"><span className="key__cap"><Icon name="arrow-left" size={14} stroke={1.6} /><span className="fb-label">Main site</span></span></span>
-      </a>
       <button className={`float-btn float-top ${top ? 'on' : ''}`} aria-label="Back to top" tabIndex={top ? 0 : -1} onClick={() => scrollTo({ top: 0, behavior: 'smooth' })}>
         <span className="key key--sm"><span className="key__cap"><Icon name="arrow-up" size={14} stroke={1.6} /><span className="fb-label">Back to top</span></span></span>
       </button>
