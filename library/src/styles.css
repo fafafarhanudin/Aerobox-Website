@@ -1590,3 +1590,14 @@ body:has(.dock.on) .float-btn { bottom: 96px; }
 .gc-bar button + button::before { content: ''; position: absolute; left: -1px; top: 8px; bottom: 8px; width: 1px; background: rgba(255, 255, 255, .14); }
 .gc-bar button:hover { background: rgba(255, 255, 255, .1); }
 .gc-bar button:hover svg { color: #fff; }
+/* when the dock is up, Back to top shrinks to its arrow so it never covers the dock's end */
+@media (min-width: 761px) {
+  body:has(.dock.on) .float-top .key__cap { width: 44px; height: 44px; padding: 0; justify-content: center; }
+  body:has(.dock.on) .float-top .fb-label { display: none; }
+}
+@media (min-width: 761px) and (max-width: 1500px) { .dock-dl span { display: none; } .dock-dl { padding: 0 10px; } }
+@media (min-width: 761px) and (max-width: 1100px) { .dock { gap: 10px; padding: 8px 8px 8px 12px; } }
+@media (min-width: 761px) and (max-width: 1023px) {
+  .dock, .dock.center, .dock:not(.center) { left: 16px; right: 80px; width: auto; max-width: none; flex-wrap: wrap; justify-content: center; overflow: visible; transform: translateY(160%); animation: none; }
+  .dock.on, .dock.center.on, .dock.on:not(.center) { transform: none; animation: none; }
+}
