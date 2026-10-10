@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Brand, SocialLogo } from "@/components/ui";
-import { LocalTime } from "@/components/local-time";
+import { LocalClock } from "@/components/local-time";
 import { MiniKeyboard } from "@/components/mini-keyboard";
 import { Wordmark } from "@/components/wordmark";
 import { mailtoHref } from "@/components/email-key";
@@ -104,7 +104,7 @@ export function Footer() {
         </p>
         <div className="flex items-center gap-4">
           <p className="hidden text-[14px] leading-5 tracking-[-0.14px] text-ink-2 md:block">
-            Local time in Indonesia <LocalTime /> {site.timeZoneLabel}
+            <LocalClock />
           </p>
         </div>
       </div>

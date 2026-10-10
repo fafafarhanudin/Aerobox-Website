@@ -12,6 +12,7 @@ export const site = {
   inProgressCount: 2,
   timeZone: "Asia/Jakarta",
   timeZoneLabel: "GMT+7",
+  city: "Jakarta",
 };
 
 export const socials = {

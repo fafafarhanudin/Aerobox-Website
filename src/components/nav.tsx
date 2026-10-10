@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Clock, Menu02, XClose } from "@untitled-ui/icons-react";
+import { Menu02, XClose } from "@untitled-ui/icons-react";
 import { Brand, Key, SocialLogo } from "@/components/ui";
 import { EmailKey } from "@/components/email-key";
-import { LocalTime } from "@/components/local-time";
+import { LocalClock } from "@/components/local-time";
 import { projects } from "@/data/projects";
 import { site, socials, type SocialKey } from "@/lib/site";
 
@@ -82,21 +82,11 @@ export function Nav() {
         </nav>
       </div>
 
-      <div className={`${assets ? "hidden" : "flex"} shrink-0 items-center gap-2 whitespace-nowrap rounded-full border border-line bg-white py-1.5 pl-2.5 pr-3 text-[12px] font-medium leading-4 tracking-[-0.12px]`}>
-        <Clock width={14} height={14} strokeWidth={1.2} className="text-ink-2" aria-hidden="true" />
-        <span className="text-ink">
-          <span className="hidden min-[560px]:inline max-xl:lg:hidden">Indonesia </span>
-          <LocalTime />
-        </span>
-        <span className="hidden text-ink-3 min-[480px]:inline max-xl:lg:hidden">{site.timeZoneLabel}</span>
-      </div>
+      {!assets && <LocalClock className="shrink-0 text-[13px] font-medium leading-5 tracking-[-0.13px] text-ink-2" />}
 
       <div className="hidden items-center justify-end gap-4 md:flex">
         {!assets && (
           <>
-        <span className="hidden whitespace-nowrap text-[12px] font-medium leading-4 tracking-[-0.12px] text-ink-3 xl:inline">
-          Other Portofolio
-        </span>
         <div className="hidden items-center gap-2 xl:flex">
           {navSocials.map((s) => (
             <Key key={s} href={socials[s].href} size="sm" aria-label={socials[s].label} capClassName="size-9">
