@@ -35,13 +35,13 @@ function pixels(name: string, stroke: number) {
   pixCache.set(key, out); return out
 }
 const withAttrs = (el: string, attrs: string) => el.replace('/>', ` ${attrs}/>`)
-/* Aero signature: every line icon carries one break in its longest stroke — line, gap, a short dash, gap, a dot, gap, line.
+/* Aero signature: every line icon carries one break in its longest stroke — line, gap, one long dash, gap, line.
    Measured once per icon in the browser (getTotalLength) on a straight stretch, so new icons get it automatically. */
 const EL = /<(?:path|circle|ellipse|rect|line|polyline|polygon)\b[^>]*\/>/g
 type Sig = { i: number; at: number } | null
 const sigCache = new Map<string, Sig>()
 let probe: SVGGElement | null = null
-const SPAN = 3 * 2.6 + 1.8 // gap·dash·gap·dot·gap at the default 1.5 stroke
+const SPAN = 2 * 2.6 + 4.2 // gap·long dash·gap at the default 1.5 stroke
 /* Placement rules, so the mark never changes what the icon says:
    1. only the middle of a straight run, with room to spare at both ends (no corners, no curves, no line ends)
    2. closed shapes (frames, bodies) first; open strokes only when they are long, never short meaning-carrying marks
@@ -101,8 +101,8 @@ function signature(key: string, body: string, kinds: string[]): Sig {
 function signed(key: string, body: string, stroke: number, kinds: string[]) {
   const sig = signature(key, body, kinds); if (!sig) return body
   // round caps eat stroke/2 of every gap, so gaps are sized from the stroke; the group is centred on sig.at
-  const g = f2(stroke + 1.1), dash = 1.8, span = 3 * g + dash, els = body.match(EL) ?? []
-  const dashes = `${f2(Math.max(.01, sig.at - span / 2))} ${g} ${dash} ${g} 0.01 ${g} 999`
+  const g = f2(stroke + 1.1), dash = 4.2, span = 2 * g + dash, els = body.match(EL) ?? []
+  const dashes = `${f2(Math.max(.01, sig.at - span / 2))} ${g} ${dash} ${g} 999`
   return els.map((el, i) => i === sig.i ? withAttrs(el, `stroke-dasharray="${dashes}"`) : el).join('')
 }
 /** gradient paint for icons — drawn in the 24×24 user space so straight lines never get a degenerate bounding box */
