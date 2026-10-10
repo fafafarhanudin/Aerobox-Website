@@ -26,6 +26,8 @@ const menuLinkCls =
 export function Nav() {
   const pathname = usePathname();
   const onWork = pathname.startsWith("/work");
+  // /support belongs to Aerobox Assets: its brand, and a quieter bar without clock or socials
+  const assets = pathname.startsWith("/support");
   const [open, setOpen] = useState(false);
 
   useEffect(() => setOpen(false), [pathname]);
@@ -46,9 +48,17 @@ export function Nav() {
     <header className="sticky top-0 z-50 border-y border-line bg-white/95 backdrop-blur-xl backdrop-saturate-150">
       <div className="flex items-center justify-between gap-3 px-5 py-3 md:px-6 md:py-4">
       <div className="flex items-center gap-10 lg:gap-14">
-        <Link href="/" aria-label="Aerobox home" className="rounded-lg">
-          <Brand />
-        </Link>
+        {assets ? (
+          <a href="/library" aria-label="Aerobox Assets home" className="flex items-center gap-2.5 rounded-lg">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/library/favicon.svg" alt="" width={28} height={28} className="size-7 rounded-[7px]" />
+            <span className="whitespace-nowrap text-[18px] font-semibold leading-6 tracking-[-0.18px] text-ink">Aerobox Assets</span>
+          </a>
+        ) : (
+          <Link href="/" aria-label="Aerobox home" className="rounded-lg">
+            <Brand />
+          </Link>
+        )}
         <nav aria-label="Primary" className="hidden items-center gap-7 lg:flex">
           <Link
             href="/work"
@@ -72,7 +82,7 @@ export function Nav() {
         </nav>
       </div>
 
-      <div className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border border-line bg-white py-1.5 pl-2.5 pr-3 text-[12px] font-medium leading-4 tracking-[-0.12px]">
+      <div className={`${assets ? "hidden" : "flex"} shrink-0 items-center gap-2 whitespace-nowrap rounded-full border border-line bg-white py-1.5 pl-2.5 pr-3 text-[12px] font-medium leading-4 tracking-[-0.12px]`}>
         <Clock width={14} height={14} strokeWidth={1.2} className="text-ink-2" aria-hidden="true" />
         <span className="text-ink">
           <span className="hidden min-[560px]:inline max-xl:lg:hidden">Indonesia </span>
@@ -82,6 +92,8 @@ export function Nav() {
       </div>
 
       <div className="hidden items-center justify-end gap-4 md:flex">
+        {!assets && (
+          <>
         <span className="hidden whitespace-nowrap text-[12px] font-medium leading-4 tracking-[-0.12px] text-ink-3 xl:inline">
           Other Portofolio
         </span>
@@ -93,6 +105,8 @@ export function Nav() {
           ))}
         </div>
         <span className="hidden h-6 w-0.5 bg-line xl:block" aria-hidden="true" />
+          </>
+        )}
         <EmailKey
           label="Send email"
           variant="primary"
@@ -131,6 +145,7 @@ export function Nav() {
               </Link>
             ))}
           </nav>
+          {!assets && (
           <div className="flex items-center gap-2">
             {navSocials.map((s) => (
               <Key key={s} href={socials[s].href} size="sm" aria-label={socials[s].label} capClassName="size-10">
@@ -138,6 +153,7 @@ export function Nav() {
               </Key>
             ))}
           </div>
+          )}
           <EmailKey
             label="Send email"
             variant="primary"
