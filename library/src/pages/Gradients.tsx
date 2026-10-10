@@ -1,7 +1,7 @@
 import type React from 'react'
 import { useMemo, useState } from 'react'
 import { CloseButton, Icon, Key, Legend, Modal, Tooltip, copyText, useToast } from '../ui'
-import { DkChips, DkRow, DkSlider, DkSwitch, DockDiv, DockPop, Formats, FloatDock, PageHead, PillTabs, Select, Summary, ViewToggle } from '../pagekit'
+import { DkChips, DkRow, DkSlider, DkSwitch, DockDiv, DockPop, Formats, FloatDock, DockDownloadAll, PageHead, PillTabs, Select, Summary, ViewToggle } from '../pagekit'
 import { GRADIENTS, type Gradient } from '../data/gradients'
 import { pop } from '../lib/confetti'
 import { RequestKey, useRequest } from '../request'
@@ -135,6 +135,7 @@ export default function GradientsPage() {
           <DkRow label="Preview & PNG"><DkChips options={Object.keys(RATIOS) as Ratio[]} value={ratio} onChange={setRatio} /></DkRow>
           <p className="dk-note">PNG export: {RW}×{RH}px</p>
         </DockPop>
+        <DockDiv /><DockDownloadAll />
       </FloatDock>
     </div>
   )

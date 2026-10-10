@@ -61,11 +61,21 @@ export default function App() {
 /* ---------------- Nav ---------------- */
 function Nav({ route, modals }: { route: Route; modals: Modals }) {
   const [scrolled, setScrolled] = useState(false)
+  const [menu, setMenu] = useState(false)
+  useEffect(() => setMenu(false), [route])
+  useEffect(() => {
+    if (!menu) return
+    const k = (e: KeyboardEvent) => e.key === 'Escape' && setMenu(false)
+    const r = () => innerWidth > 1100 && setMenu(false)
+    addEventListener('keydown', k); addEventListener('resize', r)
+    return () => { removeEventListener('keydown', k); removeEventListener('resize', r) }
+  }, [menu])
   useEffect(() => { const s = () => setScrolled(scrollY > 8); addEventListener('scroll', s, { passive: true }); return () => removeEventListener('scroll', s) }, [])
   const links: [Route | null, string, string?][] = [['icons', 'Icons', String(ICONS.length)], ['gradients', 'Gradients'], ['logos', 'Logos'], ['isometric', 'Isometric'], [null, 'Patterns'], [null, 'Illustrations']]
   return (
     <header className={`nav ${scrolled ? 'scrolled' : ''}`}>
       <div className="nav-left">
+        <a className="nav-back" href="/" aria-label="Back to the main site" title="Back to aeroboxstudio.com"><Icon name="arrow-left" size={16} stroke={1.6} /><span>Main site</span></a>
         <span className="brand">
           <Tooltip label="Open the gift" side="bottom"><NavLogo /></Tooltip>
           <a href="#/">{BRAND}</a>
@@ -85,7 +95,27 @@ function Nav({ route, modals }: { route: Route; modals: Modals }) {
         </Tooltip>
         <span className="divider" />
         <Key variant="primary" size="sm" onClick={modals.support}>Support <Legend><Icon name="heart" size={12} color="#FF6B81" stroke={2} /></Legend></Key>
+        <button className="nav-burger" aria-label={menu ? 'Close menu' : 'Open menu'} aria-expanded={menu} aria-controls="nav-menu" onClick={() => setMenu(m => !m)}>
+          <span /><span /><span />
+        </button>
       </div>
+      {menu && (
+        <div id="nav-menu" className="nav-menu">
+          <nav aria-label="Mobile">
+            {links.map(([r, label, badge]) => r ? (
+              <a key={label} href={`#/${r}`} className={`nav-menu-link ${route === r ? 'active' : ''}`} onClick={() => setMenu(false)}>{label}{badge && <span className="badge">{badge}</span>}</a>
+            ) : (
+              <span key={label} className="nav-menu-link is-soon">{label}<small>Coming soon</small></span>
+            ))}
+            <a href="#/sponsor" className={`nav-menu-link ${route === 'sponsor' ? 'active' : ''}`} onClick={() => setMenu(false)}>Become a sponsor</a>
+            <a href="/" className="nav-menu-link nav-menu-back"><span>Back to aeroboxstudio.com</span><Icon name="arrow-up-right" size={16} stroke={1.6} /></a>
+          </nav>
+          <div className="nav-menu-keys">
+            <Key className="nav-menu-share" onClick={() => { setMenu(false); modals.share() }}><XLogo size={13} /> Share on X</Key>
+            <Key variant="primary" className="nav-menu-support" onClick={() => { setMenu(false); modals.support() }}>Support <Legend><Icon name="heart" size={12} color="#FF6B81" stroke={2} /></Legend></Key>
+          </div>
+        </div>
+      )}
     </header>
   )
 }

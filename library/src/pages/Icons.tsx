@@ -4,7 +4,7 @@ import { CloseButton, Icon, Modal, Tooltip, copyText, download, iconSvg, useToas
 import { ICONS, ICON_CATS, type Icon as IconT } from '../data/icons'
 import { pop } from '../lib/confetti'
 import { RequestKey, useRequest } from '../request'
-import { ColorPicker, ColorWell, PageHead } from '../pagekit'
+import { ColorPicker, ColorWell, DockDownloadAll, PageHead } from '../pagekit'
 import { AVATARS, FLAGS, PHOTOS, type FlagT } from '../data/collections'
 
 const SWATCHES = ['#16171B', '#6B6E78', '#2F6BFF', '#7C3AED', '#15803D', '#F59E0B', '#E5484D']
@@ -185,6 +185,8 @@ export default function IconsPage({ initialQuery = '' }: { initialQuery?: string
             <i style={{ background: gradCss(grad) }} /><span className="dl">Gradient</span><Icon name="arrow-down" size={14} /></button>
           <div className={`popover up dark grad-pop ${menu === 'grad' ? 'on' : ''}`}><GradEditor value={grad} onChange={v => { setGrad(v); setUseGrad(true) }} /></div>
         </div>
+        <span className="dock-div" />
+        <DockDownloadAll />
       </div>
       <IconModal icon={sel} onClose={() => setSel(null)} stroke={stroke} color={color} grad={g} iconStyle={iconStyle} />
     </div>

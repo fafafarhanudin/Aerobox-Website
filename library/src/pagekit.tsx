@@ -1,6 +1,6 @@
 import type React from 'react'
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
-import { Icon, Tooltip } from './ui'
+import { Icon, Tooltip, useToast } from './ui'
 
 /* Page header: chip + title + description + right-hand action (matches the Figma page headers) */
 export function PageHead({ chip, count, title, desc, action, fresh }: { chip: string; count: number | string; title: ReactNode; desc: string; action?: ReactNode; fresh?: number }) {
@@ -160,4 +160,16 @@ export function DockColor({ id = 'color', on, value, onChange }: { id?: string; 
   const { open, setOpen } = useContext(DockCtx); const shown = open === id
   return <div className="dd-wrap"><ColorWell on={on} color={value} onClick={() => setOpen(shown ? '' : id)} />
     <div className={`popover up dark cpk-pop ${shown ? 'on' : ''}`}>{shown && <ColorPicker value={value} onChange={onChange} />}</div></div>
+}
+
+/** "Download all assets" — visible but locked until the full pack ships */
+export function DockDownloadAll({ label = 'Download all' }: { label?: string }) {
+  const toast = useToast()
+  return (
+    <Tooltip label="Download the whole library · coming soon">
+      <button className="dock-dl" aria-disabled="true" onClick={() => toast('Download all is coming soon')}>
+        <Icon name="lock" size={13} stroke={1.8} /><span>{label}</span><Icon name="download" size={14} />
+      </button>
+    </Tooltip>
+  )
 }

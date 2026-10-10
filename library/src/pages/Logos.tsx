@@ -1,7 +1,7 @@
 import type React from 'react'
 import { useEffect, useMemo, useState } from 'react'
 import { CloseButton, Icon, Mark, Modal, Tooltip, copyText, download, useToast, Key, Legend, XLogo } from '../ui'
-import { DkChips, DkRow, DkSwitch, DockDiv, DockPop, DockStep, FloatDock, PageHead, PillTabs, Select, ViewToggle } from '../pagekit'
+import { DkChips, DkRow, DkSwitch, DockDiv, DockPop, DockStep, FloatDock, DockDownloadAll, PageHead, PillTabs, Select, ViewToggle } from '../pagekit'
 import { MARKS } from '../data/logos'
 import { WORLD, type World } from '../data/world'
 import { LOCKUPS, type Lockup } from '../data/lockups'
@@ -176,6 +176,7 @@ function WorldLogos({ toggle }: { toggle: React.ReactNode }) {
         <DockStep label="Size" value={`${Math.round(scale * 100)}%`} onMinus={() => setScale(v => SCALES[Math.max(0, SCALES.indexOf(v) - 1)])} onPlus={() => setScale(v => SCALES[Math.min(SCALES.length - 1, SCALES.indexOf(v) + 1)])} />
         <DockDiv />
         <LookPop tone={tone} setTone={setTone} boxed={boxed} setBoxed={setBoxed} />
+        <DockDiv /><DockDownloadAll />
       </FloatDock>
     </>
   )
@@ -260,6 +261,7 @@ function Templates({ toggle }: { toggle: React.ReactNode }) {
         <DockStep label="Size" value={`${Math.round(scale * 100)}%`} onMinus={() => setScale(v => SCALES[Math.max(0, SCALES.indexOf(v) - 1)])} onPlus={() => setScale(v => SCALES[Math.min(SCALES.length - 1, SCALES.indexOf(v) + 1)])} />
         <DockDiv />
         <LookPop tone={tone} setTone={setTone} boxed={boxed} setBoxed={setBoxed} />
+        <DockDiv /><DockDownloadAll />
       </FloatDock>
       <Modal open={!!lsel} onClose={() => setLsel(null)} label="Lockup" width={560}>
         {lsel && <div className="logo-modal">
