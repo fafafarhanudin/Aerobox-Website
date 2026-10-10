@@ -59,7 +59,7 @@ export default function IsoPage() {
     return l
   }, [cat, q, sort])
   const idx = (t: T) => String(ISO.indexOf(t) + 1).padStart(2, '0')
-  const copy = async (t: T, el: Element) => { await copyText(svgOf(t, tones, line, 240, 200, sc)); pop(el, 18); toast(<>Copied <b>{t.name}</b> · {pal}</>) }
+  const copy = async (t: T, el: Element) => { await copyText(svgOf(t, tones, line, 240, 200, sc), t.name); pop(el, 18); toast(<>Copied <b>{t.name}</b> · {pal}</>) }
   const dl = (t: T, el: Element) => { download(`${t.key}.svg`, svgOf(t, tones, line, 240, 200, sc)); pop(el, 20); toast(<>Downloaded <b>{t.name}.svg</b></>) }
   return (
     <div className="page iso-page">

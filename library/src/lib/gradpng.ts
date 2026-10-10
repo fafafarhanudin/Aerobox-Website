@@ -1,3 +1,4 @@
+import { creditPng } from './credit'
 // Renders the CSS gradients we generate (linear / radial / conic layers) onto a canvas → PNG.
 type Stop = { c: string; p?: number }
 const splitTop = (s: string) => { const out: string[] = []; let d = 0, cur = ''; for (const ch of s) { if (ch === '(') d++; if (ch === ')') d--; if (ch === ',' && d === 0) { out.push(cur.trim()); cur = '' } else cur += ch } if (cur.trim()) out.push(cur.trim()); return out }
@@ -47,6 +48,7 @@ export async function gradientPng(css: string, { grain = false, dark = false, bl
     for (let i = 0; i < d.length; i += 4) { const n = (Math.random() - .5) * amt * 2; d[i] += n; d[i + 1] += n; d[i + 2] += n }
     ctx.putImageData(img, 0, 0)
   }
-  return new Promise(r => c.toBlob(b => r(b!), 'image/png'))
+  const png = await new Promise<Blob>(r => c.toBlob(b => r(b!), 'image/png'))
+  return creditPng(png, 'Aerobox gradient')
 }
 export const tailwindOf = (css: string) => `bg-[${css.replace(/\s*,\s*/g, ',').replace(/\s+/g, '_')}]`

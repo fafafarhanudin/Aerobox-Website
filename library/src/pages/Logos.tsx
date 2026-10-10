@@ -100,7 +100,7 @@ function WorldLogos({ toggle }: { toggle: React.ReactNode }) {
   const visible = list.slice(0, shown)
   const grab = async (w: World, th = theme) => toneSvg(await fetchSvg(fileOf(w, tone === 'Original' ? th : 'Light', variant)), tone)
   const dl = async (w: World) => { download(`${w.name.toLowerCase().replace(/\W+/g, '-')}.svg`, await grab(w)); toast(<>Downloaded <b>{w.name}</b></>) }
-  const cp = async (w: World, el: Element) => { await copyText(await grab(w)); pop(el, 18); toast(<>Copied <b>{w.name}</b> SVG</>) }
+  const cp = async (w: World, el: Element) => { await copyText(await grab(w), w.name); pop(el, 18); toast(<>Copied <b>{w.name}</b> SVG</>) }
   return (
     <>
       <PageHead chip="Real-world" count={WORLD.length} title="Real-world logos" desc={`${WORLD.length} brand logos for interfaces, docs and decks. Light, dark and wordmark versions when the brand provides them.`}
@@ -204,7 +204,7 @@ function Templates({ toggle }: { toggle: React.ReactNode }) {
   const dk = dark || tone === 'White'; const tsv = (svg: string) => toneSvg(svg, tone)
   const lock = useMemo(() => LOCKUPS.filter(m => m.name.toLowerCase().includes(q.toLowerCase())), [q])
   const list = useMemo(() => MARKS.filter(m => m.name.toLowerCase().includes(q.toLowerCase())), [q])
-  const copySvg = async (m: M, el: Element) => { await copyText(tsv(m.svg)); pop(el, 20); toast(<>Copied <b>{m.name}</b> mark</>) }
+  const copySvg = async (m: M, el: Element) => { await copyText(tsv(m.svg), m.name); pop(el, 20); toast(<>Copied <b>{m.name}</b> mark</>) }
   const credit = <a className="credit" href={X_URL} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()}>Created by <b>@ui_farhan</b></a>
   return (
     <>
@@ -224,7 +224,7 @@ function Templates({ toggle }: { toggle: React.ReactNode }) {
               <div className="lt-lockup"><Mark svg={tsv(l.svg)} size={30} /><Wordmark l={l} dark={dk} tone={tone} /></div>
               {credit}
               <div className="lt-actions" onClick={e => e.stopPropagation()}>
-                <Tooltip label="Copy SVG"><button onClick={async e => { const el = e.currentTarget; await copyText(lockupSvg(l, dk, tone)); pop(el, 18); toast(<>Copied <b>{l.name}</b></>) }}><Icon name="copy" size={15} /></button></Tooltip>
+                <Tooltip label="Copy SVG"><button onClick={async e => { const el = e.currentTarget; await copyText(lockupSvg(l, dk, tone), l.name); pop(el, 18); toast(<>Copied <b>{l.name}</b></>) }}><Icon name="copy" size={15} /></button></Tooltip>
                 <Tooltip label="Download"><button onClick={() => { download(`${l.name.toLowerCase()}.svg`, lockupSvg(l, dk, tone)); toast(<>Downloaded <b>{l.name}</b></>) }}><Icon name="download" size={15} /></button></Tooltip>
                 <Tooltip label="Preview"><button onClick={() => setLsel(l)}><Icon name="eye" size={15} /></button></Tooltip>
               </div>

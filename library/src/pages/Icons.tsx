@@ -81,7 +81,7 @@ export default function IconsPage({ initialQuery = '' }: { initialQuery?: string
     return () => { el.removeEventListener('scroll', upd); removeEventListener('resize', upd); ro.disconnect() }
   }, [])
   useLayoutEffect(() => { const el = navRef.current?.querySelector('.side-item.on') as HTMLElement | null; if (el) setHl({ y: el.offsetTop, h: el.offsetHeight }) }, [cat])
-  const copyIcon = async (i: IconT, el: Element) => { await copyText(iconSvg(i.name, stroke, color, 24, iconStyle, g)); pop(el, 18); toast(<>Copied <b>{i.name}</b> · {iconStyle}{g ? ' · gradient' : ''}</>) }
+  const copyIcon = async (i: IconT, el: Element) => { await copyText(iconSvg(i.name, stroke, color, 24, iconStyle, g), i.name); pop(el, 18); toast(<>Copied <b>{i.name}</b> · {iconStyle}{g ? ' · gradient' : ''}</>) }
   const downloadSet = (el: Element) => {
     const sprite = `<svg xmlns="http://www.w3.org/2000/svg" style="display:none">${filtered.map(i => `<symbol id="${i.name}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">${i.body}</symbol>`).join('')}</svg>`
     download('aerobox-icons.svg', sprite); pop(el, 44); toast(<>Downloaded <b>{filtered.length} icons</b> as a sprite</>)

@@ -1,4 +1,5 @@
 import type React from 'react'
+import { creditSvg } from './lib/credit'
 import { createContext, useCallback, useContext, useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode, type CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
 import { ICONS } from './data/icons'
@@ -41,6 +42,7 @@ const EL = /<(?:path|circle|ellipse|rect|line|polyline|polygon)\b[^>]*\/>/g
 type Sig = { i: number; at: number } | null
 const sigCache = new Map<string, Sig>()
 let probe: SVGGElement | null = null
+const SIGNATURE_BREAK = false
 const SPAN = 2 * 2.6 + 4.2 // gap·long dash·gap at the default 1.5 stroke
 /* Placement rules, so the mark never changes what the icon says:
    1. only the middle of a straight run, with room to spare at both ends (no corners, no curves, no line ends)
@@ -99,6 +101,7 @@ function signature(key: string, body: string, kinds: string[]): Sig {
 }
 /** apply the signature dash to the chosen element of an icon body */
 function signed(key: string, body: string, stroke: number, kinds: string[]) {
+  if (!SIGNATURE_BREAK) return body // icons are drawn unbroken now; the Aero character lives in the shapes
   const sig = signature(key, body, kinds); if (!sig) return body
   // round caps eat stroke/2 of every gap, so gaps are sized from the stroke; the group is centred on sig.at
   const g = f2(stroke + 1.1), dash = 4.2, span = 2 * g + dash, els = body.match(EL) ?? []
@@ -243,14 +246,16 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   )
 }
 
-export async function copyText(text: string) {
+export async function copyText(raw: string, name?: string) {
+  const text = creditSvg(raw, name)
   try { await navigator.clipboard.writeText(text); return true } catch {
     const ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select()
     try { document.execCommand('copy') } catch { /* ignore */ } ta.remove(); return true
   }
 }
 export function download(name: string, content: string, type = 'image/svg+xml') {
-  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([content], { type })); a.download = name; a.click()
+  const body = type.includes('svg') ? creditSvg(content, name) : content
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([body], { type })); a.download = name; a.click()
   setTimeout(() => URL.revokeObjectURL(a.href), 1000)
 }
 
