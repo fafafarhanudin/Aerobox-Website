@@ -1684,7 +1684,7 @@ body:has(.dock.on) .float-btn { bottom: 96px; }
 .dk-row.is-off { opacity: .4; pointer-events: none; }
 .dk-chips button .dk-def { margin-left: 2px; width: 4px; height: 4px; border-radius: 999px; background: currentColor; opacity: .5; }
 /* gradient motion + dither on the previews */
-.grad.is-dither { image-rendering: pixelated; }
+.grad-dither { position: absolute; left: 0; top: 0; display: block; image-rendering: pixelated; pointer-events: none; }
 .grad.is-moving .grad-fill { will-change: transform; }
 .grad-card:hover .grad.is-moving .grad-fill { transform: none; }
 .motion-pill { position: absolute; top: 10px; left: 10px; z-index: 2; display: inline-flex; align-items: center; gap: 5px; height: 22px; padding: 0 8px; border-radius: 999px; background: rgba(14, 15, 18, .5); backdrop-filter: blur(6px); color: #fff; font-size: 11px; }

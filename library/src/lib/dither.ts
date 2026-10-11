@@ -72,3 +72,16 @@ export function ditherPixels(img: ImageData, d: Dither, cell: number) {
   }
   return img
 }
+
+/** Dither a whole canvas at one pixel per Bayer cell: shrink to the cell grid, dither, scale back up with hard
+ *  edges. The live previews render straight at the cell grid, so preview, PNG and video show the same dots. */
+let scratch: HTMLCanvasElement | null = null
+export function ditherCanvas(ctx: CanvasRenderingContext2D, W: number, H: number, d: Dither, cell: number) {
+  const k = Math.max(1, Math.round(cell)), w = Math.ceil(W / k), h = Math.ceil(H / k)
+  scratch ??= document.createElement('canvas'); scratch.width = w; scratch.height = h
+  const sc = scratch.getContext('2d', { willReadFrequently: true })!
+  sc.imageSmoothingEnabled = true; sc.imageSmoothingQuality = 'high'; sc.drawImage(ctx.canvas, 0, 0, W, H, 0, 0, w, h)
+  sc.putImageData(ditherPixels(sc.getImageData(0, 0, w, h), d, 1), 0, 0)
+  ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.filter = 'none'; ctx.imageSmoothingEnabled = false
+  ctx.clearRect(0, 0, W, H); ctx.drawImage(scratch, 0, 0, w * k, h * k); ctx.restore()
+}

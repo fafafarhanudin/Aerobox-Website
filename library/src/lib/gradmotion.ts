@@ -1,7 +1,7 @@
 // Moving gradients. One pose function drives everything: the CSS keyframes in the previews, the copied CSS
 // and the canvas frames of the video export — so what you see is what you download.
 import { paintGradient } from './gradpng'
-import { ditherPixels, type Dither } from './dither'
+import { ditherCanvas, type Dither } from './dither'
 
 export type GradMotionKind = 'None' | 'Drift' | 'Orbit' | 'Breathe' | 'Spin' | 'Hue'
 export const GRAD_MOTIONS: GradMotionKind[] = ['None', 'Drift', 'Orbit', 'Breathe', 'Spin', 'Hue']
@@ -55,14 +55,14 @@ export async function gradientVideo(css: string, o: { W: number; H: number; blur
     if (o.blur) tc.drawImage(base, -W * .1, -H * .1, W * 1.2, H * 1.2); else tc.drawImage(base, 0, 0)
     bc.clearRect(0, 0, W, H); bc.drawImage(t, 0, 0)
   }
-  const out = document.createElement('canvas'); out.width = W; out.height = H; const ctx = out.getContext('2d', { willReadFrequently: !!o.dither?.on })!
+  const out = document.createElement('canvas'); out.width = W; out.height = H; const ctx = out.getContext('2d')!
   const draw = (p: number) => {
     const q = pose(motion.kind, p)
     ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.filter = 'none'; ctx.clearRect(0, 0, W, H)
     ctx.translate(W / 2 + q.x / 100 * W, H / 2 + q.y / 100 * H); ctx.rotate(q.r * Math.PI / 180); ctx.scale(q.s, q.s)
     if (q.hue) ctx.filter = `hue-rotate(${q.hue}deg)`
     ctx.drawImage(base, -W / 2, -H / 2)
-    if (o.dither?.on) { ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.filter = 'none'; ctx.putImageData(ditherPixels(ctx.getImageData(0, 0, W, H), o.dither, o.ditherCell ?? 2), 0, 0) }
+    if (o.dither?.on) ditherCanvas(ctx, W, H, o.dither, o.ditherCell ?? 2)
   }
   draw(0)
   const types = ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm', 'video/mp4;codecs=avc1', 'video/mp4']

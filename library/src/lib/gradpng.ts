@@ -1,5 +1,5 @@
 import { creditPng } from './credit'
-import { ditherPixels, type Dither } from './dither'
+import { ditherCanvas, type Dither } from './dither'
 // Renders the CSS gradients we generate (linear / radial / conic layers) onto a canvas → PNG.
 type Stop = { c: string; p?: number }
 const splitTop = (s: string) => { const out: string[] = []; let d = 0, cur = ''; for (const ch of s) { if (ch === '(') d++; if (ch === ')') d--; if (ch === ',' && d === 0) { out.push(cur.trim()); cur = '' } else cur += ch } if (cur.trim()) out.push(cur.trim()); return out }
@@ -45,7 +45,7 @@ export async function gradientPng(css: string, { grain = false, dark = false, bl
     ctx.clearRect(0, 0, W, H); ctx.drawImage(t, 0, 0)
   }
   // dither replaces the grain (both are a texture; the preview shows only the dither too)
-  if (dither?.on) ctx.putImageData(ditherPixels(ctx.getImageData(0, 0, W, H), dither, ditherCell), 0, 0)
+  if (dither?.on) ditherCanvas(ctx, W, H, dither, ditherCell)
   else if (grain) {
     const img = ctx.getImageData(0, 0, W, H), d = img.data, amt = (dark ? 16 : 13) * grainAmt / 32
     for (let i = 0; i < d.length; i += 4) { const n = (Math.random() - .5) * amt * 2; d[i] += n; d[i + 1] += n; d[i + 2] += n }

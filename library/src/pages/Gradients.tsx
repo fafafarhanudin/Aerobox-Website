@@ -1,5 +1,5 @@
 import type React from 'react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { CloseButton, Icon, Key, Legend, Modal, Tooltip, copyText, useToast } from '../ui'
 import { DkChips, DkColorField, DkHead, DkRow, DkSelect, DkSlider, DkSwitch, DockDiv, DockPop, Formats, FloatDock, PageHead, PillTabs, Select, Summary, ViewToggle } from '../pagekit'
 import { GRADIENTS, type Gradient } from '../data/gradients'
@@ -7,6 +7,7 @@ import { pop } from '../lib/confetti'
 import { RequestKey, useRequest } from '../request'
 import { gradientPng, tailwindOf } from '../lib/gradpng'
 import { DITHER_DEFAULT, DITHER_FILTER_ID, DITHER_STYLES, ditherFilterMarkup, type Dither } from '../lib/dither'
+import { liveDither, onFrame } from '../lib/ditherlive'
 import { GRAD_MOTIONS, GRAD_MOTION_NOTE, GRAD_SPEEDS, animName, gradientVideo, keyframes, motionSnippet, type GradMotion } from '../lib/gradmotion'
 
 const KINDS = ['All', 'Linear', 'Radial', 'Mesh', 'Conic', 'Soft', 'New']
@@ -19,17 +20,42 @@ const BLUR_PRESETS = [0, 8, 16, 24, 32]
 
 export type Grain = { on: boolean; amt: number; size: 'Fine' | 'Medium' | 'Coarse' }
 const GRAIN_PX = { Fine: 120, Medium: 180, Coarse: 280 }
-export function GradSwatch({ g, grain, blur, tune = '', dither = false, motion, delay = 0, className = '', style }: { g: Gradient; grain: boolean | Grain; blur: number; tune?: string; dither?: boolean; motion?: GradMotion; delay?: number; className?: string; style?: React.CSSProperties }) {
+export function GradSwatch({ g, grain, blur, tune = '', dither, motion, delay = 0, paused = false, className = '', style }: { g: Gradient; grain: boolean | Grain; blur: number; tune?: string; dither?: Dither; motion?: GradMotion; delay?: number; paused?: boolean; className?: string; style?: React.CSSProperties }) {
   const gr: Grain = typeof grain === 'boolean' ? { on: grain, amt: 32, size: 'Medium' } : grain
   const filter = `${blur ? `blur(${blur}px) saturate(1.05)` : ''} ${tune}`.trim()
   const moving = !!motion && motion.kind !== 'None'
+  const dithered = !!dither?.on
   return (
-    // dither sits on the still frame, so its dot grid stays crisp while the colours move underneath
-    <div className={`grad ${dither ? 'is-dither' : ''} ${moving ? 'is-moving' : ''} ${className}`} style={{ ...style, filter: dither ? `url(#${DITHER_FILTER_ID})` : undefined }}>
-      <div className="grad-fill" style={{ background: g.css, filter: filter || undefined, inset: blur ? -blur * 2 : 0, animation: moving ? `${animName(motion!.kind)} ${motion!.dur}s linear ${-delay}s infinite` : undefined }} />
-      {!dither && gr.on && gr.amt > 0 && g.tone === 'Grain' && <div className={`grain ${g.dark ? 'light' : ''}`} style={{ opacity: gr.amt / 100 * (g.dark ? .7 : 1), backgroundSize: `${GRAIN_PX[gr.size]}px` }} />}
+    <div className={`grad ${dithered ? 'is-dither' : ''} ${moving ? 'is-moving' : ''} ${className}`} style={{ ...style, background: dithered ? g.css : undefined }}>
+      {dithered
+        ? <DitherFill css={g.css} blur={blur} tune={tune} dither={dither!} motion={motion} delay={delay} paused={paused} />
+        : <div className="grad-fill" style={{ background: g.css, filter: filter || undefined, inset: blur ? -blur * 2 : 0, animation: moving ? `${animName(motion!.kind)} ${motion!.dur}s linear ${-delay}s infinite` : undefined }} />}
+      {!dithered && gr.on && gr.amt > 0 && g.tone === 'Grain' && <div className={`grain ${g.dark ? 'light' : ''}`} style={{ opacity: gr.amt / 100 * (g.dark ? .7 : 1), backgroundSize: `${GRAIN_PX[gr.size]}px` }} />}
     </div>
   )
+}
+/** dithered swatch: a canvas at one pixel per dither cell, scaled up with hard edges (lib/ditherlive);
+ *  only swatches on screen are drawn, moving ones on the shared ~30 fps clock */
+function DitherFill({ css, blur, tune, dither, motion, delay, paused }: { css: string; blur: number; tune: string; dither: Dither; motion?: GradMotion; delay: number; paused: boolean }) {
+  const ref = useRef<HTMLCanvasElement>(null)
+  const [box, setBox] = useState<[number, number]>([0, 0])
+  useEffect(() => {
+    const host = ref.current?.parentElement; if (!host) return
+    const ro = new ResizeObserver(([e]) => { const w = Math.round(e.contentRect.width), h = Math.round(e.contentRect.height); setBox(b => b[0] === w && b[1] === h ? b : [w, h]) })
+    ro.observe(host); return () => ro.disconnect()
+  }, [])
+  const kind = motion?.kind ?? 'None', dur = motion?.dur ?? 10
+  useEffect(() => {
+    const c = ref.current; if (!c || !box[0] || !box[1]) return
+    const draw = liveDither(c, { css, blur, tune, dither, motion: { kind, dur }, delay }, box[0], box[1])
+    let seen = false, painted = false
+    const io = new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen && !painted) { draw(performance.now()); painted = true } }, { rootMargin: '160px' })
+    io.observe(c)
+    // paused: the grid behind an open modal holds its frame instead of drawing unseen
+    const off = kind !== 'None' && !paused ? onFrame(t => { if (seen) draw(t) }) : undefined
+    return () => { io.disconnect(); off?.() }
+  }, [box, css, blur, tune, dither, kind, dur, delay, paused])
+  return <canvas ref={ref} className="grad-dither" aria-hidden />
 }
 const RATIOS = { '4:3': [1600, 1200], '16:9': [1920, 1080], '1:1': [1600, 1600], '3:4': [1200, 1600], '9:16': [1080, 1920] } as const
 type Ratio = keyof typeof RATIOS
@@ -71,7 +97,7 @@ export default function GradientsPage() {
     const k = Math.min(1, 1280 / Math.max(RW, RH)), W = Math.round(RW * k / 2) * 2, H = Math.round(RH * k / 2) * 2
     setRec({ name: g.name, p: 0 }); toast(<>Recording <b>{g.name}</b> · {motion.dur}s loop</>)
     try {
-      const { blob, ext } = await gradientVideo(g.css, { W, H, blur, tune, motion, dither, ditherCell: exportCell(dither.size, W), onProgress: p => setRec({ name: g.name, p }) })
+      const { blob, ext } = await gradientVideo(g.css, { W, H, blur, tune, motion, dither, ditherCell: exportCell(dither.size, W), onProgress: p => setRec(r => r && Math.floor(r.p * 100) === Math.floor(p * 100) ? r : { name: g.name, p }) }) // re-render once per percent, not every frame
       save(blob, `${slug(g)}-${motion.kind.toLowerCase()}.${ext}`); pop(el, 26); toast(<>Downloaded <b>{g.name}</b> · {W}×{H} {ext.toUpperCase()}</>)
     } catch (e) { toast((e as Error).message) } finally { setRec(null) }
   }
@@ -79,8 +105,7 @@ export default function GradientsPage() {
   const delayOf = (k: number) => (k * 1.37) % motion.dur
   return (
     <div className="page grad-page">
-      {/* shared preview machinery: the dither filter + keyframes of the chosen motion */}
-      {dither.on && <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden dangerouslySetInnerHTML={{ __html: ditherFilterMarkup(dither) }} />}
+      {/* shared preview machinery: keyframes of the chosen motion (dithered swatches draw on canvas) */}
       {moving && <style>{keyframes(motion.kind, animName(motion.kind), fillFilter)}</style>}
       <PageHead chip="Gradients" count={GRADIENTS.length} title="Gradients" desc="Smooth mesh, linear, radial and conic gradients with harmonious palettes, optional fine grain or dither, and gentle motion."
         action={<RequestKey kind="gradient" legend="G" />} />
@@ -97,7 +122,7 @@ export default function GradientsPage() {
           {list.map((g, k) => (
             <article key={g.name} className="grad-card" style={{ ['--i' as string]: Math.min(k, 16) }} onClick={() => setSel(g)}>
               <div className="gc-preview" style={{ height: 'auto', aspectRatio: `${RW} / ${RH}` }}>
-                <GradSwatch g={g} grain={gr} blur={blur} tune={tune} dither={dither.on} motion={motion} delay={delayOf(k)} />
+                <GradSwatch g={g} grain={gr} blur={blur} tune={tune} dither={dither} motion={motion} delay={delayOf(k)} paused={!!sel} />
                 {g.new && <span className="new-pill">New</span>}
                 <div className="gc-actions" onClick={e => e.stopPropagation()}>
                   <Tooltip label="Open"><button className="gc-round" onClick={() => setSel(g)}><Icon name="expand" size={14} /></button></Tooltip>
@@ -119,7 +144,7 @@ export default function GradientsPage() {
           {list.map((g, k) => (
             <div key={g.name} className="il-row grad-row" style={{ ['--i' as string]: Math.min(k, 16) }} onClick={() => setSel(g)}>
               <span className="mono dim">{idx(g)}</span>
-              <span className="gl-thumb"><GradSwatch g={g} grain={gr} blur={0} tune={tune} dither={dither.on} motion={motion} delay={delayOf(k)} /></span>
+              <span className="gl-thumb"><GradSwatch g={g} grain={gr} blur={0} tune={tune} dither={dither} motion={motion} delay={delayOf(k)} paused={!!sel} /></span>
               <b>{g.name}</b><span className="dim">{g.kind} · {g.tone}</span>
               <span className="palette">{g.colors.map(c => <i key={c} style={{ background: c }} />)}</span>
               <span className="il-actions" onClick={e => e.stopPropagation()}><Key size="sm" onClick={e => copyCss(g, e.currentTarget)}><Icon name="copy" size={14} /> Copy</Key><Key size="sm" onClick={e => dlPng(g, e.currentTarget)}><Icon name="download" size={14} /> Download</Key></span>
@@ -134,7 +159,7 @@ export default function GradientsPage() {
         {sel && <div className="grad-modal">
           <div className="im-head"><b>{sel.name}</b><span className="badge-n">{sel.kind}</span><span className="badge-n">{sel.tone}</span>{moving && <span className="badge-n">{motion.kind} · {motion.dur}s</span>}{dither.on && <span className="badge-n">Dither {dither.style}×{dither.style}</span>}<CloseButton onClick={() => setSel(null)} /></div>
           <div style={{ position: 'relative' }}>
-            <GradSwatch g={sel} grain={gr} blur={blur} tune={tune} dither={dither.on} motion={motion} className="big" style={{ aspectRatio: `${RW} / ${RH}`, height: 'auto', maxHeight: 360 }} />
+            <GradSwatch g={sel} grain={gr} blur={blur} tune={tune} dither={dither} motion={motion} className="big" style={{ aspectRatio: `${RW} / ${RH}`, height: 'auto', maxHeight: 360 }} />
             {moving && <span className="motion-pill"><i />{motion.kind}</span>}
           </div>
           {rec && rec.name === sel.name && <div className="rec-bar" aria-label="Recording"><i style={{ width: `${Math.round(rec.p * 100)}%` }} /></div>}
