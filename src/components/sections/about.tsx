@@ -93,7 +93,7 @@ export function About() {
         </dl>
 
         <p className="text-[14px] leading-[1.4] tracking-[-0.18px] text-[#727272] [grid-area:statement] md:text-[18px]">
-          I&apos;m <span className="text-black">Farhan</span>, founder of <span className="text-black">Aerobox Design</span>
+          I&apos;m <span className="text-black">Farhan</span>, founder of <span className="text-black">Aerobox Design</span>{" "}
           and a UI/UX Designer with over 3 years of experience. I specialize in creating clean, responsive, and user-centric
           interfaces for websites, dashboards, and mobile apps. My expertise lies in SaaS platforms, Web3 projects, B2B,
           Marketplaces, and product based solutions, always with a strong attention to detail and a commitment to

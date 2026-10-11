@@ -158,9 +158,12 @@ export default function GradientsPage() {
       <Modal open={!!sel} onClose={() => setSel(null)} label="Gradient" width={640}>
         {sel && <div className="grad-modal">
           <div className="im-head"><b>{sel.name}</b><span className="badge-n">{sel.kind}</span><span className="badge-n">{sel.tone}</span>{moving && <span className="badge-n">{motion.kind} · {motion.dur}s</span>}{dither.on && <span className="badge-n">Dither {dither.style}×{dither.style}</span>}<CloseButton onClick={() => setSel(null)} /></div>
-          <div style={{ position: 'relative' }}>
-            <GradSwatch g={sel} grain={gr} blur={blur} tune={tune} dither={dither} motion={motion} className="big" style={{ aspectRatio: `${RW} / ${RH}`, height: 'auto', maxHeight: 360 }} />
-            {moving && <span className="motion-pill"><i />{motion.kind}</span>}
+          {/* preview keeps the export ratio and shrinks with the window, so the modal fits one screen */}
+          <div className="gm-stage" style={{ ['--ar' as string]: RW / RH }}>
+            <div className="gm-fit">
+              <GradSwatch g={sel} grain={gr} blur={blur} tune={tune} dither={dither} motion={motion} className="big" />
+              {moving && <span className="motion-pill"><i />{motion.kind}</span>}
+            </div>
           </div>
           {rec && rec.name === sel.name && <div className="rec-bar" aria-label="Recording"><i style={{ width: `${Math.round(rec.p * 100)}%` }} /></div>}
           <div className="palette lg">{sel.colors.map(c => <Tooltip key={c} label="Copy hex"><button style={{ background: c }} onClick={async e => { const el = e.currentTarget; await copyText(c); pop(el, 14); toast(<>Copied <b>{c}</b></>) }} /></Tooltip>)}</div>

@@ -1861,3 +1861,89 @@ body:has(.dock.on) .float-btn { bottom: 96px; }
 .iso-stage:not(.sh-soft) .shadow { display: none; }
 /* feature subtext: always two lines max */
 .sc-feat-txt > span { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; min-height: 36px; }
+/* gradient modal: one screen, no scroll. The preview takes the height that is left and keeps the export ratio */
+.grad-modal { gap: 14px; }
+.gm-stage { container-type: size; height: clamp(150px, calc(100dvh - 500px), 420px); display: grid; place-items: center; }
+.gm-fit { position: relative; width: min(100cqw, 100cqh * var(--ar)); height: min(100cqh, 100cqw / var(--ar)); }
+.gm-fit .grad.big { height: 100%; }
+.grad-modal .code pre { max-height: 128px; }
+.grad-modal .im-foot { flex-wrap: wrap; gap: 10px 12px; }
+.grad-modal .im-foot .mono { white-space: nowrap; }
+.grad-modal .im-foot .row { margin-left: auto; flex-wrap: wrap; justify-content: flex-end; }
+/* the floating dock steps aside while a modal is open */
+html.modal-open .dock { opacity: 0; pointer-events: none; }
+/* modals on phones: title + close on one line, badges below; footer keys in a two-column grid */
+@media (max-width: 760px) {
+  .im-head { flex-wrap: wrap; row-gap: 8px; }
+  .im-head b { flex: 1 1 0; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .im-head .close { order: 1; margin-left: 8px; }
+  .im-head .badge-n { order: 2; }
+  .im-head .badge-n:first-of-type { margin-left: 0; }
+  .im-head::after { content: ''; order: 1; flex-basis: 100%; height: 0; }
+  .im-foot { flex-direction: column; align-items: stretch; gap: 10px; }
+  .im-foot .row, .grad-modal .im-foot .row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-left: 0; }
+  .im-foot .row > .key { width: 100%; }
+  .im-foot .row > .key:last-child:nth-child(odd) { grid-column: 1 / -1; }
+  .im-foot .row > .key .key__cap { justify-content: center; padding: 0 10px; font-size: 13.5px; white-space: nowrap; }
+  .gm-stage { height: clamp(140px, calc(100dvh - 520px), 360px); }
+}
+/* category tabs stay on one line at every width; long lists scroll sideways with soft edges */
+.pt-list { flex-wrap: nowrap; overflow-x: auto; min-width: 0; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent); padding-right: 24px; }
+.pt-list::-webkit-scrollbar { display: none; }
+.pt { flex: none; }
+.pill-tabs .pt-right { flex: none; }
+/* gradient marks: the idea behind each mark sits under it; hover swaps it for the actions */
+.logo-grid.marks .logo-tile { height: 196px; }
+.logo-grid.marks .lt-lockup { margin-top: -30px; }
+.lt-idea { position: absolute; left: 18px; right: 18px; bottom: 16px; margin: 0; font-size: 12px; line-height: 16px; color: var(--muted); text-align: center; text-wrap: balance;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; transition: opacity .2s, transform .3s var(--spring); }
+.logo-tile:hover .lt-idea { opacity: 0; transform: translateY(6px); }
+.logo-grid.dark .lt-idea { color: rgba(255, 255, 255, .5); }
+.lm-idea { display: flex; flex-direction: column; gap: 4px; margin: 0; padding: 12px 14px; border-radius: 12px; background: var(--subtle); font-size: 14px; line-height: 21px; color: var(--ink-2); }
+.lm-idea .mono { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+@media (max-width: 760px) {
+  .logo-grid.marks .logo-tile { height: 168px; }
+  .logo-grid.marks .lt-lockup { margin-top: -34px; }
+  .lt-idea { left: 10px; right: 10px; bottom: 10px; font-size: 11px; line-height: 14px; }
+}
+
+/* ---------- phone pass: toolbars, captions and copy that read cleanly at 360-430px ---------- */
+@media (max-width: 760px) {
+  /* floating dock: one tidy row that scrolls sideways; its popovers open as sheets above it */
+  .dock, .dock.center, .dock.dock-icons { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; overscroll-behavior-x: contain;
+    backdrop-filter: none; -webkit-backdrop-filter: none; background: rgba(22, 23, 27, .97); padding: 6px; gap: 4px; border-radius: 16px; }
+  .dock::-webkit-scrollbar { display: none; }
+  .dock > * { flex: none; }
+  .dock .dock-style { height: 36px; padding: 0 10px; }
+  .dock .dock-step { padding: 0 4px; }
+  .popover.dock-pop, .dock .popover { bottom: 70px; max-height: calc(100dvh - 160px); overflow-y: auto; }
+  /* Icons search bar: one row, solid, so the grid never shows through it */
+  .icons-main .main-bar { flex-wrap: nowrap; gap: 8px; margin: 0 calc(var(--page-pad) * -1); padding: 10px var(--page-pad); background: var(--page, #fff); box-shadow: 0 1px 0 var(--line); }
+  .icons-main .main-bar .search { flex: 1 1 auto; min-width: 0; }
+  .icons-main .main-bar > .dd-wrap { flex: none; }
+  .icons-main .main-bar > .dd-wrap > .key { width: auto; }
+  .main-bar .key .dim, .main-bar .dl-all-t, .main-bar .search kbd { display: none; }
+  .icons-main .main-bar .dl-all-t { display: none; }
+  .icons-main .main-bar { top: 60px; }
+  .icons-main .main-bar .search { min-width: 150px; }
+  /* card captions: name on one line, category under it, number quietly top right */
+  .ic-title { align-items: flex-start; gap: 6px; }
+  .ic-title > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .ic-title b { margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 13.5px; }
+  .ic-title .dim { font-size: 11.5px; }
+  .ic-title > .mono { flex: none; font-size: 11px; padding-top: 2px; }
+  .grad-card .ic-meta, .iso-card .ic-meta { display: none; }
+  .fmt-row { flex-wrap: wrap; row-gap: 4px; }
+  /* logo tiles: lockups scaled to the narrow column, no per-tile credit */
+  .logo-grid.lockups .lt-lockup { zoom: calc(var(--ls, 1) * .7); }
+  .logo-tile .credit { display: none; }
+  /* hero: the news chip stays on one line, the search key shrinks to its arrow */
+  .hero-chip { max-width: 100%; }
+  .hero-chip .hc-t { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+}
+@media (max-width: 480px) {
+  .hero-search .hs-label { display: none; }
+  .hero-search .key__cap { padding: 0 14px; }
+}
+/* an open dock panel owns the bottom of the screen: the back-to-top key steps aside */
+body:has(.dock-pop.on) .float-top { opacity: 0; pointer-events: none; }

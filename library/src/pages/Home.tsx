@@ -27,12 +27,12 @@ function Hero() {
         <div className="hb-grid" />
       </div>
       <HeroLogo />
-      <a className="hero-chip" href="#/icons"><span className="dot" />New: 300 icons, 100 gradients and 82 isometric scenes<Icon name="arrow-right" size={14} /></a>
+      <a className="hero-chip" href="#/logos"><span className="dot" /><span className="hc-t">New: sportswear, car and football logos</span><Icon name="arrow-right" size={14} /></a>
       <h1>Beautiful assets for<br /><span>better interfaces.</span></h1>
       <p>Discover curated icons, gradients, logos and isometric templates, ready to copy, customize and ship.</p>
       <form className="hero-search" onSubmit={e => { e.preventDefault(); go('icons', q) }}>
         <Icon name="search" size={20} /><input value={q} onChange={e => setQ(e.target.value)} placeholder="Search icons, gradients, logos…" /><kbd>⌘K</kbd>
-        <Key variant="primary" type="submit">Browse library <Icon name="arrow-right" size={16} /></Key>
+        <Key variant="primary" type="submit"><span className="hs-label">Browse library</span> <Icon name="arrow-right" size={16} /></Key>
       </form>
     </section>
   )

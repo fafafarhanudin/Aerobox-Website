@@ -10,8 +10,10 @@ import { RequestKey } from '../request'
 import { TONES, TONE_SWATCH, fetchSvg, toneAccent, toneInk, toneSvg, type Tone } from '../lib/tone'
 
 const FONTS = ['Outfit', 'Space Grotesk', 'Manrope', 'Syne', 'Nunito', 'Poppins', 'Rubik', 'Fredoka']
-const WCATS = ['All', 'AI', 'Software', 'Dev', 'Data', 'Design', 'Social', 'Payments', 'Brands']
+const WCATS = ['All', 'AI', 'Software', 'Dev', 'Data', 'Design', 'Social', 'Payments', 'Sportswear', 'Automotive', 'Football', 'Brands']
 type M = typeof MARKS[number]
+/** marks keep one dark "ink" gradient; on dark tiles it turns light, the way a real logo ships a dark-mode version */
+const lightInk = (svg: string) => svg.replace(/#5B6382/g, '#EEF0F7').replace(/#141826/g, '#B4BCD2')
 type Mode = 'world' | 'templates'
 const PAGE = 50
 const SCALES = [.75, .875, 1, 1.125, 1.25, 1.5]
@@ -201,7 +203,8 @@ function Templates({ toggle }: { toggle: React.ReactNode }) {
   const toast = useToast(); const [q, setQ] = useState(''); const [sel, setSel] = useState<M | null>(null); const [lsel, setLsel] = useState<Lockup | null>(null)
   const [tab, setTab] = useState('All'); const [theme, setTheme] = useState<'Light' | 'Dark'>('Light'); const dark = theme === 'Dark'
   const [scale, setScale] = useState(1); const [tone, setTone] = useState<Tone>('Original'); const [boxed, setBoxed] = useState(false); const [font, setFont] = useState('Mixed')
-  const dk = dark || tone === 'White'; const tsv = (svg: string) => toneSvg(svg, tone)
+  const dk = dark || tone === 'White'
+  const tsv = (svg: string, onDark = dark) => toneSvg(onDark && tone === 'Original' ? lightInk(svg) : svg, tone)
   const lock = useMemo(() => LOCKUPS.filter(m => m.name.toLowerCase().includes(q.toLowerCase())), [q])
   const list = useMemo(() => MARKS.filter(m => m.name.toLowerCase().includes(q.toLowerCase())), [q])
   const copySvg = async (m: M, el: Element) => { await copyText(tsv(m.svg), m.name); pop(el, 20); toast(<>Copied <b>{m.name}</b> mark</>) }
@@ -234,10 +237,11 @@ function Templates({ toggle }: { toggle: React.ReactNode }) {
       </>}
       {tab !== 'Lockups' && <>
         {tab === 'All' && <h3 className="tpl-h">Gradient marks <span className="mono dim">{list.length}</span></h3>}
-        <div className={`logo-grid ${dk ? 'dark' : ''} ${boxed ? 'boxed' : ''}`} style={{ ['--ls' as string]: scale }}>
+        <div className={`logo-grid marks ${dk ? 'dark' : ''} ${boxed ? 'boxed' : ''}`} style={{ ['--ls' as string]: scale }}>
           {list.map((m, k) => (
             <div key={m.name} className="logo-tile" style={{ ['--i' as string]: Math.min(k, 20) }} onClick={() => setSel(m)}>
               <div className="lt-lockup"><Mark svg={tsv(m.svg)} size={34} /><span style={{ color: tone !== 'Original' ? toneInk(tone) : undefined, fontFamily: `'${font === 'Mixed' ? FONTS[k % FONTS.length] : font}', Geist, sans-serif` }}>{m.name}</span></div>
+              <p className="lt-idea">{m.idea}</p>
               {credit}
               <div className="lt-actions" onClick={e => e.stopPropagation()}>
                 <Tooltip label="Copy SVG"><button onClick={e => copySvg(m, e.currentTarget)}><Icon name="copy" size={15} /><span>Copy SVG</span></button></Tooltip>
@@ -278,7 +282,8 @@ function Templates({ toggle }: { toggle: React.ReactNode }) {
         {sel && <div className="logo-modal">
           <div className="im-head"><b>{sel.name}</b><span className="badge-n">Mark</span><span className="badge-n">SVG</span><CloseButton onClick={() => setSel(null)} /></div>
           <div className="lm-stage"><div className="lm-mark" key={sel.name}><Mark svg={tsv(sel.svg)} size={120} /></div></div>
-          <div className="lm-variants">{['#FFFFFF', '#16171B', '#EEF3FF'].map(bg => <div key={bg} style={{ background: bg }}><Mark svg={tsv(sel.svg)} size={40} /><span style={{ color: bg === '#16171B' ? '#fff' : '#16171B' }}>{sel.name}</span></div>)}</div>
+          <p className="lm-idea"><span className="mono">The idea</span>{sel.idea}</p>
+          <div className="lm-variants">{['#FFFFFF', '#16171B', '#EEF3FF'].map(bg => <div key={bg} style={{ background: bg }}><Mark svg={tsv(sel.svg, bg === '#16171B')} size={40} /><span style={{ color: bg === '#16171B' ? '#fff' : '#16171B' }}>{sel.name}</span></div>)}</div>
           <div className="im-foot"><a className="credit-lg" href={X_URL} target="_blank" rel="noreferrer"><XLogo size={12} /> Created by <b>@ui_farhan</b></a><div className="row">
             <Key onClick={e => copySvg(sel, e.currentTarget)}>Copy SVG</Key>
             <Key variant="primary" onClick={e => { download(`${sel.name.toLowerCase()}.svg`, tsv(sel.svg)); pop(e.currentTarget, 24); toast(<>Downloaded <b>{sel.name}</b></>) }}>Download</Key>

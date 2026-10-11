@@ -158,7 +158,7 @@ export default function IconsPage({ initialQuery = '' }: { initialQuery?: string
 
         <div className="icons-main">
           <div className="main-bar">
-            <label className="search"><Icon name="search" size={20} /><input ref={search} value={q} onChange={e => setQ(e.target.value)} placeholder={`Search ${ICONS.length} icons`} /><kbd>/</kbd></label>
+            <label className="search"><Icon name="search" size={20} /><input ref={search} value={q} onChange={e => setQ(e.target.value)} placeholder="Search icons" /><kbd>/</kbd></label>
             <div className="dd-wrap" onClick={e => e.stopPropagation()}>
               <Key onClick={() => setMenu(m => m === 'sort' ? '' : 'sort')}><span className="dim">Sort</span> {sort} <Icon name="arrow-down" size={14} /></Key>
               <div className={`popover right ${menu === 'sort' ? 'on' : ''}`}>{(['Popular', 'A–Z'] as const).map(s => <button key={s} className={`pop-item ${sort === s ? 'on' : ''}`} onClick={() => { setSort(s); setMenu('') }}>{s}</button>)}</div>
