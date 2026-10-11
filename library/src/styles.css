@@ -755,8 +755,8 @@ kbd { font: 500 11px/1 'Geist Mono', monospace; padding: 4px 6px; border-radius:
 .load-more { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 28px; font-size: 12px; }
 .wl-preview { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .wl-preview > div { position: relative; display: grid; place-items: center; height: 200px; border-radius: 14px; }
-.wl-preview .light { background: var(--page); }
-.wl-preview .dark { background: #16171B; }
+.wl-preview > .light { background: var(--page); }
+.wl-preview > .dark { background: #16171B; }
 .wl-preview img { max-height: 72px; max-width: 70%; animation: popIn .5s var(--spring); }
 .wl-preview .mono { position: absolute; left: 12px; bottom: 10px; font-size: 11px; color: var(--muted); }
 .wl-thumb { display: grid; place-items: center; width: 64px; height: 48px; border-radius: 10px; background: var(--page); }
@@ -1947,3 +1947,54 @@ html.modal-open .dock { opacity: 0; pointer-events: none; }
 }
 /* an open dock panel owns the bottom of the screen: the back-to-top key steps aside */
 body:has(.dock-pop.on) .float-top { opacity: 0; pointer-events: none; }
+
+/* ---------- phone pass 2: every details preview fits one screen ---------- */
+@media (max-width: 760px) {
+  .icon-modal, .grad-modal, .logo-modal, .iso-modal { padding: 18px; gap: 12px; }
+  /* icon / avatar / flag */
+  .icon-modal .im-preview { padding: 18px 0 14px; gap: 12px; }
+  .icon-modal .im-controls ~ .im-paint, .icon-modal .im-controls { width: 100%; }
+  .icon-modal:has(.im-controls) .im-sizes { display: none; }
+  .icon-modal .im-controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  .icon-modal .im-controls > * { width: 100%; min-width: 0; justify-content: space-between; }
+  .icon-modal .im-paint { flex-wrap: nowrap; flex-direction: column; align-items: stretch; gap: 2px; }
+  .icon-modal .im-paint .swatches { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; gap: 10px; padding: 4px 2px; }
+  .icon-modal .im-paint .swatches::-webkit-scrollbar { display: none; }
+  .icon-modal .im-paint .swatches > * { flex: none; }
+  .icon-modal .code pre { max-height: 92px; }
+  /* logo, lockup */
+  .wl-preview > div { height: 132px; }
+  .wl-preview .lt-lockup { zoom: .56; }
+  .wl-preview img { max-height: 56px; }
+  /* gradient mark */
+  .lm-stage { height: 168px; }
+  .lm-stage .mark { zoom: .8; }
+  .lm-variants { gap: 6px; }
+  .lm-variants div { height: 56px; gap: 6px; padding: 0 6px; font-size: 12.5px; min-width: 0; }
+  .lm-variants div .mark { zoom: .7; flex: none; }
+  .lm-variants div span:last-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .lm-idea { padding: 10px 12px; font-size: 13px; line-height: 19px; }
+  /* isometric */
+  .iso-big { padding: 8px; }
+  .iso-big svg { width: 100%; height: auto; max-height: 34dvh; }
+  .pal-switch { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .pal-switch::-webkit-scrollbar { display: none; }
+  .pal-switch button { flex: none; }
+  /* collection feature cards stack in one column here: each one hugs its text */
+  .sc-feat-txt > span { min-height: 0; }
+}
+@media (max-width: 760px) {
+  .esc-hint { display: none; }
+  .icon-modal .im-controls > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
+@media (max-width: 760px) { .icon-modal .im-controls .dd-wrap > .select { width: 100%; justify-content: space-between; } }
+@media (max-width: 760px) {
+  .logo-grid.lockups .logo-tile { height: 124px; }
+}
+@media (max-width: 380px) {
+  .icons-main .main-bar .sort-v { display: none; }
+  .icons-main .main-bar .search { min-width: 0; }
+}
+.sort-ic, .sort-ic2 { display: inline-flex; }
+.sort-ic2 { display: none; }
+@media (max-width: 380px) { .icons-main .main-bar .sort-ic { display: none; } .icons-main .main-bar .sort-ic2 { display: inline-flex; } }

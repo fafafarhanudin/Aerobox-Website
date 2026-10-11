@@ -1282,3 +1282,5 @@ body {
 }
 /* feature subtext: always two lines max */
 .sc-feat__txt > span { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; min-height: 36px; }
+/* one-column feature list on phones: each card hugs its text */
+@media (max-width: 559px) { .sc-feat__txt > span { min-height: 0; } }

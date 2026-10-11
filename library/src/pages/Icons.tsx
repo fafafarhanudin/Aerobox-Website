@@ -160,7 +160,7 @@ export default function IconsPage({ initialQuery = '' }: { initialQuery?: string
           <div className="main-bar">
             <label className="search"><Icon name="search" size={20} /><input ref={search} value={q} onChange={e => setQ(e.target.value)} placeholder="Search icons" /><kbd>/</kbd></label>
             <div className="dd-wrap" onClick={e => e.stopPropagation()}>
-              <Key onClick={() => setMenu(m => m === 'sort' ? '' : 'sort')}><span className="dim">Sort</span> {sort} <Icon name="arrow-down" size={14} /></Key>
+              <Key onClick={() => setMenu(m => m === 'sort' ? '' : 'sort')} aria-label={`Sort: ${sort}`}><span className="dim">Sort</span> <span className="sort-v">{sort}</span> <span className="sort-ic"><Icon name="arrow-down" size={14} /></span><span className="sort-ic2"><Icon name="sort" size={18} /></span></Key>
               <div className={`popover right ${menu === 'sort' ? 'on' : ''}`}>{(['Popular', 'A–Z'] as const).map(s => <button key={s} className={`pop-item ${sort === s ? 'on' : ''}`} onClick={() => { setSort(s); setMenu('') }}>{s}</button>)}</div>
             </div>
             {/* Download all: pick the style to export — visible, but locked until the full pack ships */}
@@ -376,7 +376,7 @@ function IconModal({ icon, onClose, stroke: s0, color: c0, color2: f0, grad: g0,
           <pre>{code}</pre>
         </div>
         <div className="im-foot">
-          <span className="mono dim"><kbd>esc</kbd> to close</span>
+          <span className="mono dim esc-hint"><kbd>esc</kbd> to close</span>
           <div className="row">
             <Key onClick={async () => { download(`${i.name}.svg`, await svg(size)); toast(<>Downloaded <b>{i.name}.svg</b>{mv ? ' · animated' : ''}</>) }}>Download</Key>
             <Key onClick={e => copy('JSX', `<${comp} size={${size}} strokeWidth={${stroke}} ${paintProp(false)} />`, e.currentTarget)}>Copy JSX</Key>
