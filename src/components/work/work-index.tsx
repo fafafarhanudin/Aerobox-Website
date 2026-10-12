@@ -69,7 +69,7 @@ export function WorkIndex() {
         <div className="flex flex-col items-start gap-4">
           <Eyebrow index="01" label="All work" count={projects.length} />
           <h1 className="font-heading text-[44px] leading-[48px] tracking-[-0.88px] text-ink md:text-[56px] md:leading-[60px] md:tracking-[-1.12px] lg:text-[72px] lg:leading-[72px] lg:tracking-[-1.44px]">
-            All work <span className="text-ink-3">all on one page.</span>
+            All work <span className="text-ink-soft">all on one page.</span>
           </h1>
           <p className="max-w-[640px] text-[18px] leading-[26px] tracking-[-0.18px] text-ink-2">
             Everything from my portfolio: dashboards, web apps, mobile apps and landing pages for SaaS, AI, B2B and Web3

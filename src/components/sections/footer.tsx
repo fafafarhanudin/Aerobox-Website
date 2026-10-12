@@ -16,6 +16,7 @@ const sitemap = [
   { label: "Process", href: "/#process" },
   { label: "About", href: "/#about" },
   { label: "FAQ", href: "/#faq" },
+  { label: "Privacy", href: "/privacy" },
 ];
 
 const connect: SocialKey[] = ["x", "linkedin", "dribbble", "behance", "contra", "ondesign", "upwork"];

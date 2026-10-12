@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/meta";
 import { Eyebrow } from "@/components/ui";
 import { SupportForm } from "@/components/support/support-form";
 import { SupportWall } from "@/components/support/support-wall";
@@ -7,10 +8,11 @@ import { availability } from "@/lib/support/providers";
 
 export const revalidate = 60;
 
-export const metadata: Metadata = {
-  title: "Support Aerobox",
-  description: "Every contribution helps us create more high-quality design resources for the creative community.",
-};
+export const metadata: Metadata = pageMeta(
+  "Support Aerobox",
+  "Every contribution helps us create more high-quality design resources for the creative community.",
+  "/support",
+);
 
 async function loadWall() {
   try {

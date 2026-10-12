@@ -14,7 +14,7 @@ export function Contact() {
         <h2 className="font-heading text-center text-[30px] leading-[36px] tracking-[-0.3px] text-ink md:text-[48px] md:leading-[56px] lg:text-[64px] lg:leading-[68px]">
           Got something to ship?
           <br />
-          <span className="text-ink-3">Let&apos;s make it precise.</span>
+          <span className="text-ink-soft">Let&apos;s make it precise.</span>
         </h2>
       </div>
       <p className="max-w-[480px] text-center text-[16px] leading-[26px] tracking-[-0.16px] text-ink-2">{site.bookingNote}</p>

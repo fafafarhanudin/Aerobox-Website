@@ -136,7 +136,7 @@ export function SupportForm({ available }: { available: Record<Region, boolean> 
               }`}
             >
               {regions[k].label}
-              <span className="font-mono text-[11px] text-ink-3">— {regions[k].currency}</span>
+              <span className="font-mono text-[11px] text-ink-2">— {regions[k].currency}</span>
             </button>
           ))}
         </div>
@@ -199,7 +199,7 @@ export function SupportForm({ available }: { available: Record<Region, boolean> 
             <p className="text-[12px] leading-[18px] text-ink-2">
               <span className="block text-[13px] font-medium text-ink">Pay now with QRIS</span>
               Scan with any e-wallet or bank app and enter {shown === "—" ? "your amount" : shown}. Direct transfers aren&apos;t listed on the wall.{" "}
-              <a href="/library/qris-code.png" download="aerobox-qris.png" className="font-medium text-accent hover:underline">
+              <a href="/library/qris-code.png" download="aerobox-qris.png" className="font-medium text-accent-ink hover:underline">
                 Save QR
               </a>
             </p>

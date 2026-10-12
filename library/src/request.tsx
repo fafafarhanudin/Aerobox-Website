@@ -40,11 +40,12 @@ function RequestModal({ kind: k0, onClose }: { kind: Kind | null; onClose: () =>
   const set = (key: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setF(s => ({ ...s, [key]: e.target.value }))
   const emailOk = /^\S+@\S+\.\S+$/.test(f.email)
   const valid = f.name.trim() && emailOk && f.request.trim().length >= 4
+  const [hp, setHp] = useState('')
   const submit = async (e: React.FormEvent) => {
     e.preventDefault(); setTouched(true)
     if (!valid) { toast('Please add your name, a valid email and what you need'); return }
     setState('sending')
-    const payload = { form: 'request', kind: KINDS.find(x => x[0] === kind)![1], ...f, page: location.hash || '#/' }
+    const payload = { form: 'request', kind: KINDS.find(x => x[0] === kind)![1], ...f, page: location.hash || '#/', website: hp }
     let ok = false
     try { const r = await fetch('/api/request', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); ok = r.ok } catch { /* static hosting */ }
     if (!ok && WEBHOOK) { try { await fetch(WEBHOOK, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) }); ok = true } catch { /* ignore */ } }
@@ -57,6 +58,8 @@ function RequestModal({ kind: k0, onClose }: { kind: Kind | null; onClose: () =>
       <div className="share-step req" key={state === 'done' ? 'done' : 'form'}>
         {state !== 'done' ? (
           <form onSubmit={submit} noValidate>
+            {/* honeypot: hidden from people, filled by bots; the server drops any post that has it */}
+            <input className="hp" name="website" tabIndex={-1} autoComplete="off" aria-hidden value={hp} onChange={e => setHp(e.target.value)} />
             <div className="m-head">
               <span className="x-badge req-badge"><Icon name={label[3]} size={17} color="#fff" /></span>
               <div className="m-title"><b>{label[2]}</b><span>Tell us what you need. Popular requests ship first.</span></div>

@@ -8,7 +8,7 @@ import { Brand, Key, SocialLogo } from "@/components/ui";
 import { EmailKey } from "@/components/email-key";
 import { LocalClock } from "@/components/local-time";
 import { projects } from "@/data/projects";
-import { socials, type SocialKey } from "@/lib/site";
+import { site, socials, type SocialKey } from "@/lib/site";
 
 const navSocials: SocialKey[] = ["x", "linkedin", "contra", "dribbble", "ondesign"];
 
@@ -69,7 +69,7 @@ export function Nav() {
             className="-mx-2 flex items-center gap-1.5 rounded-lg px-2 py-1 text-[14px] font-medium leading-5 tracking-[-0.14px] text-ink transition-colors duration-150 hover:bg-subtle"
           >
             Portfolio
-            <span className="rounded-full bg-accent-soft px-1.5 py-0.5 text-[12px] leading-4 tracking-[-0.12px] text-accent">
+            <span className="rounded-full bg-accent-soft px-1.5 py-0.5 text-[12px] leading-4 tracking-[-0.12px] text-accent-ink">
               {projects.length}
             </span>
           </Link>
@@ -86,7 +86,7 @@ export function Nav() {
       </div>
 
       {!assets && (
-        <div className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border border-line bg-white py-1.5 pl-2.5 pr-3.5 text-[12px] font-medium leading-4 tracking-[-0.12px] text-ink-2">
+        <div className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border border-line bg-white py-1.5 max-[480px]:hidden pl-2.5 pr-3.5 text-[12px] font-medium leading-4 tracking-[-0.12px] text-ink-2">
           <Clock width={14} height={14} strokeWidth={1.8} className="text-ink-2" aria-hidden="true" />
           <LocalClock />
         </div>
@@ -113,6 +113,17 @@ export function Nav() {
         />
       </div>
 
+      <div className="flex items-center gap-2 lg:hidden">
+      {/* below md the nav has no room for the email key, so the sticky bar keeps one short CTA beside the menu */}
+      <Key
+        href={site.telegram}
+        variant="primary"
+        size="sm"
+        className="md:hidden"
+        capClassName="h-10 px-3.5 text-[14px] font-medium leading-5 tracking-[-0.14px]"
+      >
+        Message
+      </Key>
       <button
         type="button"
         aria-label={open ? "Close menu" : "Open menu"}
@@ -124,6 +135,7 @@ export function Nav() {
         {open ? <XClose width={20} height={20} strokeWidth={1.8} /> : <Menu02 width={20} height={20} strokeWidth={1.8} />}
       </button>
       </div>
+      </div>
 
       {open && (
         <div
@@ -133,7 +145,7 @@ export function Nav() {
           <nav aria-label="Mobile" className="flex flex-col">
             <Link href="/work" className={menuLinkCls} aria-current={onWork ? "page" : undefined}>
               Portfolio
-              <span className="rounded-full bg-accent-soft px-2 py-0.5 text-[12px] leading-4 tracking-[-0.12px] text-accent">
+              <span className="rounded-full bg-accent-soft px-2 py-0.5 text-[12px] leading-4 tracking-[-0.12px] text-accent-ink">
                 {projects.length}
               </span>
             </Link>

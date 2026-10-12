@@ -125,7 +125,7 @@ export function Hero() {
 
       <h1 className="font-heading max-w-[350px] text-balance text-center text-[34px] leading-[40px] tracking-[-0.68px] text-ink md:max-w-[740px] md:text-[48px] md:leading-[54px] md:tracking-[-0.96px] lg:max-w-none lg:text-[60px] lg:leading-[66px] lg:tracking-[-1.2px]">
         Helping companies create better <br className="hidden lg:block" />
-        <span className="text-ink-3">digital experiences for their customers.</span>
+        <span className="text-ink-soft">digital experiences for their customers.</span>
       </h1>
 
       <p className="max-w-[720px] text-balance text-center text-[16px] leading-[26px] tracking-[-0.16px] text-ink-2 md:text-[18px] md:leading-7 md:tracking-[-0.18px] lg:max-w-[900px]">

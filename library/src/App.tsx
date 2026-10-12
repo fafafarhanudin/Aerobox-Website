@@ -173,7 +173,7 @@ function Footer({ modals, route }: { modals: Modals; route: Route }) {
         </div>
         <div className="footer-cols">
           <nav aria-label="Library"><b>Library</b><a href="#/icons">Icons</a><a href="#/gradients">Gradients</a><a href="#/logos">Logos</a><a href="#/isometric">Isometric</a><a href="#/#faq" onClick={e => { e.preventDefault(); go('home'); setTimeout(() => document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' }), 80) }}>FAQ</a></nav>
-          <div><b>Resources</b><button onClick={modals.share}>Share on X</button><button onClick={modals.support}>Support Aerobox Assets</button><a href="#/sponsor">Become a sponsor</a></div>
+          <div><b>Resources</b><button onClick={modals.share}>Share on X</button><button onClick={modals.support}>Support Aerobox Assets</button><a href="#/sponsor">Become a sponsor</a><a href="/privacy">Privacy policy</a></div>
           <div><b>Connect</b>{SOCIALS.map(([k, label, href]) => <a key={k} href={href} target="_blank" rel="noreferrer" className="ft-social">{k === 'x' ? <XLogo size={13} /> : <Icon name="arrow-up-right" size={14} />}{label}</a>)}</div>
           <div className="ft-contact"><b>Contact</b>
             <a href="https://t.me/hanwork12345" target="_blank" rel="noreferrer"><span>Telegram</span><small>@hanwork12345</small></a>

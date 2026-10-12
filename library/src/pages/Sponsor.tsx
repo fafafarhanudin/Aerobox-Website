@@ -20,11 +20,12 @@ export default function SponsorPage() {
   const set = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setF(s => ({ ...s, [k]: e.target.value }))
   const emailOk = /^\S+@\S+\.\S+$/.test(f.email)
   const valid = f.name.trim() && emailOk && f.message.trim().length >= 10
+  const [hp, setHp] = useState('')
   const submit = async (e: React.FormEvent) => {
     e.preventDefault(); setTouched(true)
     if (!valid) { toast('Please fill in name, a valid email and a short message'); return }
     setState('sending')
-    const payload = { form: 'sponsor', ...f, placement: placement.map(p => PLACEMENTS.find(x => x[0] === p)![1]) }
+    const payload = { form: 'sponsor', ...f, placement: placement.map(p => PLACEMENTS.find(x => x[0] === p)![1]), website: hp }
     let ok = false
     try { const r = await fetch('/api/sponsor', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); ok = r.ok } catch { /* static hosting */ }
     if (!ok && WEBHOOK) { try { await fetch(WEBHOOK, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) }); ok = true } catch { /* ignore */ } }
@@ -58,6 +59,8 @@ export default function SponsorPage() {
         <div className="sp-card">
           {state !== 'done' ? (
             <form onSubmit={submit} noValidate>
+            {/* honeypot: hidden from people, filled by bots; the server drops any post that has it */}
+            <input className="hp" name="website" tabIndex={-1} autoComplete="off" aria-hidden value={hp} onChange={e => setHp(e.target.value)} />
               <div className="sp-row">
                 <label className={`field ${touched && !f.name.trim() ? 'err' : ''}`}><span>Name</span><input value={f.name} onChange={set('name')} placeholder="Your name" autoComplete="name" /></label>
                 <label className="field"><span>Company <i>optional</i></span><input value={f.company} onChange={set('company')} placeholder="Company or product" autoComplete="organization" /></label>

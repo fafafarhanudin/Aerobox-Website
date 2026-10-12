@@ -83,7 +83,7 @@ export function WorkCard({ project, priority }: { project: Project; priority?: b
       Live
     </span>
   ) : project.isNew ? (
-    <span className="shrink-0 rounded-full bg-accent-soft px-1.5 py-0.5 text-[10px] font-medium leading-3 tracking-[-0.1px] text-accent">
+    <span className="shrink-0 rounded-full bg-accent-soft px-1.5 py-0.5 text-[10px] font-medium leading-3 tracking-[-0.1px] text-accent-ink">
       New
     </span>
   ) : null;
