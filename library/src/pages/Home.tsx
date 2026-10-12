@@ -1,27 +1,22 @@
 import { useEffect, useRef, useState } from 'react'
 import type React from 'react'
 import { BrandMark, Icon, Mark, Tooltip, XLogo, copyText, useReveal, useToast, Key, Legend, type IconStyle } from '../ui'
-import { GRADIENTS } from '../data/gradients'
-import { AVATARS, FLAGS, PHOTOS } from '../data/collections'
+import { COUNTS, MARQUEE, WORLD_LITE, ISO_LITE } from '../data/lite'
 import { OGCard, SITE, intentUrl, SHARE_LINES } from '../share'
-import { MARKS } from '../data/logos'
-import { ICONS } from '../data/icons'
-import { LOCKUPS } from '../data/lockups'
-import { WORLD } from '../data/world'
-import { ISO } from '../data/iso'
 import { go, type Modals } from '../App'
 import { pop } from '../lib/confetti'
 import { HeroLogo } from '../logo'
+import { isPrerendered } from '../boot'
 
 export default function Home({ modals }: { modals: Modals }) {
   return (<><Hero /><Marquee /><Showcase /><Support modals={modals} /><Faq modals={modals} /></>)
 }
 
-function Hero() {
-  const [q, setQ] = useState('')
+export function Hero() {
+  const [q, setQ] = useState(''); const [still] = useState(isPrerendered)
   const ref = useRef<HTMLElement>(null)
   return (
-    <section className="hero" ref={ref}>
+    <section className={`hero ${still ? 'is-still' : ''}`} ref={ref}>
       <div className="hero-bg" aria-hidden>
         <i className="hb-blob a" /><i className="hb-blob b" /><i className="hb-blob c" />
         <div className="hb-grid" />
@@ -40,8 +35,8 @@ function Hero() {
 
 function Marquee() {
   const toast = useToast()
-  const rowA = MARKS.slice(0, 22), rowB = MARKS.slice(22, 44)
-  const Row = ({ items, rev }: { items: typeof MARKS; rev?: boolean }) => (
+  const rowA = MARQUEE.slice(0, 22), rowB = MARQUEE.slice(22, 44)
+  const Row = ({ items, rev }: { items: typeof MARQUEE; rev?: boolean }) => (
     <div className={`mq-row ${rev ? 'rev' : ''}`}><div className="mq-track">{[...items, ...items].map((m, k) => <div key={k} className="mq-item"><a href="#/logos"><Mark svg={m.svg} size={24} /><span>{m.name}</span></a><Tooltip label="Copy SVG"><button className="mq-copy" aria-label={`Copy ${m.name}`} onClick={async e => { const el = e.currentTarget; await copyText(m.svg); pop(el, 16); toast(<>Copied <b>{m.name}</b> mark</>) }}><Icon name="copy" size={14} /></button></Tooltip></div>)}</div></div>)
   return (
     <section className="marquee">
@@ -54,38 +49,38 @@ function Marquee() {
 const n0 = (v: number) => v.toLocaleString('en-US')
 type Feat = [icon: string, label: string, text: string]
 const CARDS: { no: string; name: string; lede: string; feats: Feat[]; count: string; fmt: string; route: 'icons' | 'gradients' | 'isometric' | 'logos' }[] = [
-  { no: '01', name: 'Aero Icons', route: 'icons', fmt: 'SVG · JSX · FIG', count: `${n0(ICONS.length)} icons · ${AVATARS.length + PHOTOS.length} avatars · ${FLAGS.length} flags`,
-    lede: `${n0(ICONS.length)} icons that change style, colour and motion right on the page, then paste into Figma as one clean vector.`,
+  { no: '01', name: 'Aero Icons', route: 'icons', fmt: 'SVG · JSX · FIG', count: `${n0(COUNTS.icons)} icons · ${COUNTS.avatars} avatars · ${COUNTS.flags} flags`,
+    lede: `${n0(COUNTS.icons)} icons that change style, colour and motion right on the page, then paste into Figma as one clean vector.`,
     feats: [['layers-three-01', 'Five styles', 'Aero, Duotone, Two-tone, Filled and Sharp.'],
       ['palette', 'Two colours, your pick', 'Line and fill, or two line colours.'],
       ['play-circle', 'Motion inside the file', 'Six motions that stay in the copied SVG.'],
       ['figma', 'Clean paste', 'One named vector per icon, no masks.']] },
-  { no: '02', name: 'Grain Gradients', route: 'gradients', fmt: 'CSS · Tailwind · PNG · Video', count: `${GRADIENTS.length} gradients`,
-    lede: `${GRADIENTS.length} mesh, linear, radial and conic gradients you can texture, tune and set in motion before you export.`,
+  { no: '02', name: 'Grain Gradients', route: 'gradients', fmt: 'CSS · Tailwind · PNG · Video', count: `${COUNTS.gradients} gradients`,
+    lede: `${COUNTS.gradients} mesh, linear, radial and conic gradients you can texture, tune and set in motion before you export.`,
     feats: [['grid-03', 'Grain or dither', 'Film grain or Bayer dither, up to 16×16.'],
       ['wind-01', 'Gradients that move', 'Five motions, as CSS or a looping video.'],
       ['sliders-02', 'Tune the palette', 'Hue, saturation, brightness and blur.'],
       ['crop-01', 'Any frame', 'Five ratios, PNG up to 1920 px.']] },
-  { no: '03', name: 'Isometric', route: 'isometric', fmt: 'SVG · FIG · PNG', count: `${ISO.length} scenes`,
-    lede: `${ISO.length} scenes for SaaS, fintech, Web3, tech and marketing pages, all on one 30° grid so they sit together.`,
+  { no: '03', name: 'Isometric', route: 'isometric', fmt: 'SVG · FIG · PNG', count: `${COUNTS.iso} scenes`,
+    lede: `${COUNTS.iso} scenes for SaaS, fintech, Web3, tech and marketing pages, all on one 30° grid so they sit together.`,
     feats: [['palette', 'Four palettes or your own', 'Four palettes, or a ramp from any colour.'],
       ['sunrise', 'Shadows you steer', 'Soft or long, with angle, blur and opacity.'],
       ['grid-01', 'Scene backgrounds', 'Plain, grid or glow behind every scene.'],
       ['brush-01', 'Line weight', '1, 1.5 or 2 px outlines to match your icons.']] },
-  { no: '04', name: 'Logos', route: 'logos', fmt: 'SVG · PNG', count: `${n0(WORLD.length)} brands · ${MARKS.length + LOCKUPS.length} templates`,
-    lede: `${n0(WORLD.length)} real brand logos and ${MARKS.length + LOCKUPS.length} placeholder templates for mockups, docs and decks.`,
+  { no: '04', name: 'Logos', route: 'logos', fmt: 'SVG · PNG', count: `${n0(COUNTS.world)} brands · ${COUNTS.marks + COUNTS.lockups} templates`,
+    lede: `${n0(COUNTS.world)} real brand logos and ${COUNTS.marks + COUNTS.lockups} placeholder templates for mockups, docs and decks.`,
     feats: [['tag-01', 'Sorted by field', 'AI, software, dev, design, payments and more.'],
       ['contrast-01', 'Five colour modes', 'Original, grey, black, white or duotone.'],
       ['moon-01', 'Icon or wordmark', 'The mark or full wordmark, light or dark.'],
-      ['type-01', 'Placeholder templates', `${MARKS.length} marks and ${LOCKUPS.length} lockups for early layouts.`]] },
+      ['type-01', 'Placeholder templates', `${COUNTS.marks} marks and ${COUNTS.lockups} lockups for early layouts.`]] },
 ]
 const WALL = ['home-02', 'search-md', 'layers-three-01', 'heart', 'folder', 'message-circle-01', 'calendar', 'image-01', 'bell-01', 'code-01', 'cloud-01', 'shield-01', 'marker-pin-01', 'star-01', 'compass', 'user-01', 'music-note-01', 'camera-01', 'gift-01', 'rocket-01', 'zap', 'feather', 'send-01', 'link-01', 'palette', 'globe-01', 'tag-01', 'coins-01', 'mail-01', 'lock-01', 'brush-01', 'moon-01', 'sun', 'flag-01', 'crop-01', 'truck-01']
 // real brands on the Logos card (files from the real-world set, shown as app-style tiles)
-const BRANDS = ['Figma', 'Spotify', 'Stripe', 'Slack', 'Airbnb', 'Claude', 'Discord', 'Netflix', 'Google', 'Supabase'].map(n => WORLD.find(w => w.name === n)).filter(Boolean) as typeof WORLD
+const BRANDS = ['Figma', 'Spotify', 'Stripe', 'Slack', 'Airbnb', 'Claude', 'Discord', 'Netflix', 'Google', 'Supabase'].map(n => WORLD_LITE.find(w => w.name === n)).filter(Boolean) as typeof WORLD_LITE
 const WALL60 = [...WALL, ...WALL.slice(0, 24)] // 60 = 6 or 10 full rows
 const REEL = [...BRANDS.slice(-1), ...BRANDS, ...BRANDS.slice(0, 1)]
 // the isometric bento card cycles through a hand-picked reel
-const ISO_REEL = ['team-workspace', 'gold-bars', 'robot', 'house', 'data-center', 'lighthouse2', 'shopping-cart', 'mining-rig', 'award-podium', 'bank2', 'forest2', 'help-desk'].map(k => ISO.find(t => t.key === k)).filter(Boolean) as typeof ISO
+const ISO_REEL = ['team-workspace', 'gold-bars', 'robot', 'house', 'data-center', 'lighthouse2', 'shopping-cart', 'mining-rig', 'award-podium', 'bank2', 'forest2', 'help-desk'].map(k => ISO_LITE.find(t => t.key === k)).filter(Boolean) as typeof ISO_LITE
 
 /* Each card plays its four features in turn; the stage acts out whichever feature is lit. */
 const FEAT_MS = 2600, STEP_MS = 1300
@@ -127,7 +122,7 @@ function Showcase() {
           const chip = k === 0 ? (f === 0 ? style : f === 1 ? (style === 'Two-tone' ? 'Two-tone · two line colours' : 'Duotone · line + fill') : f === 2 ? `Motion · ${motionKind}` : f === 3 ? `${WALL[15]}.svg · 1 vector` : 'Aero')
             : k === 1 ? (f === 0 ? (st % 2 ? `Dither · Bayer ${bayer}×${bayer}` : 'Grain · 32%') : f === 1 ? `${['Drift', 'Orbit', 'Breathe'][st % 3]} · loop` : f === 2 ? `Hue ${hue > 0 ? '+' : ''}${hue}°` : f === 3 ? `${ratio[0]} · ${ratio[1]}` : 'Aurora · Mesh · Grain')
               : k === 2 ? (f === 0 ? `Palette · ${pal[0]}` : f === 1 ? (st % 2 ? 'Long shadow' : 'Soft shadow') : f === 2 ? `Background · ${bg}` : f === 3 ? `${['1', '1.5', '2'][st % 3]} px outline` : ISO_REEL[isoI].name)
-                : (f === 0 ? `Field · ${FIELDS[st % FIELDS.length]}` : f === 1 ? `Colour · ${mode}` : f === 2 ? (st % 2 ? 'Dark tiles' : 'Light tiles') : f === 3 ? `${MARKS.length} marks · ${LOCKUPS.length} lockups` : REEL[reel].name)
+                : (f === 0 ? `Field · ${FIELDS[st % FIELDS.length]}` : f === 1 ? `Colour · ${mode}` : f === 2 ? (st % 2 ? 'Dark tiles' : 'Light tiles') : f === 3 ? `${COUNTS.marks} marks · ${COUNTS.lockups} lockups` : REEL[reel].name)
           return (
             <article key={c.no} className={`sc-card c${k} ${on ? 'on' : ''}`} onMouseEnter={() => { hover.current = true; if (!on) setPos({ a: k, f: 0 }) }} onMouseLeave={() => { hover.current = false }} onClick={() => go(c.route)}>
               <div className="sc-stage">

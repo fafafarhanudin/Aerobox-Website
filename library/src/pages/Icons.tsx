@@ -1,6 +1,6 @@
 import type React from 'react'
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { CloseButton, Icon, Modal, Tooltip, copyText, download, iconSvg, useToast, Key, Legend, ICON_STYLES, ICON_MOTIONS, TWO_TONE_DEFAULT, gradCss, type Grad, type IconStyle, type IconMotion } from '../ui'
+import { addIcons, CloseButton, Icon, Modal, Tooltip, copyText, download, iconSvg, useToast, Key, Legend, ICON_STYLES, ICON_MOTIONS, TWO_TONE_DEFAULT, gradCss, type Grad, type IconStyle, type IconMotion } from '../ui'
 import { ICONS, ICON_CATS, type Icon as IconT } from '../data/icons'
 import { pop } from '../lib/confetti'
 import { cleanIconSvg } from '../lib/iconexport'
@@ -10,6 +10,9 @@ import { ColorPicker, PageHead, Select } from '../pagekit'
 /** The Stroke control counts from 1 at the default weight: label 1 = a 1.5 px line, so "1" never looks hairline-thin. */
 const weightLabel = (stroke: number) => +(stroke - 0.5).toFixed(2)
 import { AVATARS, FLAGS, PHOTOS, type FlagT } from '../data/collections'
+
+// this page draws, exports and copies every library icon, so the full set is registered up front
+addIcons(ICONS, 'u:')
 
 const SWATCHES = ['#16171B', '#6B6E78', '#2F6BFF', '#7C3AED', '#15803D', '#F59E0B', '#E5484D']
 const SHORT: Record<string, string> = { 'Finance & eCommerce': 'Finance', 'Alerts & feedback': 'Alerts', 'Media & devices': 'Media' }

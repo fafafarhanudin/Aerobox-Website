@@ -4,10 +4,11 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --port 5190 --host 127.0.0.1 --strictPort",
+    "dev": "node scripts/lite-data.ts && vite --port 5190 --host 127.0.0.1 --strictPort",
     "share": "vite --port 5190 --host 0.0.0.0",
-    "build": "tsc -b && vite build",
-    "preview": "vite preview --port 5191"
+    "build": "node scripts/lite-data.ts && tsc -b && vite build && node scripts/prerender.mjs",
+    "preview": "vite preview --port 5191",
+    "lite": "node scripts/lite-data.ts"
   },
   "dependencies": {
     "clipper-lib": "^6.4.2",

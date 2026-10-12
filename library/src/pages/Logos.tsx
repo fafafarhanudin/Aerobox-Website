@@ -9,6 +9,10 @@ import { pop } from '../lib/confetti'
 import { RequestKey } from '../request'
 import { TONES, TONE_SWATCH, fetchSvg, toneAccent, toneInk, toneSvg, type Tone } from '../lib/tone'
 
+// the placeholder lockups set their wordmarks in these faces; only this page needs them
+const LOGO_FONTS = 'https://fonts.googleapis.com/css2?family=Outfit:wght@600&family=Space+Grotesk:wght@700&family=Manrope:wght@800&family=Syne:wght@700&family=Nunito:wght@800&family=Poppins:wght@600&family=Rubik:wght@700&family=Fredoka:wght@600&family=Plus+Jakarta+Sans:ital,wght@0,400;0,600;0,700;1,600&display=swap'
+if (!document.querySelector(`link[href="${LOGO_FONTS}"]`)) document.head.append(Object.assign(document.createElement('link'), { rel: 'stylesheet', href: LOGO_FONTS }))
+
 const FONTS = ['Outfit', 'Space Grotesk', 'Manrope', 'Syne', 'Nunito', 'Poppins', 'Rubik', 'Fredoka']
 const WCATS = ['All', 'AI', 'Software', 'Dev', 'Data', 'Design', 'Social', 'Payments', 'Sportswear', 'Automotive', 'Football', 'Brands']
 type M = typeof MARKS[number]
@@ -89,7 +93,6 @@ function WorldLogos({ toggle }: { toggle: React.ReactNode }) {
   const toast = useToast()
   const [cat, setCat] = useState('All'); const [q, setQ] = useState(''); const [theme, setTheme] = useState<'Light' | 'Dark'>('Light'); const [variant, setVariant] = useState<'Icon' | 'Wordmark'>('Icon')
   const [sort, setSort] = useState<'Popular' | 'A–Z'>('Popular'); const [view, setView] = useState<'grid' | 'list'>('grid'); const [shown, setShown] = useState(PAGE); const [sel, setSel] = useState<World | null>(null)
-  const [flip, setFlip] = useState<Record<string, boolean>>({})
   const [scale, setScale] = useState(1); const [tone, setTone] = useState<Tone>('Original'); const [boxed, setBoxed] = useState(false)
   useEffect(() => setShown(PAGE), [cat, q])
   // White logos need a dark tile; recoloured logos start from the light artwork
@@ -118,15 +121,14 @@ function WorldLogos({ toggle }: { toggle: React.ReactNode }) {
       {view === 'grid' ? (
         <div className={`world-grid ${tileTheme === 'Dark' ? 'dark' : ''} ${boxed ? 'boxed' : ''}`} style={{ ['--ls' as string]: scale }}>
           {visible.map((w, k) => {
-            const th = flip[w.name] ? (tileTheme === 'Dark' ? 'Light' : 'Dark') : tileTheme
+            const th = tileTheme
             return (
               <div key={w.name} className={`wl-tile ${th === 'Dark' ? 'is-dark' : ''}`} style={{ ['--i' as string]: k % PAGE }} onClick={() => setSel(w)}>
                 <span className="wl-logo"><ToneImg src={fileOf(w, tone === 'Original' ? th : 'Light', variant)} tone={tone} alt={w.name} className={variant === 'Wordmark' && w.files.wm ? 'wm' : ''} /></span>
                 <b>{w.name}</b><span>{w.sub}</span>
                 <div className="wl-actions" onClick={e => e.stopPropagation()}>
                   <Tooltip label="Copy SVG"><button onClick={async e => { const el = e.currentTarget; await copyText(await grab(w, th)); pop(el, 18); toast(<>Copied <b>{w.name}</b> SVG</>) }}><Icon name="copy" size={15} /><span>Copy SVG</span></button></Tooltip>
-                  <Tooltip label={th === 'Dark' ? 'Light preview' : 'Dark preview'}><button onClick={() => setFlip(f => ({ ...f, [w.name]: !f[w.name] }))}><Icon name="sun" size={15} /></button></Tooltip>
-                  <Tooltip label="Download SVG"><button onClick={() => dl(w)}><Icon name="download" size={15} /><span>Download</span></button></Tooltip>
+                  <Tooltip label="Download SVG"><button aria-label="Download SVG" onClick={() => dl(w)}><Icon name="download" size={15} /></button></Tooltip>
                   <Tooltip label="Preview"><button onClick={() => setSel(w)}><Icon name="eye" size={15} /></button></Tooltip>
                   <Tooltip label="Brand site"><a href={w.url} target="_blank" rel="noreferrer"><Icon name="external-link" size={15} /></a></Tooltip>
                 </div>

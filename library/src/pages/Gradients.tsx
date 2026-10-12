@@ -128,8 +128,10 @@ export default function GradientsPage() {
                   <Tooltip label="Open"><button className="gc-round" onClick={() => setSel(g)}><Icon name="expand" size={14} /></button></Tooltip>
                 </div>
                 <div className="gc-bar" onClick={e => e.stopPropagation()}>
-                  <button onClick={e => copyCss(g, e.currentTarget)}><Icon name="copy" size={14} /> Copy gradient</button>
-                  <button onClick={e => dlPng(g, e.currentTarget)}><Icon name="download" size={14} /> Download PNG</button>
+                  <button onClick={e => copyCss(g, e.currentTarget)}><Icon name="copy" size={14} /> {moving ? 'Copy CSS' : 'Copy gradient'}</button>
+                  {/* with a motion on, the bar also records the loop; labels shorten so three still fit the card */}
+                  <button onClick={e => dlPng(g, e.currentTarget)}><Icon name="download" size={14} /> {moving ? 'PNG' : 'Download PNG'}</button>
+                  {moving && <button onClick={e => dlVideo(g, e.currentTarget)} disabled={!!rec}><Icon name="play" size={14} /> {rec?.name === g.name ? `${Math.round(rec.p * 100)}%` : 'Video'}</button>}
                 </div>
               </div>
               <div className="ic-cap">
@@ -207,7 +209,7 @@ export default function GradientsPage() {
         <DockPop id="motion" label="Motion" value={moving ? motion.kind : 'Off'} icon={<Icon name="play" size={15} color="#fff" />} width={296}>
           <DkRow label="Motion"><DkChips options={GRAD_MOTIONS} value={motion.kind} onChange={v => setMotion(m => ({ ...m, kind: v }))} render={v => v === 'None' ? 'Off' : v} /></DkRow>
           <DkRow label="Speed"><DkChips options={GRAD_SPEEDS.map(s => s[1])} value={motion.dur} onChange={v => setMotion(m => ({ ...m, dur: v }))} render={v => `${GRAD_SPEEDS.find(s => s[1] === v)![0]} · ${v}s`} /></DkRow>
-          <p className="dk-note">{moving ? `${GRAD_MOTION_NOTE[motion.kind]}. Copy gives animated CSS; open a gradient to download a seamless video loop.` : 'Pick a motion to bring every gradient to life.'}</p>
+          <p className="dk-note">{moving ? `${GRAD_MOTION_NOTE[motion.kind]}. Copy gives animated CSS; Video on any card downloads a seamless loop.` : 'Pick a motion to bring every gradient to life.'}</p>
         </DockPop>
         <DockDiv />
         <DockPop id="tune" label="Adjust" value={tune ? 'Custom' : 'Original'} icon={<Icon name="palette" size={15} color="#fff" />} width={290}>

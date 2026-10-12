@@ -79,15 +79,16 @@ export function pop(el: Element | null, count = 36) {
   ensure()
   const r = el?.getBoundingClientRect()
   const x = r ? r.left + r.width / 2 : innerWidth / 2, y = r ? r.top + r.height / 2 : innerHeight / 2
-  spawn({ x, y, angle: -90, spread: 100, velocity: 9, count, gravity: 0.3 })
+  // kept light: about a third of what callers ask for, so a click sparkles instead of showering the page
+  spawn({ x, y, angle: -90, spread: 80, velocity: 7.5, count: Math.max(4, Math.round(count * 0.3)), gravity: 0.3 })
 }
 
-/** big party: two side cannons + a centre burst */
+/** party: two small side cannons + a centre puff (deliberately modest) */
 export function party() {
   if (reduced()) return
   ensure()
   const h = innerHeight
-  spawn({ x: -10, y: h * 0.72, angle: -58, spread: 34, velocity: 21, count: 90 })
-  spawn({ x: innerWidth + 10, y: h * 0.72, angle: -122, spread: 34, velocity: 21, count: 90 })
-  setTimeout(() => spawn({ x: innerWidth / 2, y: h * 0.38, angle: -90, spread: 300, velocity: 11, count: 70, gravity: 0.22 }), 160)
+  spawn({ x: -10, y: h * 0.72, angle: -58, spread: 30, velocity: 19, count: 16 })
+  spawn({ x: innerWidth + 10, y: h * 0.72, angle: -122, spread: 30, velocity: 19, count: 16 })
+  setTimeout(() => spawn({ x: innerWidth / 2, y: h * 0.38, angle: -90, spread: 300, velocity: 9, count: 12, gravity: 0.22 }), 160)
 }

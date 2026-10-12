@@ -9,7 +9,10 @@
 * { box-sizing: border-box; }
 html { -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
 html.modal-open { overflow: hidden; }
-body { margin: 0; background: #fff; color: var(--ink); font: 400 15px/1.5 Geist, ui-sans-serif, system-ui, sans-serif; letter-spacing: -0.01em; }
+/* Geist loads without blocking paint; until it lands, Arial scaled to Geist's width keeps lines from re-wrapping */
+@font-face { font-family: 'Geist Fallback'; src: local('Arial'), local('Helvetica'), local('Liberation Sans'); font-weight: 100 450; size-adjust: 102.8%; }
+@font-face { font-family: 'Geist Fallback'; src: local('Arial'), local('Helvetica'), local('Liberation Sans'); font-weight: 451 900; size-adjust: 105.5%; }
+body { margin: 0; background: #fff; color: var(--ink); font: 400 15px/1.5 Geist, 'Geist Fallback', ui-sans-serif, system-ui, sans-serif; letter-spacing: -0.01em; }
 button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; letter-spacing: inherit; }
 a { color: inherit; text-decoration: none; }
 input, textarea { font: inherit; color: inherit; letter-spacing: inherit; }
@@ -738,11 +741,11 @@ kbd { font: 500 11px/1 'Geist Mono', monospace; padding: 4px 6px; border-radius:
 .wl-tile img { height: 40px; max-width: 120px; object-fit: contain; margin-bottom: 10px; transition: transform .4s var(--spring); }
 .wl-tile img.wm { height: 28px; max-width: 150px; }
 .wl-tile b { font-size: 14px; font-weight: 500; transition: transform .35s var(--spring); }
-.wl-tile > span { font-size: 12px; color: var(--muted); transition: opacity .2s; }
+.wl-tile > span:not(.wl-logo) { font-size: 12px; color: var(--muted); transition: opacity .2s; }
 .wl-tile:hover { background: #fff; z-index: 1; }
 .wl-tile:hover img { transform: translateY(-10px) scale(1.06); }
 .wl-tile:hover b { transform: translateY(-10px); }
-.wl-tile:hover > span { opacity: 0; }
+.wl-tile:hover > span:not(.wl-logo) { opacity: 0; } /* the subtitle only: the logo wrapper is a span too */
 .wl-actions { position: absolute; bottom: 14px; display: flex; gap: 2px; opacity: 0; transform: translateY(6px); transition: opacity .2s, transform .3s var(--spring); }
 .wl-tile:hover .wl-actions { opacity: 1; transform: none; }
 .wl-actions button, .wl-actions a { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 8px; color: var(--ink-2); transition: background .15s, color .15s; }
@@ -1253,30 +1256,21 @@ img.toning { opacity: 0; }
 
 /* ---------- the edge cats ---------- */
 .footer-cta { position: relative; }
-.kitty-zone { position: absolute; left: 16px; right: 16px; bottom: 100%; height: 104px; overflow: hidden; pointer-events: none; }
+.kitty-zone { position: absolute; left: 16px; right: 16px; bottom: 100%; height: 136px; overflow: hidden; pointer-events: none; }
 .kitty { position: absolute; left: 0; bottom: 0; pointer-events: auto; cursor: pointer; transition-property: transform; transition-timing-function: linear; }
-.kitty-body { display: block; width: 100%; height: 100%; transform-origin: 50% 100%; transition: translate .5s cubic-bezier(.5, 0, .75, 0); }
-.kitty-body img { display: block; width: 100%; height: 100%; transform: scaleX(var(--flip)); user-select: none; -webkit-user-drag: none; filter: drop-shadow(0 4px 6px rgba(80, 40, 0, .18)); }
-/* peeking: only ears, eyes and paws over the edge */
-.kitty-peek .kitty-body { animation: kitPeek 1s cubic-bezier(.2, .9, .3, 1.2) both; translate: 0 52%; }
-@keyframes kitPeek { 0% { translate: 0 100% } 50% { translate: 0 60% } 65% { translate: 0 66% } 100% { translate: 0 52% } }
-.kitty-peek .kitty-body img { animation: kitLook 3.2s ease-in-out 1s infinite; }
-@keyframes kitLook { 0%, 100% { rotate: 0deg } 30% { rotate: -7deg } 60% { rotate: 6deg } }
-/* hopping along the edge */
-.kitty-hop .kitty-body { animation: kitHop .42s cubic-bezier(.3, 0, .5, 1) infinite; }
-@keyframes kitHop { 0%, 100% { transform: translateY(0) scale(1.04, .94) } 45% { transform: translateY(-14px) scale(.97, 1.04) } }
-/* sitting: breathing and the odd happy head tilt */
-.kitty-sit .kitty-body { animation: kitBreathe 2.6s ease-in-out infinite; }
-@keyframes kitBreathe { 0%, 100% { transform: scale(1) } 50% { transform: scale(1.025, .985) } }
-.kitty-sit .kitty-body img { animation: kitTilt 4.5s ease-in-out infinite; transform-origin: 50% 90%; }
-@keyframes kitTilt { 0%, 62%, 100% { rotate: 0deg } 70%, 84% { rotate: -6deg } }
-/* fright: quick little leaps off the side */
-.kitty-run .kitty-body { animation: kitHop .2s ease-in-out infinite; }
-.kitty-gone { pointer-events: none; }
-.kitty-gone .kitty-body { translate: 0 105%; }
-.kitty-alert { position: absolute; left: 50%; top: -6px; font: 800 18px/1 Geist, sans-serif; color: #E5484D; animation: catAlert .4s var(--spring) both; }
+.kitty.is-away { visibility: hidden; pointer-events: none; }
+/* sprite-sheet cat: the frame is picked by background-position, the sheet faces right and flips for left */
+.kitty-body { display: block; width: 100%; height: 100%; background-repeat: no-repeat; translate: 0 6.25%; /* the sheet's ground line sits 16/256 above the cell bottom */ filter: drop-shadow(0 4px 5px rgba(60, 40, 10, .16)); }
+.kitty-roll .kitty-body, .kitty-happy .kitty-body { cursor: grab; }
+.kitty-alert { position: absolute; left: 58%; top: 2px; font: 800 18px/1 Geist, sans-serif; color: #E5484D; animation: catAlert .4s var(--spring) both; }
 @keyframes catAlert { from { transform: scale(0) translateY(8px) } to { transform: none } }
-@media (prefers-reduced-motion: reduce) { .kitty-body, .kitty-body img { animation: none !important; } }
+/* petted: three little hearts float up and fade */
+.kitty-hearts { position: absolute; left: 50%; top: 4px; width: 0; height: 0; pointer-events: none; }
+.kitty-hearts svg { position: absolute; left: -7px; top: 0; opacity: 0; animation: kitHeart 1.6s ease-out both; }
+.kitty-hearts svg:nth-child(2) { animation-delay: .25s; --hx: -14px; }
+.kitty-hearts svg:nth-child(3) { animation-delay: .5s; --hx: 12px; }
+@keyframes kitHeart { 0% { opacity: 0; transform: translate(0, 6px) scale(.4) } 20% { opacity: 1; transform: translate(calc(var(--hx, 2px) * .4), -6px) scale(1) } 100% { opacity: 0; transform: translate(var(--hx, 2px), -30px) scale(.8) } }
+@media (prefers-reduced-motion: reduce) { .kitty-hearts, .kitty-alert { display: none; } }
 
 /* isometric bento: the scene swaps every few seconds */
 .iso-swap { animation: isoSwap 2.4s cubic-bezier(.2, .9, .3, 1.2) both; }
@@ -1998,3 +1992,9 @@ body:has(.dock-pop.on) .float-top { opacity: 0; pointer-events: none; }
 .sort-ic, .sort-ic2 { display: inline-flex; }
 .sort-ic2 { display: none; }
 @media (max-width: 380px) { .icons-main .main-bar .sort-ic { display: none; } .icons-main .main-bar .sort-ic2 { display: inline-flex; } }
+
+/* placeholder while a page chunk loads, so the footer does not jump up for a frame */
+.page-loading { min-height: 100vh; }
+.gc-bar button:disabled { opacity: .55; cursor: progress; }
+/* first paint from the pre-rendered markup: the hero is already in place, no rise */
+.hero.is-still h1, .hero.is-still p { animation: none; }

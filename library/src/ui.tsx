@@ -2,12 +2,19 @@ import type React from 'react'
 import { creditSvg } from './lib/credit'
 import { createContext, useCallback, useContext, useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode, type CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
-import { ICONS } from './data/icons'
-import { UI_ICONS } from './data/icons-ui'
+import type { Icon as IconData } from './data/icons-ui'
+import { UI_LITE, HOME_ICONS } from './data/lite'
 import { AeroboxLogo } from './logo'
 
-// interface glyphs by plain name; library icons under a `u:` key so the two sets never collide
-const DATA = new Map([...UI_ICONS.map(i => [i.name, i] as const), ...ICONS.map(i => ['u:' + i.name, i] as const)])
+// interface glyphs by plain name; library icons under a `u:` key so the two sets never collide.
+// Only the glyphs the app names in its source (plus the home wall) ship up front; the full sets
+// load on the first miss, so a name built at runtime still draws, one frame late.
+const DATA = new Map<string, IconData>([...UI_LITE.map(i => [i.name, i] as const), ...HOME_ICONS.map(i => ['u:' + i.name, i] as const)])
+export function addIcons(list: IconData[], prefix = '') { for (const i of list) DATA.set(prefix + i.name, i) }
+const sets: Partial<Record<'ui' | 'lib', Promise<void>>> = {}
+const loadSet = (lib: boolean) => lib
+  ? (sets.lib ??= import('./data/icons').then(m => addIcons(m.ICONS, 'u:')))
+  : (sets.ui ??= import('./data/icons-ui').then(m => addIcons(m.UI_ICONS)))
 export const libKey = (name: string) => 'u:' + name
 export type IconStyle = 'Aero' | 'Duotone' | 'Two-tone' | 'Filled' | 'Sharp' | 'Pixel' | '3D' | 'Glass'
 export const ICON_STYLES: IconStyle[] = ['Aero', 'Duotone', 'Two-tone', 'Filled', 'Sharp', 'Pixel', '3D', 'Glass']
@@ -218,6 +225,8 @@ function paint(name: string, style: IconStyle, stroke: number, color: string, ui
 /* ---------- Aero icon (4 styles, weight adjustable) ---------- */
 export function Icon({ name, size = 20, stroke = 1.9, color = 'currentColor', color2, variant = 'Aero', grad, motion, className, style }: { name: string; size?: number; stroke?: number; color?: string; color2?: string; variant?: IconStyle; grad?: Grad; motion?: IconMotion; className?: string; style?: CSSProperties }) {
   const uid = useId().replace(/[^a-zA-Z0-9_-]/g, '')
+  const [, redraw] = useState(0), missing = !!name && !DATA.has(name) // callers may pass no name: draws nothing, as before
+  useEffect(() => { if (!missing) return; let live = true; loadSet(name.startsWith('u:')).then(() => { if (live) redraw(v => v + 1) }); return () => { live = false } }, [missing, name])
   const { root, inner } = build(name, variant, stroke, color, uid, grad, color2)
   const attrs = Object.fromEntries([...root.matchAll(/([a-z-]+)="([^"]*)"/g)].map(([, k, v]) => [k.replace(/-([a-z])/g, (_, c) => c.toUpperCase()), v]))
   const html = motion && motion.kind !== 'None' ? animate(inner, motion, `m${uid}`) : inner

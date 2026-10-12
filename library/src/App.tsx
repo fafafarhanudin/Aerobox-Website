@@ -1,19 +1,19 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { BrandMark, Icon, Modal, ToastProvider, Tooltip, XLogo, Key, Legend } from './ui'
 import { ShareModal, SupportModal } from './share'
 import { COLORS, pop } from './lib/confetti'
 import { RequestProvider } from './request'
 import { BRAND, NavLogo } from './logo'
 import { EdgeCats } from './cat'
-import { ICONS } from './data/icons'
-import { GRADIENTS } from './data/gradients'
-import { MARKS } from './data/logos'
+import { COUNTS } from './data/lite'
+import { isPrerendered, settle } from './boot'
 import Home from './pages/Home'
-import IconsPage from './pages/Icons'
-import GradientsPage from './pages/Gradients'
-import LogosPage from './pages/Logos'
-import IsoPage from './pages/Iso'
-import SponsorPage from './pages/Sponsor'
+// every other page is its own chunk with its own data, fetched when the route is opened
+const IconsPage = lazy(() => import('./pages/Icons'))
+const GradientsPage = lazy(() => import('./pages/Gradients'))
+const LogosPage = lazy(() => import('./pages/Logos'))
+const IsoPage = lazy(() => import('./pages/Iso'))
+const SponsorPage = lazy(() => import('./pages/Sponsor'))
 
 export type Route = 'home' | 'icons' | 'gradients' | 'logos' | 'isometric' | 'sponsor'
 const ROUTES: Route[] = ['home', 'icons', 'gradients', 'logos', 'isometric', 'sponsor']
@@ -36,18 +36,21 @@ export default function App() {
     const k = (e: KeyboardEvent) => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); setPalette(p => !p) } }
     addEventListener('keydown', k); return () => removeEventListener('keydown', k)
   }, [])
+  const [still] = useState(isPrerendered); useEffect(settle, [])
   const modals: Modals = useMemo(() => ({ share: () => setShare(true), support: () => { window.location.href = '/support' }, palette: () => setPalette(true) }), [])
   return (
     <ToastProvider><RequestProvider>
       <div className="shell">
       <Nav route={route} modals={modals} />
-      <main key={route} className="page-enter">
+      <main key={route} className={still ? undefined : 'page-enter'}>
         {route === 'home' && <Home modals={modals} />}
-        {route === 'icons' && <IconsPage initialQuery={q} />}
-        {route === 'gradients' && <GradientsPage />}
-        {route === 'logos' && <LogosPage />}
-        {route === 'isometric' && <IsoPage />}
-        {route === 'sponsor' && <SponsorPage />}
+        <Suspense fallback={<div className="page-loading" />}>
+          {route === 'icons' && <IconsPage initialQuery={q} />}
+          {route === 'gradients' && <GradientsPage />}
+          {route === 'logos' && <LogosPage />}
+          {route === 'isometric' && <IsoPage />}
+          {route === 'sponsor' && <SponsorPage />}
+        </Suspense>
       </main>
       <Footer modals={modals} route={route} />
       </div>
@@ -73,7 +76,7 @@ function FloatingButtons() {
 }
 
 /* ---------------- Nav ---------------- */
-function Nav({ route, modals }: { route: Route; modals: Modals }) {
+export function Nav({ route, modals }: { route: Route; modals: Modals }) {
   const [scrolled, setScrolled] = useState(false)
   const [menu, setMenu] = useState(false)
   useEffect(() => setMenu(false), [route])
@@ -85,7 +88,7 @@ function Nav({ route, modals }: { route: Route; modals: Modals }) {
     return () => { removeEventListener('keydown', k); removeEventListener('resize', r) }
   }, [menu])
   useEffect(() => { const s = () => setScrolled(scrollY > 8); addEventListener('scroll', s, { passive: true }); return () => removeEventListener('scroll', s) }, [])
-  const links: [Route | null, string, string?][] = [['icons', 'Icons', String(ICONS.length)], ['gradients', 'Gradients'], ['logos', 'Logos'], ['isometric', 'Isometric'], [null, 'Patterns'], [null, 'Illustrations']]
+  const links: [Route | null, string, string?][] = [['icons', 'Icons', String(COUNTS.icons)], ['gradients', 'Gradients'], ['logos', 'Logos'], ['isometric', 'Isometric'], [null, 'Patterns'], [null, 'Illustrations']]
   return (
     <header className={`nav ${scrolled ? 'scrolled' : ''}`}>
       <div className="nav-left">
@@ -164,7 +167,7 @@ function Footer({ modals, route }: { modals: Modals; route: Route }) {
           <a className="brand" href="#/"><BrandMark size={28} /><span>Aerobox Assets</span></a>
           <p>Free icons, gradients, logos and isometric scenes.<br />Drawn in Indonesia, shared with everyone.</p>
           <div className="ft-status">
-            <a className="ft-avatar" href={SOCIALS[0][2]} target="_blank" rel="noreferrer" aria-label="Farhan on X"><img src="/library/farhan.png" alt="" width={30} height={30} /></a>
+            <a className="ft-avatar" href={SOCIALS[0][2]} target="_blank" rel="noreferrer" aria-label="Farhan on X"><img src="/library/farhan.webp" alt="" width={30} height={30} loading="lazy" decoding="async" /></a>
             <span className="ft-pill"><i />Made by <b>Farhan</b> · updated weekly</span>
           </div>
         </div>
@@ -191,7 +194,7 @@ function Footer({ modals, route }: { modals: Modals; route: Route }) {
   )
 }
 
-/* confetti fountains behind the footer: a small burst shoots up from the bottom every few seconds, then flutters back down.
+/* confetti fountains behind the footer: a few pieces shoot up from the bottom every few seconds, then flutters back down.
    Runs only while the footer is on screen and never for reduced motion. */
 function FooterConfetti() {
   const ref = useRef<HTMLCanvasElement>(null)
@@ -199,7 +202,7 @@ function FooterConfetti() {
     const cv = ref.current, host = cv?.parentElement, ctx = cv?.getContext('2d')
     if (!cv || !host || !ctx || matchMedia('(prefers-reduced-motion: reduce)').matches) return
     type Q = { x: number; y: number; vx: number; vy: number; term: number; s: number; rot: number; vr: number; tilt: number; vt: number; c: string; k: number }
-    const G = .16, MAX = 60
+    const G = .16, MAX = 18
     let W = 0, H = 0, raf = 0, last = 0, next = 0, side = 0
     const ps: Q[] = []
     const fit = () => {
@@ -208,7 +211,7 @@ function FooterConfetti() {
     }
     const burst = () => {
       side ^= 1
-      const x0 = W * (side ? .1 + Math.random() * .3 : .6 + Math.random() * .3), n = 10 + ((Math.random() * 6) | 0)
+      const x0 = W * (side ? .1 + Math.random() * .3 : .6 + Math.random() * .3), n = 4 + ((Math.random() * 3) | 0)
       for (let i = 0; i < n && ps.length < MAX; i++) {
         const a = (-90 + (Math.random() - .5) * 44) * Math.PI / 180, v = Math.sqrt(2 * G * H * (.5 + Math.random() * .38)) * 1.08
         ps.push({ x: x0 + (Math.random() - .5) * 24, y: H + 8, vx: Math.cos(a) * v, vy: Math.sin(a) * v, term: 1.3 + Math.random() * 1.1,
@@ -226,7 +229,7 @@ function FooterConfetti() {
     }
     const tick = (t: number) => {
       const dt = last ? Math.min(3, (t - last) / 16.7) : 1; last = t
-      if (t >= next) { burst(); next = t + 2600 + Math.random() * 1400 }
+      if (t >= next) { burst(); next = t + 4500 + Math.random() * 2000 }
       ctx.clearRect(0, 0, W, H)
       for (let i = ps.length - 1; i >= 0; i--) {
         const p = ps[i]
@@ -251,21 +254,29 @@ function FooterConfetti() {
 }
 
 /* ---------------- ⌘K palette ---------------- */
+const loadPaletteDb = () => Promise.all([import('./data/icons'), import('./data/gradients'), import('./data/logos')])
+  .then(([i, g, l]) => ({ ICONS: i.ICONS, GRADIENTS: g.GRADIENTS, MARKS: l.MARKS }))
+type PaletteDb = Awaited<ReturnType<typeof loadPaletteDb>>
 function Palette({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [q, setQ] = useState(''); const [i, setI] = useState(0); const inp = useRef<HTMLInputElement>(null)
   useEffect(() => { if (open) { setQ(''); setI(0); setTimeout(() => inp.current?.focus(), 60) } }, [open])
   type Hit = { kind: string; label: string; icon?: string; swatch?: string; run: () => void }
+  // the search index (icons, gradients, marks) is fetched the first time the palette opens
+  const [db, setDb] = useState<PaletteDb | null>(null)
+  useEffect(() => { if (open && !db) loadPaletteDb().then(setDb) }, [open, db])
   const hits: Hit[] = useMemo(() => {
     const s = q.trim().toLowerCase()
     const pages: Hit[] = (['icons', 'gradients', 'logos', 'isometric'] as Route[]).map(r => ({ kind: 'Page', label: r[0].toUpperCase() + r.slice(1), icon: 'arrow-right', run: () => go(r) }))
     if (!s) return pages
+    if (!db) return pages.filter(p => p.label.toLowerCase().includes(s))
+    const { ICONS, GRADIENTS, MARKS } = db
     return [
       ...pages.filter(p => p.label.toLowerCase().includes(s)),
       ...ICONS.filter(x => x.name.includes(s)).slice(0, 6).map(x => ({ kind: 'Icon', label: x.name, icon: 'u:' + x.name, run: () => go('icons', x.name) })),
       ...GRADIENTS.filter(x => x.name.toLowerCase().includes(s)).slice(0, 4).map(x => ({ kind: 'Gradient', label: x.name, swatch: x.css, run: () => go('gradients') })),
       ...MARKS.filter(x => x.name.toLowerCase().includes(s)).slice(0, 4).map(x => ({ kind: 'Logo', label: x.name, icon: 'star', run: () => go('logos') })),
     ]
-  }, [q])
+  }, [q, db])
   const run = (h?: Hit) => { if (!h) return; h.run(); onClose() }
   return (
     <Modal open={open} onClose={onClose} label="Search" width={560}>
