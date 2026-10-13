@@ -8,3 +8,8 @@ Part of the base geometry of Aero Icons (`src/data/icons.ts`) is adapted from Un
 
 The MIT License requires its copyright and permission notice to travel with substantial portions of the
 work. Copy the notice from the upstream repository's LICENSE file into this section before redistribution.
+
+
+## Fonts
+
+Geist and Geist Mono (Vercel) and Instrument Serif (Instrument) are served from `public/fonts` under the SIL Open Font License 1.1, https://openfontlicense.org.

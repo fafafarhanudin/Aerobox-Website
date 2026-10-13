@@ -1,3 +1,9 @@
+/* interface fonts, self-hosted (SIL Open Font License): Geist and Geist Mono are variable, one file per script covers 100–900 */
+@font-face { font-family: 'Geist'; font-style: normal; font-weight: 100 900; font-display: swap; src: url(/library/fonts/geist-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Geist'; font-style: normal; font-weight: 100 900; font-display: swap; src: url(/library/fonts/geist-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 100 900; font-display: swap; src: url(/library/fonts/geist-mono-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 100 900; font-display: swap; src: url(/library/fonts/geist-mono-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Instrument Serif'; font-style: italic; font-weight: 400; font-display: swap; src: url(/library/fonts/instrument-serif-italic-latin.woff2) format('woff2'); }
 :root {
   --ink: #16171B; --ink-2: #4F525B; --muted: #6B6E78; /* both clear WCAG AA 4.5:1 on white and on --page */ --line: #E5E5E8; --hover: #C9CBD2; --page: #F6F6F5; --subtle: #EEEFF2;
   --accent: #2F6BFF; --accent-weak: #EEF3FF; --green: #15803D; --dark: #0E0F12;
@@ -2001,3 +2007,54 @@ body:has(.dock-pop.on) .float-top { opacity: 0; pointer-events: none; }
 
 /* form honeypot: out of sight and out of the tab order */
 .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+
+/* ---------- Icons page on phones: one final block (comes last, so it settles the earlier patches) ---------- */
+@media (max-width: 760px) {
+  /* filters: compact chips that scroll sideways, the last one fading out as a hint */
+  .icons-page .side { gap: 14px; }
+  .icons-page .side-label { margin-bottom: 8px; font-size: 11px; }
+  .icons-page .side-styles, .icons-page .side-nav { gap: 6px; padding-bottom: 4px; -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 44px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 44px), transparent); scroll-snap-type: x proximity; scroll-padding-inline: var(--page-pad); }
+  .icons-page .side-styles > *, .icons-page .side-item { scroll-snap-align: start; }
+  .icons-page .style-card { min-width: 0; height: 38px; gap: 7px; padding: 0 12px 0 4px; border-radius: 12px; font-size: 13px; white-space: nowrap; }
+  .icons-page .style-card .style-prev { width: 28px; height: 28px; border-radius: 8px; }
+  .icons-page .style-card .sc-n { margin-left: 2px; }
+  .icons-page .side-item { height: 38px; gap: 7px; padding: 0 12px; border-radius: 12px; font-size: 13px; }
+  .icons-page .side-item .si-count { font-size: 11px; }
+
+  /* search: a white floating field, no grey band behind it; sorting stays on desktop */
+  .icons-main .main-bar { margin: 0 calc(var(--page-pad) * -1); padding: 10px var(--page-pad) 14px; gap: 8px; flex-wrap: nowrap; top: 60px;
+    background: linear-gradient(#fff 82%, rgba(255, 255, 255, 0)); box-shadow: none; }
+  .icons-main .main-bar .dd-sort { display: none; }
+  .icons-main .main-bar .search { flex: 1 1 auto; min-width: 0; height: 48px; padding: 0 6px 0 14px; gap: 10px; border-radius: 14px; background: #fff; border: 1px solid var(--line); color: var(--ink-2);
+    box-shadow: 0 1px 2px rgba(22, 23, 27, .04), 0 8px 24px -10px rgba(22, 23, 27, .18); }
+  .icons-main .main-bar .search:focus-within { border-color: #2F6BFF; box-shadow: 0 0 0 4px rgba(47, 107, 255, .14), 0 8px 24px -10px rgba(22, 23, 27, .18); color: #2F6BFF; }
+  .icons-main .main-bar .search input { font-size: 16px; } /* 16px keeps iOS from zooming in */
+  .icons-main .main-bar .dd-dl { display: none; } /* "Download all" is still locked: on a phone it would be a button that does nothing */
+
+  /* customize dock: a tidy two-row panel that always fits — style / colour / motion, then size and stroke */
+  .dock.dock-icons, .dock.dock-icons:not(.center) { left: 12px; right: 12px; bottom: 12px; width: auto; max-width: none; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; padding: 8px; border-radius: 18px; overflow: visible; transform: translateY(160%); animation: none; }
+  .dock.dock-icons.on { transform: none; }
+  .dock-icons .dock-div { display: none; }
+  .dock-icons > .dd-wrap, .dock-icons > .dock-step { min-width: 0; height: 40px; border-radius: 11px; background: rgba(255, 255, 255, .06); }
+  .dock-icons .dc-style { grid-column: span 2; order: 1; }
+  .dock-icons .dc-color { grid-column: span 2; order: 2; }
+  .dock-icons .dc-motion { grid-column: span 2; order: 3; }
+  .dock-icons .dc-size { grid-column: span 3; order: 4; }
+  .dock-icons .dc-stroke { grid-column: span 3; order: 5; }
+  .dock-icons .dd-wrap > button { width: 100%; height: 40px; justify-content: center; padding: 0 8px; gap: 6px; border-radius: 11px; font-size: 13px; }
+  .dock-icons .dd-wrap > button .dl { display: none; } /* the value says enough: "Aero", the swatch, "Off" */
+  .dock-icons .dock-step { justify-content: space-between; gap: 4px; padding: 0 4px 0 12px; }
+  .dock-icons .dock-step .dl { flex: 1; margin: 0; font-size: 12px; }
+  .dock-icons .dock-step button { width: 32px; height: 32px; border-radius: 9px; font-size: 16px; }
+  .dock-icons .dock-step b { min-width: 26px; font-size: 14px; }
+  .dock-icons .popover, .popover.dock-pop { position: fixed; left: 12px; right: 12px; bottom: 116px; top: auto; width: auto !important; max-height: calc(100dvh - 200px); overflow-y: auto; translate: 0 0; }
+  /* colour popover: the picker and swatches use the whole width instead of the desktop 236px column */
+  .dock-icons .paint-pop { padding: 14px; gap: 12px; }
+  .dock-icons .paint-pop .cpk { width: 100%; }
+  .dock-icons .paint-pop .cpk-sq { height: 128px; }
+  .dock-icons .paint-pop .cpk-pal { grid-template-columns: repeat(9, 1fr); gap: 7px; }
+  .dock-icons .tone-pairs .tt-anchor { display: block; }
+  .dock-icons .tone-pairs button { width: 100%; height: 40px; }
+  .icons-page .icon-grid { padding-bottom: 112px; } /* the last row clears the dock */
+  body:has(.dock-icons.on) .float-btn { bottom: 118px; }
+}

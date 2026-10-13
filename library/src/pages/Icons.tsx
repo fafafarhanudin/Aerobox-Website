@@ -162,12 +162,12 @@ export default function IconsPage({ initialQuery = '' }: { initialQuery?: string
         <div className="icons-main">
           <div className="main-bar">
             <label className="search"><Icon name="search" size={20} /><input ref={search} value={q} onChange={e => setQ(e.target.value)} placeholder="Search icons" /><kbd>/</kbd></label>
-            <div className="dd-wrap" onClick={e => e.stopPropagation()}>
+            <div className="dd-wrap dd-sort" onClick={e => e.stopPropagation()}>
               <Key onClick={() => setMenu(m => m === 'sort' ? '' : 'sort')} aria-label={`Sort: ${sort}`}><span className="dim">Sort</span> <span className="sort-v">{sort}</span> <span className="sort-ic"><Icon name="arrow-down" size={14} /></span><span className="sort-ic2"><Icon name="sort" size={18} /></span></Key>
               <div className={`popover right ${menu === 'sort' ? 'on' : ''}`}>{(['Popular', 'A–Z'] as const).map(s => <button key={s} className={`pop-item ${sort === s ? 'on' : ''}`} onClick={() => { setSort(s); setMenu('') }}>{s}</button>)}</div>
             </div>
             {/* Download all: pick the style to export — visible, but locked until the full pack ships */}
-            <div className="dd-wrap" onClick={e => e.stopPropagation()}>
+            <div className="dd-wrap dd-dl" onClick={e => e.stopPropagation()}>
               <Key onClick={() => setMenu(m => m === 'dl' ? '' : 'dl')} aria-expanded={menu === 'dl'} className="dl-all"><Icon name="lock" size={14} /><span className="dl-all-t">Download all</span><Icon name="arrow-down" size={14} /></Key>
               <div className={`popover right dl-pop ${menu === 'dl' ? 'on' : ''}`}>
                 <div className="dl-pop-head"><b>Download all icons</b><span className="soon">Coming soon</span></div>
@@ -203,18 +203,18 @@ export default function IconsPage({ initialQuery = '' }: { initialQuery?: string
       </div>
 
       <div className={`dock dock-icons ${dockOn ? 'on' : ''}`} onClick={e => e.stopPropagation()}>
-        <div className="dd-wrap">
+        <div className="dd-wrap dc-style">
           <button className={`dock-style ${menu === 'style' ? 'open' : ''}`} onClick={() => setMenu(m => m === 'style' ? '' : 'style')}><span className="dl">Style</span>{iconStyle}<Icon name="chevron-down" size={13} /></button>
           <div className={`popover up dark ${menu === 'style' ? 'on' : ''}`}>{ICON_STYLES.map(st => LOCKED.has(st)
             ? <button key={st} className="pop-item" disabled onClick={() => toast(SOON)}><span className="pi-row"><Icon name="layers" size={16} color="#8D909A" />{st}</span><Icon name="lock" size={13} color="#8D909A" /></button>
             : <button key={st} className={`pop-item ${iconStyle === st ? 'on' : ''}`} onClick={() => { setIconStyle(st); setMode('icons'); setMenu('') }}><span className="pi-row"><Icon name="layers" size={16} variant={st} color="#fff" />{st}</span></button>)}</div>
         </div>
         <span className="dock-div" />
-        <div className="dock-step"><span className="dl">Size</span><button onClick={() => setSize(v => Math.max(16, v - 4))} aria-label="Smaller">−</button><b className="mono">{size}</b><button onClick={() => setSize(v => Math.min(36, v + 4))} aria-label="Bigger">+</button></div>
-        <div className="dock-step"><span className="dl">Stroke</span><button onClick={() => setStroke(v => Math.max(1, +(v - 0.25).toFixed(2)))} aria-label="Thinner">−</button><b className="mono">{weightLabel(stroke)}</b><button onClick={() => setStroke(v => Math.min(2.5, +(v + 0.25).toFixed(2)))} aria-label="Thicker">+</button></div>
+        <div className="dock-step dc-size"><span className="dl">Size</span><button onClick={() => setSize(v => Math.max(16, v - 4))} aria-label="Smaller">−</button><b className="mono">{size}</b><button onClick={() => setSize(v => Math.min(36, v + 4))} aria-label="Bigger">+</button></div>
+        <div className="dock-step dc-stroke"><span className="dl">Stroke</span><button onClick={() => setStroke(v => Math.max(1, +(v - 0.25).toFixed(2)))} aria-label="Thinner">−</button><b className="mono">{weightLabel(stroke)}</b><button onClick={() => setStroke(v => Math.min(2.5, +(v + 0.25).toFixed(2)))} aria-label="Thicker">+</button></div>
         <span className="dock-div" />
         {/* one paint control: Solid / Gradient — or, for the two-colour styles, their two colours */}
-        <div className="dd-wrap">
+        <div className="dd-wrap dc-color">
           <button className={`dock-gbtn dock-paint ${menu === 'color' ? 'open' : ''}`} onClick={() => { setPaintTab(g ? 'grad' : 'solid'); setMenu(m => m === 'color' ? '' : 'color') }} aria-expanded={menu === 'color'}>
             <i className="paint-chip" style={{ background: g ? gradCss(grad) : color }}>{pair && <em style={{ background: second ?? color, opacity: second ? 1 : .35 }} />}</i><span className="dl">Color</span><Icon name="chevron-down" size={13} /></button>
           <div className={`popover up dark paint-pop ${menu === 'color' ? 'on' : ''}`}>
@@ -245,7 +245,7 @@ export default function IconsPage({ initialQuery = '' }: { initialQuery?: string
             </>}
           </div>
         </div>
-        <div className="dd-wrap">
+        <div className="dd-wrap dc-motion">
           <button className={`dock-gbtn ${menu === 'motion' ? 'open' : ''}`} onClick={() => setMenu(m => m === 'motion' ? '' : 'motion')} aria-expanded={menu === 'motion'}>
             <Icon name="play" size={13} color="#fff" /><span className="dl">Motion</span><b>{moving ? motion.kind : 'Off'}</b><Icon name="chevron-down" size={13} /></button>
           <div className={`popover up dark motion-pop ${menu === 'motion' ? 'on' : ''}`}>

@@ -9,7 +9,24 @@ import { HeroLogo } from '../logo'
 import { isPrerendered } from '../boot'
 
 export default function Home({ modals }: { modals: Modals }) {
-  return (<><Hero /><Marquee /><Showcase /><Support modals={modals} /><Faq modals={modals} /></>)
+  return (<><Hero />
+    <Later h={240}><Marquee /></Later><Later h={1400}><Showcase /></Later>
+    <Later h={700}><Support modals={modals} /></Later><Later h={800}><Faq modals={modals} /></Later></>)
+}
+
+/** Below-the-fold sections mount as they come near the screen, so the first paint and the first seconds of the
+ *  page are not spent drawing a 120-icon wall nobody can see yet. `home:mount` (the FAQ link) mounts them all. */
+export const mountHome = () => window.dispatchEvent(new Event('home:mount'))
+function Later({ h, children }: { h: number; children: React.ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null); const [on, setOn] = useState(false)
+  useEffect(() => {
+    const el = ref.current; if (on || !el) return
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) setOn(true) }, { rootMargin: '250px 0px' })
+    const all = () => setOn(true)
+    io.observe(el); window.addEventListener('home:mount', all)
+    return () => { io.disconnect(); window.removeEventListener('home:mount', all) }
+  }, [on])
+  return on ? <>{children}</> : <div ref={ref} style={{ minHeight: h }} aria-hidden />
 }
 
 export function Hero() {
