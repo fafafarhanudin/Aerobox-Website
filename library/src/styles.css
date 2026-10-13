@@ -2058,3 +2058,35 @@ body:has(.dock-pop.on) .float-top { opacity: 0; pointer-events: none; }
   .icons-page .icon-grid { padding-bottom: 112px; } /* the last row clears the dock */
   body:has(.dock-icons.on) .float-btn { bottom: 118px; }
 }
+
+/* ---------- Gradients, Logos and Isometric docks on phones: the same tidy two-row panel as the Icons dock ---------- */
+@media (max-width: 760px) {
+  .dock.center, .dock.center:not(.dock-icons) { left: 12px; right: 12px; bottom: 12px; width: auto; max-width: none; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; padding: 8px; border-radius: 18px; overflow: visible; transform: translateY(160%); animation: none; }
+  .dock.center.on { transform: none; }
+  .dock.center .dock-div { display: none; }
+  /* menus: three to a row; label on top, value under it, so "16px" or "Off" still says what it is */
+  .dock.center > .dd-wrap { grid-column: span 2; order: 1; min-width: 0; }
+  .dock.center > .dd-wrap > .dock-style { position: relative; width: 100%; height: 44px; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 1px; padding: 0 22px 0 10px; border-radius: 11px; background: rgba(255, 255, 255, .06); font-size: 13px; line-height: 16px; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dock.center > .dd-wrap > .dock-style > svg:first-child, .dock.center > .dd-wrap > .dock-style > .tone-dot { display: none; }
+  .dock.center > .dd-wrap > .dock-style .dl { display: block !important; font-size: 10px; line-height: 12px; color: #8D909A; }
+  .dock.center > .dd-wrap > .dock-style > svg:last-child { position: absolute; right: 8px; top: 50%; translate: 0 -50%; }
+  /* steppers and swatches share the second row; a stepper alone takes all of it */
+  .dock.center > .dock-step { grid-column: span 3; order: 2; height: 44px; justify-content: space-between; gap: 4px; padding: 0 4px 0 12px; border-radius: 11px; background: rgba(255, 255, 255, .06); }
+  .dock.center:not(:has(> .dock-sw)) > .dock-step { grid-column: 1 / -1; }
+  .dock.center > .dock-step .dl { flex: 1; margin: 0; font-size: 12px; }
+  .dock.center > .dock-step button { width: 34px; height: 34px; border-radius: 9px; font-size: 16px; }
+  .dock.center > .dock-step b { min-width: 44px; text-align: center; font-size: 14px; }
+  .dock.center > .dock-sw { grid-column: span 3; order: 2; height: 44px; display: flex; align-items: center; justify-content: space-evenly; gap: 4px; padding: 0 6px; border-radius: 11px; background: rgba(255, 255, 255, .06); }
+  .dock.center > .dock-dl { display: none; } /* "Download all" is still locked: on a phone it would be a button that does nothing */
+  .dock.center .popover, .popover.dock-pop, .dock.center .cpk-pop { position: fixed; left: 12px; right: 12px; bottom: 124px; top: auto; width: auto !important; max-height: calc(100dvh - 210px); overflow-y: auto; translate: 0 0; }
+  body:has(.dock.center.on) .page { padding-bottom: 124px; } /* the last row clears the dock */
+  body:has(.dock.center.on) .float-btn { bottom: 128px; }
+}
+
+/* template tiles: the hover bar always fits its tile; on a narrow tile "Copy SVG" shrinks to its icon too */
+.logo-tile, .wl-tile { container-type: inline-size; }
+.lt-actions, .wl-actions { max-width: calc(100% - 16px); }
+@container (max-width: 200px) {
+  .lt-actions button > span, .wl-actions button > span { display: none; }
+  .lt-actions button:has(span), .wl-actions button:has(span) { width: 28px; padding: 0; gap: 0; justify-content: center; }
+}

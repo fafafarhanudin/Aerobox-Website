@@ -230,7 +230,7 @@ function Templates({ toggle }: { toggle: React.ReactNode }) {
               {credit}
               <div className="lt-actions" onClick={e => e.stopPropagation()}>
                 <Tooltip label="Copy SVG"><button onClick={async e => { const el = e.currentTarget; await copyText(lockupSvg(l, dk, tone), l.name); pop(el, 18); toast(<>Copied <b>{l.name}</b></>) }}><Icon name="copy" size={15} /><span>Copy SVG</span></button></Tooltip>
-                <Tooltip label="Download"><button onClick={() => { download(`${l.name.toLowerCase()}.svg`, lockupSvg(l, dk, tone)); toast(<>Downloaded <b>{l.name}</b></>) }}><Icon name="download" size={15} /><span>Download</span></button></Tooltip>
+                <Tooltip label="Download SVG"><button aria-label="Download SVG" onClick={() => { download(`${l.name.toLowerCase()}.svg`, lockupSvg(l, dk, tone)); toast(<>Downloaded <b>{l.name}</b></>) }}><Icon name="download" size={15} /></button></Tooltip>
                 <Tooltip label="Preview"><button onClick={() => setLsel(l)}><Icon name="eye" size={15} /></button></Tooltip>
               </div>
             </div>
@@ -247,7 +247,7 @@ function Templates({ toggle }: { toggle: React.ReactNode }) {
               {credit}
               <div className="lt-actions" onClick={e => e.stopPropagation()}>
                 <Tooltip label="Copy SVG"><button onClick={e => copySvg(m, e.currentTarget)}><Icon name="copy" size={15} /><span>Copy SVG</span></button></Tooltip>
-                <Tooltip label="Download"><button onClick={() => { download(`${m.name.toLowerCase()}.svg`, tsv(m.svg)); toast(<>Downloaded <b>{m.name}</b></>) }}><Icon name="download" size={15} /><span>Download</span></button></Tooltip>
+                <Tooltip label="Download SVG"><button aria-label="Download SVG" onClick={() => { download(`${m.name.toLowerCase()}.svg`, tsv(m.svg)); toast(<>Downloaded <b>{m.name}</b></>) }}><Icon name="download" size={15} /></button></Tooltip>
                 <Tooltip label="Preview"><button onClick={() => setSel(m)}><Icon name="eye" size={15} /></button></Tooltip>
               </div>
             </div>
