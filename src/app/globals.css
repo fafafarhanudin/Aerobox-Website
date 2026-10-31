@@ -1324,22 +1324,6 @@ body {
   }
 }
 
-/* hero work wall: columns drift slowly against each other; the wall fades into the page at the bottom */
-.hero-wall {
-  mask-image: linear-gradient(to bottom, #000 55%, transparent);
-}
-.hero-wall__col {
-  animation: wall-drift 18s ease-in-out infinite alternate;
-  will-change: transform;
-}
-@keyframes wall-drift {
-  from { transform: translateY(0); }
-  to { transform: translateY(-40px); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .hero-wall__col { animation: none; }
-}
-
 /* blueprint loader: a graphite sheet where the page's boxes draw themselves, then the sheet lifts away */
 .bp {
   position: fixed;
@@ -1518,4 +1502,7 @@ body {
 }
 @media (prefers-reduced-motion: reduce) {
   .fig-holder > svg { animation: none; }
+}
+.fig-holder [data-drive] {
+  transition: none;
 }

@@ -39,24 +39,21 @@ export function BlueprintLoader() {
           </Box>
 
           <div className="flex flex-1 flex-col items-center gap-7 overflow-hidden px-5 pt-12 md:px-8 md:pt-16 lg:px-12 [&>*]:shrink-0">
-            <Box i={6} label="Status" className="h-8 w-[236px]" />
-            <div className="relative w-full max-w-[350px] md:max-w-[940px]">
+            <Box i={6} label="Status" className="h-8 w-[260px]" />
+            <div className="relative w-full max-w-[350px] md:max-w-[740px] lg:max-w-[1180px]">
               <span className="bp-dim hidden md:block" style={{ "--i": 9 } as CSSProperties}>
-                <span>940</span>
+                <span>1180</span>
               </span>
-              <Box i={7} label="Title · 68 / 70" className="h-[120px] w-full md:h-[140px]" />
+              <Box i={7} label="Title · 60 / 66" className="h-[120px] w-full md:h-[132px]" />
             </div>
             <Box i={8} label="Copy · 18 / 28" className="h-[78px] w-full max-w-[560px] md:h-14" />
             <div className="flex w-full flex-col gap-2.5 md:w-auto md:flex-row md:gap-3">
               <Box i={9} label="CTA 01" className="h-12 md:w-[188px]" />
               <Box i={10} label="CTA 02" className="h-12 md:w-[146px]" />
             </div>
-            <div className="-mx-5 mt-6 flex w-[calc(100%+40px)] justify-center gap-3 px-3 md:-mx-8 md:mt-10 md:w-[calc(100%+64px)] md:gap-4 lg:-mx-12 lg:w-[calc(100%+96px)]">
+            <div className="mt-4 grid w-full grid-cols-2 gap-3 md:mt-8 md:grid-cols-3 md:gap-4 lg:grid-cols-5 max-lg:md:[&>*:nth-child(n+4)]:hidden max-md:[&>*:nth-child(n+5)]:hidden">
               {plates.map((c) => (
-                <div key={c} className={`flex w-[46vw] max-w-[280px] shrink-0 flex-col gap-3 md:w-[19vw] md:gap-4 ${c > 2 ? "max-md:hidden" : ""}`} style={{ marginTop: [0, 56, 18, 72, 36][c] }}>
-                  <Box i={11 + c} label={`Plate 0${c + 1}`} cross className="aspect-[7/5] w-full" />
-                  <Box i={12 + c} cross className="aspect-[7/5] w-full" />
-                </div>
+                <Box key={c} i={11 + c} label={`Plate 0${c + 1}`} cross className="aspect-[16/11] w-full" />
               ))}
             </div>
           </div>

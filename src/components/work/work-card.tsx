@@ -2,25 +2,24 @@ import Image from "next/image";
 import { TransitionLink } from "@/components/view-transition";
 import type { Work } from "@/data/work";
 
-/* A project card: the screen sits inset on a soft panel and is cropped at the bottom, so it reads as a
-   window into the product. The panel is named for the page transition only when clicked (see TransitionLink). */
-export function WorkCard({ work, priority, sizes = "(min-width: 1024px) 660px, (min-width: 744px) 46vw, 92vw" }: { work: Work; priority?: boolean; sizes?: string }) {
-  const portrait = work.cover.h > work.cover.w * 0.95; // phone collages and tall pages
+/* A project card: the whole screen sits on a soft panel, never cropped. The image keeps its own proportions and is
+   centred in the panel, so dashboards, phone sets and tall pages all show edge to edge. The panel is named for the
+   page transition only when clicked (see TransitionLink). */
+export function WorkCard({ work, priority, sizes = "(min-width: 1024px) 600px, (min-width: 744px) 44vw, 88vw" }: { work: Work; priority?: boolean; sizes?: string }) {
+  const { cover } = work;
   return (
     <TransitionLink href={`/work/${work.slug}`} className="group flex flex-col gap-3 rounded-[22px] outline-offset-4" aria-label={`${work.name}, ${work.summary}`}>
-      <span
-        className="relative block aspect-[4/3] overflow-hidden rounded-[20px] border border-line bg-page"
-        data-vt-name={`work-${work.slug}`}
-      >
-        <span className="absolute inset-x-[7%] bottom-0 top-[8%] overflow-hidden rounded-t-[10px] shadow-[0_0_0_1px_rgba(12,14,20,.06),0_24px_48px_-20px_rgba(12,14,20,.35)] transition-transform duration-[700ms] ease-[cubic-bezier(.2,.8,.2,1)] group-hover:-translate-y-2 group-hover:scale-[1.015] motion-reduce:transition-none">
+      <span className="relative block aspect-[4/3] overflow-hidden rounded-[20px] border border-line bg-page" data-vt-name={`work-${work.slug}`}>
+        <span className="absolute inset-[6%] flex items-center justify-center">
           <Image
-            src={work.cover.src}
-            alt={`${work.name} — ${work.cover.caption}`}
-            fill
+            src={cover.src}
+            alt={`${work.name} — ${cover.caption}`}
+            width={cover.w}
+            height={cover.h}
             sizes={sizes}
             quality={85}
             priority={priority}
-            className={`object-cover ${portrait ? "object-center" : "object-top"}`}
+            className="h-auto max-h-full w-auto max-w-full rounded-[8px] shadow-[0_0_0_1px_rgba(12,14,20,.06),0_20px_40px_-18px_rgba(12,14,20,.35)] transition-transform duration-[700ms] ease-[cubic-bezier(.2,.8,.2,1)] group-hover:scale-[1.02] motion-reduce:transition-none"
           />
         </span>
         <span className="absolute left-3 top-3 flex gap-1.5">

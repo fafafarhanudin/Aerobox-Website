@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Brand, SocialLogo } from "@/components/ui";
+import { Brand, Eyebrow, SocialLogo } from "@/components/ui";
 import { LocalClock } from "@/components/local-time";
-import { MiniKeyboard } from "@/components/mini-keyboard";
+import { Animator } from "@/components/figures/animator";
 import { Wordmark } from "@/components/wordmark";
 import { mailtoHref } from "@/components/email-key";
 import { site, socials, type SocialKey } from "@/lib/site";
@@ -37,10 +37,7 @@ function Status() {
       >
         <Image src="/assets/hero/avatar.png" alt="" width={56} height={56} className="size-full rounded-full object-cover" />
       </a>
-      <span className="flex items-center gap-2 rounded-full border border-line bg-white py-1.5 pl-2.5 pr-3 text-[12px] font-medium leading-4 tracking-[-0.12px] text-ink-2">
-        <Image src="/assets/hero/dot.svg" alt="" width={8} height={8} />
-        {site.availability}
-      </span>
+      <Eyebrow label="Available for new projects" tone="live" />
     </div>
   );
 }
@@ -95,8 +92,9 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="px-5 pb-12 pt-4 md:px-8 lg:px-12">
-        <MiniKeyboard />
+      {/* a small city at work, drawn with the anatomy kit (scripts/figures/build.mjs); wider than the screen on phones */}
+      <div className="overflow-hidden px-5 pb-10 pt-2 md:px-8 lg:px-12">
+        <Animator name="city" ratio="1400 / 611" theme="light" className="iso fig-card max-md:-ml-[45%] max-md:w-[190%]" />
       </div>
 
       <div className="flex items-center justify-between gap-4 border-t border-line px-5 py-5 md:px-8 lg:px-12">

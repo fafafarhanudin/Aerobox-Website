@@ -7,10 +7,13 @@ import { useEffect, useRef } from "react";
    Positions follow their targets with a critically damped spring, so every move starts and lands softly.
    Loops run only while the figure is on screen; reduced motion keeps the drawing still. */
 
-type Channels = { x?: number; y?: number; z?: number; o?: number; s?: number; sy?: number };
+// d is how much of a drawn line is showing (0..1), for parts holding paths with pathLength="1"
+type Channels = { x?: number; y?: number; z?: number; o?: number; s?: number; sy?: number; d?: number };
 type Pose = Record<string, Channels>;
 type Key = [time: number, pose: Pose, snap?: boolean];
-type Script = { period: number; keys: Key[] };
+// a drive moves a part at constant speed from one end to the other and starts again, fading in and out at the ends
+type Drive = { axis: "x" | "y"; from: number; to: number; period: number; phase?: number; fade?: number };
+type Script = { period: number; keys: Key[]; drives?: Record<string, Drive> };
 
 const tap = (at: number, scroll: number): Key[] => [
   [at, { tip: { z: -11 }, coilB: { sy: 1.5 }, coilF: { sy: 1.5 } }],
@@ -19,6 +22,20 @@ const tap = (at: number, scroll: number): Key[] => [
   [at + 0.55, { ripple: { o: 0 } }],
   [at + 1.2, { ripple: { s: 1 } }, true],
 ];
+
+// shared with scripts/figures/build.mjs: the plotter's circle, the easel's hills
+const LOGO_R = 22;
+const HILLS = [[-40, 30], [-30, 38], [-18, 44], [-6, 41], [6, 35], [18, 42], [30, 49], [40, 44]];
+
+const bars = (sy: number[]): Pose => Object.fromEntries(sy.map((v, i) => [`bar${i}`, { sy: v }]));
+
+/** keys tracing a circle from angle 0: each step gets the point and how far round it is */
+function circleKeys(start: number, step: number, count: number, r: number, at: (x: number, y: number, f: number) => Pose): Key[] {
+  return Array.from({ length: count }, (_, i) => {
+    const a = ((i + 1) / count) * Math.PI * 2;
+    return [start + i * step, at(r * Math.cos(a), r * Math.sin(a), (i + 1) / count)];
+  });
+}
 
 const scripts: Record<string, Script> = {
   // the gantry picks a tile from the tray, sets it into the empty slot, and goes back for the next one
@@ -78,6 +95,108 @@ const scripts: Record<string, Script> = {
       [4.6, { ram: { z: 0 } }],
     ],
   },
+
+  // the trace scrolls one period at a time while the bar meter breathes
+  dashboard: {
+    period: 4.8,
+    drives: { trace: { axis: "x", from: 0, to: 38, period: 2.2 } },
+    keys: [
+      [0, bars([1, 1, 1, 1, 1])],
+      [0.8, bars([1.5, 0.6, 1.8, 0.8, 2.2])],
+      [1.6, bars([0.7, 1.3, 1.1, 1.6, 1.2])],
+      [2.4, bars([1.9, 0.8, 0.6, 1.2, 1.8])],
+      [3.2, bars([1.2, 1.4, 1.6, 0.7, 1])],
+    ],
+  },
+  // the pen goes down and traces the mark once round; the sheet clears for the next one
+  logo: {
+    period: 6.8,
+    keys: [
+      [0, { px: { x: 0 }, py: { y: 0 }, pen: { z: 0 }, ink: { d: 0, o: 1 } }, true],
+      [0.4, { pen: { z: -2.8 } }],
+      ...circleKeys(0.7, 0.13, 24, LOGO_R, (x, y, f) => ({ px: { x: x - LOGO_R }, py: { y }, ink: { d: f } })),
+      [4.0, { pen: { z: 0 } }],
+      [4.3, { px: { x: -LOGO_R }, py: { y: 0 } }],
+      [5.6, { ink: { o: 0 } }],
+      [6.2, { px: { x: 0 } }],
+    ],
+  },
+  // the brush leaves the palette, paints the hills, then the sun, and goes back
+  illustration: {
+    period: 7.8,
+    keys: [
+      [0, { hills: { d: 0, o: 1 }, sun: { d: 0, o: 1 }, brush: { x: 98, y: 31, z: -27 } }, true],
+      [0.5, { brush: { x: 0, y: 0, z: 0 } }],
+      ...HILLS.slice(1).map(([x, z], i): Key => [1.1 + i * 0.3, { brush: { x: x + 40, z: z - 30 }, hills: { d: (i + 1) / (HILLS.length - 1) } }]),
+      [3.4, { brush: { x: 72, z: 36 } }],
+      ...circleKeys(3.9, 0.17, 12, 8, (x, z, f) => ({ brush: { x: 64 + x, z: 36 + z }, sun: { d: f } })),
+      [6.2, { brush: { x: 98, y: 31, z: -27 } }],
+      [7.2, { hills: { o: 0 }, sun: { o: 0 } }],
+    ],
+  },
+  // the camera eases from keyframe to keyframe along the slider
+  animation: {
+    period: 6.4,
+    keys: [
+      [0, { cam: { x: 0 } }],
+      [0.6, { cam: { x: 50 } }],
+      [2.2, { cam: { x: 100 } }],
+      [3.8, { cam: { x: 50 } }],
+      [5.0, { cam: { x: 0 } }],
+    ],
+  },
+  // each new slide flashes the screen and regrows the bars
+  deck: {
+    period: 6,
+    keys: [
+      [0, { ...bars([1, 1, 1, 1]), flash: { o: 0 } }],
+      [1.6, { flash: { o: 0.7 } }],
+      [1.8, { ...bars([0.6, 0.9, 1.3, 1.5]), flash: { o: 0 } }],
+      [3.6, { flash: { o: 0.7 } }],
+      [3.8, { ...bars([1.2, 0.7, 1.1, 0.8]), flash: { o: 0 } }],
+      [5.6, { flash: { o: 0.7 } }],
+      [5.8, { ...bars([1, 1, 1, 1]), flash: { o: 0 } }],
+    ],
+  },
+  // components ride the belt through the publish gate
+  nocode: {
+    period: 6,
+    drives: {
+      slats: { axis: "x", from: 0, to: 8, period: 0.5 },
+      tile0: { axis: "x", from: 0, to: 150, period: 6, phase: 0, fade: 16 },
+      tile1: { axis: "x", from: 0, to: 150, period: 6, phase: 1 / 3, fade: 16 },
+      tile2: { axis: "x", from: 0, to: 150, period: 6, phase: 2 / 3, fade: 16 },
+    },
+    keys: [],
+  },
+  // the city: traffic both ways, a train on the viaduct, smoke from the factory, the crane setting a beam
+  city: {
+    period: 9,
+    drives: {
+      train: { axis: "x", from: -240, to: 224, period: 12, fade: 40 },
+      east0: { axis: "x", from: 0, to: 590, period: 9, phase: 0, fade: 20 },
+      east1: { axis: "x", from: 0, to: 590, period: 9, phase: 0.36, fade: 20 },
+      east2: { axis: "x", from: 0, to: 590, period: 9, phase: 0.7, fade: 20 },
+      west0: { axis: "x", from: 0, to: -590, period: 10, phase: 0.12, fade: 20 },
+      west1: { axis: "x", from: 0, to: -590, period: 10, phase: 0.47, fade: 20 },
+      west2: { axis: "x", from: 0, to: -590, period: 10, phase: 0.8, fade: 20 },
+    },
+    keys: ([
+      [0, { trolley: { x: 0 }, hook: { z: 0 }, cable: { sy: 1 }, beam: { o: 1 }, placed: { o: 0 } }],
+      [0.8, { trolley: { x: -24 } }],
+      [2.4, { hook: { z: -24.4 }, cable: { sy: 1.555 } }],
+      [3.4, { placed: { o: 1 }, beam: { o: 0 } }],
+      [3.6, { hook: { z: 0 }, cable: { sy: 1 } }],
+      [4.8, { trolley: { x: 0 } }],
+      [7.6, { placed: { o: 0 } }],
+      [8.2, { beam: { o: 1 } }],
+      ...[0, 3, 6].flatMap((t): Key[] => [
+        [t, { smoke0: { s: 1, z: 0, o: 0.7 }, smoke1: { s: 1, z: 0, o: 0.7 } }, true],
+        [t + 0.1, { smoke0: { s: 2.4, z: 10 }, smoke1: { s: 2, z: 8 } }],
+        [t + 1.2, { smoke0: { o: 0 }, smoke1: { o: 0 } }],
+      ]),
+    ] as Key[]).sort((a, b) => a[0] - b[0]),
+  },
 };
 
 // matches STATIONS in scripts/figures/build.mjs
@@ -106,9 +225,9 @@ function poseAt(script: Script, t: number) {
   return { pose, snap };
 }
 
-type Live = { el: SVGGElement; anchor?: [number, number]; at: Required<Omit<Channels, "o">>; v: Required<Omit<Channels, "o">>; o: number };
-const CHANNELS = ["x", "y", "z", "s", "sy"] as const;
-const REST = { x: 0, y: 0, z: 0, s: 1, sy: 1 };
+type Live = { el: SVGGElement; anchor?: [number, number]; ink: SVGPathElement[]; at: Required<Omit<Channels, "o">>; v: Required<Omit<Channels, "o">>; o: number };
+const CHANNELS = ["x", "y", "z", "s", "sy", "d"] as const;
+const REST = { x: 0, y: 0, z: 0, s: 1, sy: 1, d: 1 };
 const W = 10; // spring stiffness: settles in about half a second
 
 function animate(root: HTMLElement, svg: SVGSVGElement, name: string, stageRef: { current: { stage: number; since: number } }) {
@@ -117,7 +236,8 @@ function animate(root: HTMLElement, svg: SVGSVGElement, name: string, stageRef: 
     const parts = new Map<string, Live>();
     svg.querySelectorAll<SVGGElement>("g[data-part]").forEach((el) => {
       const pin = el.dataset.anchor?.split(" ").map(Number) as [number, number] | undefined;
-      parts.set(el.dataset.part ?? "", { el, anchor: pin, at: { ...REST }, v: { x: 0, y: 0, z: 0, s: 0, sy: 0 }, o: Number(el.style.opacity || 1) });
+      const ink = [...el.querySelectorAll<SVGPathElement>(":scope > path[pathLength]")];
+      parts.set(el.dataset.part ?? "", { el, anchor: pin, ink, at: { ...REST }, v: { x: 0, y: 0, z: 0, s: 0, sy: 0, d: 0 }, o: Number(el.style.opacity || 1) });
     });
 
     const draw = (p: Live) => {
@@ -130,6 +250,7 @@ function animate(root: HTMLElement, svg: SVGSVGElement, name: string, stageRef: 
         transform += ` translate(${ax} ${ay}) scale(${s.toFixed(3)} ${(s * sy).toFixed(3)}) translate(${-ax} ${-ay})`;
       }
       p.el.setAttribute("transform", transform);
+      for (const path of p.ink) path.style.strokeDashoffset = (1 - p.at.d).toFixed(4);
     };
 
     const script = scripts[name];
@@ -144,7 +265,17 @@ function animate(root: HTMLElement, svg: SVGSVGElement, name: string, stageRef: 
       clock += dt;
       stageRef.current.since += dt;
       const { pose, snap } = script ? poseAt(script, clock % script.period) : { pose: processPose(stageRef.current.stage, stageRef.current.since), snap: null };
+      for (const [part, drive] of Object.entries(script?.drives ?? {})) {
+        const p = parts.get(part);
+        if (!p) continue;
+        const f = (clock / drive.period + (drive.phase ?? 0)) % 1;
+        const span = Math.abs(drive.to - drive.from);
+        p.at[drive.axis] = drive.from + (drive.to - drive.from) * f;
+        draw(p);
+        if (drive.fade) p.el.style.opacity = Math.min(1, (Math.min(f, 1 - f) * span) / drive.fade).toFixed(3);
+      }
       for (const [part, p] of parts) {
+        if (script?.drives?.[part]) continue;
         const target = { ...REST, ...pose[part] };
         for (const c of CHANNELS) {
           if (snap?.[part] && snap[part][c] !== undefined) {

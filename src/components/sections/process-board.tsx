@@ -79,9 +79,9 @@ export function ProcessBoard({ steps }: { steps: Step[] }) {
                 <h3 className="text-[20px] font-medium leading-7 tracking-[-0.2px] text-white">{s.title}</h3>
                 <p className="text-[14px] leading-[22px] tracking-[-0.14px] text-white/55">{s.body}</p>
               </div>
-              <p className="mt-auto border-t border-white/10 pt-3.5 text-[13px] leading-5 tracking-[-0.13px] text-white/50">
-                <span aria-hidden="true">↳ </span>
-                {s.output}
+              <p className="mt-auto flex flex-col gap-1 border-t border-white/10 pt-3.5">
+                <span className="font-mono text-[10px] uppercase leading-3 tracking-[0.1em] text-white/35">Output</span>
+                <span className="text-[13px] leading-5 tracking-[-0.13px] text-white/70">{s.output}</span>
               </p>
             </li>
           );
