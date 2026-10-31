@@ -51,9 +51,9 @@ export function BlueprintLoader() {
               <Box i={9} label="CTA 01" className="h-12 md:w-[188px]" />
               <Box i={10} label="CTA 02" className="h-12 md:w-[146px]" />
             </div>
-            <div className="mt-4 grid w-full grid-cols-2 gap-3 md:mt-8 md:grid-cols-3 md:gap-4 lg:grid-cols-5 max-lg:md:[&>*:nth-child(n+4)]:hidden max-md:[&>*:nth-child(n+5)]:hidden">
+            <div className="-mx-5 mt-4 flex gap-3 self-stretch overflow-hidden md:-mx-8 md:mt-8 md:gap-4 lg:-mx-12">
               {plates.map((c) => (
-                <Box key={c} i={11 + c} label={`Plate 0${c + 1}`} cross className="aspect-[16/11] w-full" />
+                <Box key={c} i={11 + c} label={`Plate 0${c + 1}`} cross className="aspect-[448/344] w-[292px] shrink-0 md:w-[460px]" />
               ))}
             </div>
           </div>

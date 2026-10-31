@@ -4,7 +4,7 @@ import sizes from "@/data/image-sizes.json";
 
 /**
  * Projects as the site shows them: every screen in data/projects.ts grouped by product name
- * ("BetFlow · Markets" → BetFlow), plus five case studies with screens exported from Figma at 1.6×.
+ * ("BetFlow · Markets" → BetFlow), plus four case studies with screens exported from Figma at 1.6×.
  * Words live in data/case-notes.ts.
  */
 
@@ -175,26 +175,6 @@ const caseStudies: CaseDef[] = [
       },
     ],
   },
-  {
-    slug: "datalyr",
-    name: "Datalyr",
-    category: "Live websites",
-    url: "https://datalyr.com/",
-    live: true,
-    sections: [
-      { title: "First screen", body: "The promise in one line, the product right under it.", shots: [cs("datalyr", "hero", "Hero")] },
-      {
-        title: "Attribution story",
-        body: "Each feature is shown with its real product table, not an illustration.",
-        shots: [cs("datalyr", "revenue", "Revenue attribution"), cs("datalyr", "conversions", "Ad analytics"), cs("datalyr", "customers", "Customer journeys")],
-      },
-      {
-        title: "Platform",
-        body: "Everything in one platform, an AI assistant that answers in charts, integrations and use cases.",
-        shots: [cs("datalyr", "platform", "Platform overview"), cs("datalyr", "ask", "Ask Datalyr"), cs("datalyr", "stack", "Integrations"), cs("datalyr", "built", "Use cases")],
-      },
-    ],
-  },
 ];
 
 // ---------- assemble ----------
@@ -261,8 +241,8 @@ export const nextWork = (slug: string) => {
   return works[(i + 1) % works.length];
 };
 
-/** the six on the home page: the case studies first, then one strong dashboard */
-export const featured = ["cutmage", "handgate", "marshal", "sentinel-ai", "datalyr", "betflow"]
+/** the six on the home page: the case studies first, then two strong dashboards */
+export const featured = ["cutmage", "handgate", "marshal", "sentinel-ai", "aether-ai", "kargo"]
   .map((s) => workBySlug(s))
   .filter((w): w is Work => Boolean(w));
 
@@ -277,12 +257,12 @@ export const workCategories: { name: Category | "Case studies"; count: number }[
 /** the hero wall: fifteen strong screens, each linking to its project, in column order */
 const WALL = [
   "Cutmage · Home", "Lintas · Control room", "Stride", "Modelgate · Models", "Kargo",
-  "BetFlow · Trade history", "Datalyr", "Aether AI · Charging ledger", "Sentinel AI", "Flowdesk",
+  "Trading terminal", "Aperture redesign", "Aether AI · Charging ledger", "Sentinel AI", "Flowdesk",
   "Cutmage · Editor", "Analytics suite", "Moolah", "Crypto portfolio", "Exalt Studio",
 ];
 export const heroWall = WALL.map((title) => {
   const p = projects.find((x) => x.title === title)!;
   const product = productOf(p.title);
   const work = works.find((w) => w.name === product)!;
-  return { shot: shot(p.image, p.title), slug: work.slug, name: product };
+  return { shot: shot(p.image, p.title), slug: work.slug, name: product, tag: p.tag };
 });

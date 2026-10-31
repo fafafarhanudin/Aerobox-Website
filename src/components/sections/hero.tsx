@@ -1,87 +1,30 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { CornerDownLeft } from "@/components/aero-icons";
 import { Eyebrow, Key, Legend } from "@/components/ui";
-import { TransitionLink } from "@/components/view-transition";
+import { Marquee } from "@/components/marquee";
+import { MarqueeCard } from "@/components/project-card";
 import { heroWall } from "@/data/work";
 import { site, socials } from "@/lib/site";
 
-/* A strip of work under the hero. Each tile holds three projects and shows one at a time, whole (never cropped);
-   every few seconds one tile, in a fixed shuffled order, cross-fades to its next project. */
-const TILES = 5;
-const ORDER = [2, 0, 4, 1, 3];
-const STEP_MS = 2600;
-const pools = Array.from({ length: TILES }, (_, t) => heroWall.filter((_, i) => i % TILES === t));
-
-function shown(tile: number, step: number) {
-  const at = ORDER.indexOf(tile);
-  const turns = step > at ? Math.floor((step - at - 1) / TILES) + 1 : 0;
-  return turns % pools[tile].length;
-}
-
+/* Recent work under the hero, on a slow sideways loop (the same marquee as the rest of the site); each card opens
+   its project and shows the whole screen. */
 function Wall() {
-  const [step, setStep] = useState(0);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const root = ref.current;
-    if (!root || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    let timer = 0;
-    const io = new IntersectionObserver(([entry]) => {
-      window.clearInterval(timer);
-      if (entry.isIntersecting) timer = window.setInterval(() => setStep((s) => s + 1), STEP_MS);
-    });
-    io.observe(root);
-    return () => {
-      io.disconnect();
-      window.clearInterval(timer);
-    };
-  }, []);
-
   return (
-    <div
-      ref={ref}
-      className="grid w-full grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-5 max-lg:md:[&>*:nth-child(n+4)]:hidden max-md:[&>*:nth-child(n+5)]:hidden"
-      aria-label="Recent work"
-    >
-      {pools.map((pool, t) => {
-        const current = shown(t, step);
-        const tile = pool[current];
-        return (
-          <TransitionLink key={t} href={`/work/${tile.slug}`} className="group relative block aspect-[16/11] overflow-hidden rounded-[16px] border border-line bg-page" aria-label={tile.name}>
-            {pool.map((p, i) => (
-              <span
-                key={p.shot.src}
-                className={`absolute inset-[6%] flex items-center justify-center transition-opacity duration-700 ease-out motion-reduce:transition-none ${i === current ? "opacity-100" : "opacity-0"}`}
-                aria-hidden={i !== current}
-              >
-                <Image
-                  src={p.shot.src}
-                  alt=""
-                  width={p.shot.w}
-                  height={p.shot.h}
-                  sizes="(min-width: 1200px) 260px, (min-width: 744px) 30vw, 46vw"
-                  quality={75}
-                  priority={i === 0 && t < 2}
-                  className="h-auto max-h-full w-auto max-w-full rounded-[6px] shadow-[0_0_0_1px_rgba(12,14,20,.06),0_12px_24px_-14px_rgba(12,14,20,.4)] transition-transform duration-700 ease-[cubic-bezier(.2,.8,.2,1)] group-hover:scale-[1.03]"
-                />
-              </span>
-            ))}
-            <span className="absolute bottom-2 left-2 rounded-full bg-white/90 px-2 py-0.5 font-mono text-[10px] uppercase leading-4 tracking-[0.06em] text-ink-2 opacity-0 shadow-[0_0_0_1px_rgba(12,14,20,.08)] transition-opacity duration-300 group-hover:opacity-100">
-              {tile.name}
-            </span>
-          </TransitionLink>
-        );
-      })}
-    </div>
+    <Marquee label="Recent work" duration={heroWall.length * 6} fade="w-[72px] md:w-40" className="w-full">
+      {heroWall.map((t, i) => (
+        <div key={t.shot.src} className="pb-1.5 pr-3 pt-1 md:pr-4">
+          <MarqueeCard title={t.name} tag={t.tag} image={t.shot.src} index={i + 1} href={`/work/${t.slug}`} priority={i < 3} />
+        </div>
+      ))}
+    </Marquee>
   );
 }
 
 export function Hero() {
   return (
-    <section id="top" className="flex flex-col items-center gap-7 border-b border-line px-5 pb-12 pt-12 md:px-8 md:pb-16 md:pt-16 lg:px-12">
+    <section id="top" className="flex flex-col items-center gap-7 overflow-hidden border-b border-line px-5 pb-12 pt-12 md:px-8 md:pb-16 md:pt-16 lg:px-12">
       <div className="flex items-center gap-2.5">
         <a
           href={socials.x.href}
@@ -118,7 +61,7 @@ export function Hero() {
         </Key>
       </div>
 
-      <div className="mt-4 w-full md:mt-8">
+      <div className="-mx-5 mt-4 self-stretch md:-mx-8 md:mt-8 lg:-mx-12">
         <Wall />
       </div>
     </section>

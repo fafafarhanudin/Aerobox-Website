@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import { TransitionLink } from "@/components/view-transition";
 import type { Project } from "@/data/projects";
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -10,16 +10,18 @@ export function MarqueeCard({
   image,
   index,
   priority,
+  href = "/work",
 }: {
   title: string;
   tag: string;
   image: string;
   index: number;
   priority?: boolean;
+  href?: string;
 }) {
   return (
-    <Link
-      href="/work"
+    <TransitionLink
+      href={href}
       className="lift group relative flex w-[292px] shrink-0 flex-col rounded-lg border border-line bg-white p-1.5 md:w-[460px]"
     >
       <span className="relative block aspect-[448/320] w-full overflow-hidden rounded bg-subtle">
@@ -28,13 +30,14 @@ export function MarqueeCard({
           alt={`${title} — ${tag}`}
           fill
           sizes="(min-width: 744px) 448px, 280px"
-          className="object-cover"
+          quality={90}
+          className="object-contain"
           priority={priority}
         />
         <ViewPill label="View project" />
       </span>
       <Caption title={title} tag={tag} right={pad(index)} />
-    </Link>
+    </TransitionLink>
   );
 }
 
