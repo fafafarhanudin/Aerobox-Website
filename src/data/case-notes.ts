@@ -31,6 +31,12 @@ export const notes: Record<string, Note> = {
       "An operations suite for a rail freight yard: consist planning, yard inventory, cargo manifests, routes, line control and fleet maintenance. Dense tables and track diagrams stay readable through one blue accent, tight type and isometric wagon renders that tell rolling stock apart at a glance.",
     scope: ["Product design", "Complex workflows", "3D renders", "Design system"],
   },
+  IsoBuilder: {
+    summary: "Isometric asset builder for designers",
+    overview:
+      "A browser tool for making editable isometric shapes and illustrations without 3D software. Pick a shape or a template, set width, depth and height, choose one colour and let the sides shade themselves, round any corner, then copy the result to Figma or export SVG and PNG. Designed end to end in Figma and built as a working beta.",
+    scope: ["Product design", "Web app", "Design system", "Prototype"],
+  },
   "Sentinel AI": {
     summary: "AI infrastructure observability",
     overview:

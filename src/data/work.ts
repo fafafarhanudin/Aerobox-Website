@@ -153,25 +153,34 @@ const caseStudies: CaseDef[] = [
     ],
   },
   {
-    slug: "sentinel-ai",
-    name: "Sentinel AI",
-    category: "Landing pages",
+    slug: "isobuilder",
+    name: "IsoBuilder",
+    category: "Web apps",
     sections: [
       {
-        title: "Landing page",
-        body: "The full page, top to bottom: from the promise to the platform, pricing and the closing call to action.",
-        shots: [1, 2, 3, 4, 5].map((i) => cs("sentinel-ai", `landing-${i}`, i === 1 ? "Landing page · full length" : "")),
-        tall: true,
+        title: "Dashboard",
+        body: "Start from a blank canvas or a familiar template, pick up the last project where you left it, and keep recent exports one click away.",
+        shots: [cs("isobuilder", "dashboard", "Dashboard · start, continue, export")],
       },
       {
-        title: "Product story",
-        body: "Four steps, each with its own illustration: connect, analyze, observe, act.",
-        shots: [
-          cs("sentinel-ai", "shot-1", "Step 01 · Connect"),
-          cs("sentinel-ai", "shot-2", "Step 02 · Analyze"),
-          cs("sentinel-ai", "shot-3", "Step 03 · Observe"),
-          cs("sentinel-ai", "shot-4", "Step 04 · Act"),
-        ],
+        title: "The editor",
+        body: "Six shapes, one style panel and a view bar. Size is width, depth and height; one colour shades the three sides; every corner can be rounded on its own.",
+        shots: [cs("isobuilder", "editor", "Editor · shapes, canvas and style"), cs("isobuilder", "corners", "Editor · per-corner radius")],
+      },
+      {
+        title: "Projects & templates",
+        body: "Everything you make stays editable. Templates start plain so they take your colours, with a line and dashed view for wireframes.",
+        shots: [cs("isobuilder", "projects", "My projects"), cs("isobuilder", "templates", "Templates · edit corners, recolour")],
+      },
+      {
+        title: "Export & copy to Figma",
+        body: "PNG at 1×, 2× or 3× with a transparent background, SVG, or a copy that pastes into Figma as editable vectors.",
+        shots: [cs("isobuilder", "export", "Export · PNG, SVG, copy to Figma")],
+      },
+      {
+        title: "Pricing & dark mode",
+        body: "A free plan for trying ideas, Pro for gradients, premium templates and high-res export, and the whole dashboard in dark.",
+        shots: [cs("isobuilder", "pricing", "Plans & pricing"), cs("isobuilder", "dark", "Dashboard · dark mode")],
       },
     ],
   },
@@ -245,8 +254,8 @@ export const nextWork = (slug: string) => {
   return works[(i + 1) % works.length];
 };
 
-/** the six on the home page: the case studies first, then two strong dashboards */
-export const featured = ["cutmage", "handgate", "marshal", "sentinel-ai", "aether-ai", "kargo"]
+/** the case studies on the home page */
+export const featured = ["cutmage", "handgate", "marshal", "isobuilder"]
   .map((s) => workBySlug(s))
   .filter((w): w is Work => Boolean(w));
 
