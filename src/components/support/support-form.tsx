@@ -13,6 +13,7 @@ import {
   isEmail,
   parseCustomAmount,
   regions,
+  tipPages,
   type Region,
 } from "@/lib/support/config";
 
@@ -301,9 +302,22 @@ export function SupportForm({ available }: { available: Record<Region, boolean> 
               </Legend>
             </Key>
           ) : (
-            <p className="rounded-xl border border-dashed border-line px-3 py-3 text-center text-[13px] leading-[18px] text-ink-2">
-              {region === "ID" ? "Card & e-wallet checkout opens soon — QRIS works today." : "International checkout opens soon."}
-            </p>
+            <div className="flex flex-col gap-2">
+              <Key
+                href={tipPages[region].url}
+                target="_blank"
+                rel="noopener noreferrer"
+                variant="primary"
+                className="w-full"
+                capClassName="h-11 w-full justify-center gap-2.5 text-[15px] font-medium tracking-[-0.15px]"
+              >
+                Continue on {tipPages[region].name}
+                <Legend>
+                  <ArrowRight width={12} height={12} strokeWidth={2} />
+                </Legend>
+              </Key>
+              <p className="text-center text-[12px] leading-4 text-ink-3">You choose the amount on {tipPages[region].name}.</p>
+            </div>
           )}
           <p className="flex items-center justify-center gap-1.5 text-[11px] leading-4 text-ink-3">
             <Lock01 width={12} height={12} strokeWidth={2} aria-hidden="true" className="shrink-0" />

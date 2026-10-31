@@ -98,3 +98,9 @@ export function validateContribution(body: unknown): { ok: true; value: Contribu
     },
   };
 }
+
+/** where each region tips while the site's own checkout is not connected: Huzztip for Indonesia, Buy Me a Coffee abroad */
+export const tipPages: Record<Region, { name: string; url: string }> = {
+  ID: { name: "Huzztip", url: "https://www.huzztip.lol/farhan" },
+  INTL: { name: "Buy Me a Coffee", url: "https://buymeacoffee.com/uifarhan" },
+};

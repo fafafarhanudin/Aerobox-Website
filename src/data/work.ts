@@ -179,8 +179,12 @@ const caseStudies: CaseDef[] = [
 
 // ---------- assemble ----------
 
+// Bento cards and live client websites are not shown as portfolio work
+const SHOWN: Category[] = ["Dashboards", "Web apps", "Mobile apps", "Landing pages"];
+const portfolio = projects.filter((p) => SHOWN.includes(p.category));
+
 const groups = new Map<string, typeof projects>();
-for (const p of projects) {
+for (const p of portfolio) {
   const name = productOf(p.title);
   groups.set(name, [...(groups.get(name) ?? []), p]);
 }
@@ -248,17 +252,14 @@ export const featured = ["cutmage", "handgate", "marshal", "sentinel-ai", "aethe
 
 export const workCategories: { name: Category | "Case studies"; count: number }[] = [
   { name: "Case studies", count: caseStudies.length },
-  ...(["Dashboards", "Web apps", "Mobile apps", "Landing pages", "Bento & UI cards", "Live websites"] as Category[]).map((name) => ({
-    name,
-    count: works.filter((w) => w.category === name).length,
-  })),
+  ...SHOWN.map((name) => ({ name, count: portfolio.filter((p) => p.category === name).length })),
 ];
 
 /** the hero wall: fifteen strong screens, each linking to its project, in column order */
 const WALL = [
   "Cutmage · Home", "Lintas · Control room", "Stride", "Modelgate · Models", "Kargo",
   "Trading terminal", "Aperture redesign", "Aether AI · Charging ledger", "Sentinel AI", "Flowdesk",
-  "Cutmage · Editor", "Analytics suite", "Moolah", "Crypto portfolio", "Exalt Studio",
+  "Cutmage · Editor", "Analytics suite", "Moolah", "Crypto portfolio", "Developer console",
 ];
 export const heroWall = WALL.map((title) => {
   const p = projects.find((x) => x.title === title)!;
@@ -266,3 +267,12 @@ export const heroWall = WALL.map((title) => {
   const work = works.find((w) => w.name === product)!;
   return { shot: shot(p.image, p.title), slug: work.slug, name: product, tag: p.tag };
 });
+
+/** every portfolio piece on its own, in catalogue order, each opening the project it belongs to (the /work grid) */
+const caseNames = new Set(caseStudies.map((c) => c.name));
+export const screens = portfolio.map((p) => {
+  const product = productOf(p.title);
+  const work = works.find((w) => w.name === product)!;
+  return { ...shot(p.image, p.title), title: p.title, tag: p.tag, category: p.category, slug: work.slug, isNew: !!p.isNew, isCase: caseNames.has(product) };
+});
+export const screenCount = screens.length;
