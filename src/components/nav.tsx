@@ -7,7 +7,7 @@ import { Clock, Menu02, XClose } from "@/components/aero-icons";
 import { Brand, Key, SocialLogo } from "@/components/ui";
 import { EmailKey } from "@/components/email-key";
 import { LocalClock } from "@/components/local-time";
-import { projects } from "@/data/projects";
+import { works } from "@/data/work";
 import { site, socials, type SocialKey } from "@/lib/site";
 
 const navSocials: SocialKey[] = ["x", "linkedin", "contra", "dribbble", "ondesign"];
@@ -70,7 +70,7 @@ export function Nav() {
           >
             Portfolio
             <span className="rounded-full bg-accent-soft px-1.5 py-0.5 text-[12px] leading-4 tracking-[-0.12px] text-accent-ink">
-              {projects.length}
+              {works.length}
             </span>
           </Link>
           {links.map((l) => (
@@ -146,7 +146,7 @@ export function Nav() {
             <Link href="/work" className={menuLinkCls} aria-current={onWork ? "page" : undefined}>
               Portfolio
               <span className="rounded-full bg-accent-soft px-2 py-0.5 text-[12px] leading-4 tracking-[-0.12px] text-accent-ink">
-                {projects.length}
+                {works.length}
               </span>
             </Link>
             {links.map((l) => (

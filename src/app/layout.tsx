@@ -1,11 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@/components/analytics";
+import { ViewTransitionDone } from "@/components/view-transition";
+import { BlueprintLoader } from "@/components/blueprint-loader";
 import { BackToTop } from "@/components/back-to-top";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/components/sections/footer";
 import { site, socials } from "@/lib/site";
 import "./globals.css";
+import "./iso.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -78,8 +81,9 @@ const jsonLd = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <BlueprintLoader />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
         <div className="mx-auto max-w-[1440px] min-[1442px]:border-x min-[1442px]:border-line">
           <Nav />
@@ -87,6 +91,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <Footer />
         <BackToTop />
         <Analytics />
+        <ViewTransitionDone />
         </div>
       </body>
     </html>

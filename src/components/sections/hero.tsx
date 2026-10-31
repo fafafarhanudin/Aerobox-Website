@@ -1,42 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Command, CornerDownLeft } from "@/components/aero-icons";
+import { CornerDownLeft } from "@/components/aero-icons";
 import { Key, Legend } from "@/components/ui";
-import { FitToWidth } from "@/components/fit-to-width";
-import { disciplines, useDiscipline, type DisciplineId } from "@/components/discipline";
+import { TransitionLink } from "@/components/view-transition";
+import { heroWall } from "@/data/work";
 import { site, socials } from "@/lib/site";
-
-const rowA = disciplines.slice(0, 5);
-const rowB = disciplines.slice(5);
-const order = disciplines.map((d) => d.id);
-
-const bigCap = "flex-col items-start justify-between whitespace-nowrap px-3.5 py-3";
-
-const AUTOPLAY_MS = 1400;
-const USER_PAUSE_MS = 6000;
-
-function DisciplineKey({ d, onPick }: { d: (typeof disciplines)[number]; onPick: (id: DisciplineId) => void }) {
-  const { active } = useDiscipline();
-  const on = active === d.id;
-  return (
-    <Key
-      size="lg"
-      variant={on ? "accent" : "secondary"}
-      pressed={on}
-      aria-pressed={on}
-      aria-label={d.title}
-      onClick={() => onPick(d.id)}
-      capClassName={`${bigCap} size-24`}
-    >
-      <span className="text-[22px] font-medium leading-7 tracking-[-0.22px]">{d.key}</span>
-      <span className={`text-[12px] font-medium leading-4 tracking-[-0.12px] ${on ? "text-[#dce6ff]" : "text-ink-2"}`}>
-        {d.short}
-      </span>
-    </Key>
-  );
-}
 
 function useMonthName() {
   const [month, setMonth] = useState<string | null>(null);
@@ -55,61 +25,59 @@ function SlotStatus() {
         <span className="relative size-2 rounded-full bg-[#2f6bff] shadow-[0_0_6px_rgba(47,107,255,.7)]" />
       </span>
       <span suppressHydrationWarning>
-        <span className="text-ink">Only 1 project slot left</span> for {month}
-        <span className="hidden md:inline"> — book yours before it&apos;s gone.</span>
+        <span className="text-ink">1 project slot left</span> for {month}
       </span>
     </span>
   );
 }
 
-function useAutoplay(plate: React.RefObject<HTMLDivElement | null>) {
-  const { active, setActive } = useDiscipline();
-  const activeRef = useRef(active);
-  const lastUser = useRef(0);
-  const hovering = useRef(false);
+/* Five columns of real screens drifting slowly against each other, fading out at the bottom.
+   Each tile opens its project. */
+const COLUMNS = 5;
+const OFFSET = [0, 56, 18, 72, 36];
 
-  useEffect(() => {
-    activeRef.current = active;
-  }, [active]);
-
-  useEffect(() => {
-    const el = plate.current;
-    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    let visible = false;
-    const io = new IntersectionObserver(([e]) => (visible = e.isIntersecting), { threshold: 0.5 });
-    io.observe(el);
-    const id = window.setInterval(() => {
-      if (!visible || hovering.current || document.hidden || Date.now() - lastUser.current < USER_PAUSE_MS) return;
-      const next = order[(order.indexOf(activeRef.current) + 1) % order.length];
-      setActive(next);
-    }, AUTOPLAY_MS);
-    return () => {
-      io.disconnect();
-      window.clearInterval(id);
-    };
-  }, [plate, setActive]);
-
-  return {
-    pick: (id: DisciplineId) => {
-      lastUser.current = Date.now();
-      setActive(id);
-    },
-    hoverProps: {
-      onPointerEnter: () => (hovering.current = true),
-      onPointerLeave: () => (hovering.current = false),
-    },
-  };
+function Wall() {
+  const columns = Array.from({ length: COLUMNS }, (_, c) => heroWall.filter((_, i) => i % COLUMNS === c));
+  return (
+    <div className="hero-wall relative -mx-5 h-[420px] overflow-hidden md:-mx-8 md:h-[560px] lg:-mx-12" aria-label="Recent work">
+      <div className="absolute inset-x-0 top-0 flex justify-center gap-3 px-3 md:gap-4">
+        {columns.map((col, c) => (
+          <div
+            key={c}
+            className={`hero-wall__col flex w-[46vw] max-w-[280px] shrink-0 flex-col gap-3 md:w-[19vw] md:gap-4 ${c > 2 ? "max-md:hidden" : ""}`}
+            style={{ marginTop: OFFSET[c], animationDelay: `${-c * 3.2}s`, animationDirection: c % 2 ? "reverse" : "normal" }}
+          >
+            {col.map((t, i) => (
+              <TransitionLink
+                key={t.shot.src}
+                href={`/work/${t.slug}`}
+                className="group block overflow-hidden rounded-[14px] border border-line bg-page p-1.5"
+                aria-label={t.name}
+                tabIndex={-1}
+              >
+                <span className="relative block aspect-[7/5] overflow-hidden rounded-[9px]">
+                  <Image
+                    src={t.shot.src}
+                    alt=""
+                    fill
+                    sizes="(min-width: 744px) 19vw, 46vw"
+                    quality={75}
+                    priority={i === 0 && c < 3}
+                    className="object-cover object-top transition-transform duration-700 ease-[cubic-bezier(.2,.8,.2,1)] group-hover:scale-[1.03]"
+                  />
+                </span>
+              </TransitionLink>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 export function Hero() {
-  const plate = useRef<HTMLDivElement>(null);
-  const { pick, hoverProps } = useAutoplay(plate);
-
   return (
-    <section
-      id="top"
-      className="flex flex-col items-center gap-8 border-b border-line px-5 pb-14 pt-12 md:px-8 md:pb-[72px] lg:px-12 lg:pb-24"
-    >
+    <section id="top" className="flex flex-col items-center gap-7 overflow-hidden border-b border-line px-5 pt-12 md:px-8 md:pt-16 lg:px-12">
       <div className="flex items-center gap-2">
         <a
           href={socials.x.href}
@@ -123,22 +91,17 @@ export function Hero() {
         <SlotStatus />
       </div>
 
-      <h1 className="font-heading max-w-[350px] text-balance text-center text-[34px] leading-[40px] tracking-[-0.68px] text-ink md:max-w-[740px] md:text-[48px] md:leading-[54px] md:tracking-[-0.96px] lg:max-w-none lg:text-[60px] lg:leading-[66px] lg:tracking-[-1.2px]">
-        Helping companies create better <br className="hidden lg:block" />
-        <span className="text-ink-soft">digital experiences for their customers.</span>
+      <h1 className="font-heading max-w-[350px] text-balance text-center text-[36px] leading-[40px] tracking-[-0.72px] text-ink md:max-w-[940px] md:text-[56px] md:leading-[60px] md:tracking-[-1.4px] lg:text-[68px] lg:leading-[70px] lg:tracking-[-1.9px]">
+        Product and web design, <span className="text-ink-soft">from one studio.</span>
       </h1>
 
-      <p className="max-w-[720px] text-balance text-center text-[16px] leading-[26px] tracking-[-0.16px] text-ink-2 md:text-[18px] md:leading-7 md:tracking-[-0.18px] lg:max-w-[900px]">
-        Web, product, and brand design services for SaaS, AI, B2B, and Web3 teams. Websites, dashboards, mobile apps,
-        branding, pitch decks, and animations—all in one unified service.
+      <p className="max-w-[560px] text-balance text-center text-[16px] leading-[26px] tracking-[-0.16px] text-ink-2 md:text-[18px] md:leading-7 md:tracking-[-0.18px]">
+        I&apos;m Farhan. I design dashboards, web apps, websites and brands for SaaS, AI and Web3 teams, from first sketch
+        to handoff.
       </p>
 
       <div className="flex w-full flex-col items-stretch gap-2.5 md:w-auto md:flex-row md:items-end md:gap-3">
-        <Key
-          href={site.telegram}
-          variant="primary"
-          capClassName="h-12 gap-2.5 pl-[18px] pr-3 text-[16px] font-medium leading-5 tracking-[-0.16px]"
-        >
+        <Key href={site.telegram} variant="primary" capClassName="h-12 gap-2.5 pl-[18px] pr-3 text-[16px] font-medium leading-5 tracking-[-0.16px]">
           Send a message
           <Legend>
             <CornerDownLeft width={12} height={12} strokeWidth={1.8} />
@@ -150,44 +113,8 @@ export function Hero() {
         </Key>
       </div>
 
-      <div className="hidden w-full flex-col items-center gap-5 pt-5 md:flex">
-        <FitToWidth>
-          <div
-            ref={plate}
-            {...hoverProps}
-            className="plate flex flex-col gap-3 rounded-[28px] p-5"
-            role="group"
-            aria-label="Disciplines"
-          >
-            <div className="flex items-end gap-3">
-              <Key size="lg" tabIndex={-1} aria-hidden="true" capClassName={`${bigCap} h-24 w-[148px]`}>
-                <Command width={24} height={24} strokeWidth={1.8} className="text-ink" />
-                <span className="text-[12px] font-medium leading-4 tracking-[-0.12px] text-ink-2">command</span>
-              </Key>
-              {rowA.map((d) => (
-                <DisciplineKey key={d.id} d={d} onPick={pick} />
-              ))}
-            </div>
-            <div className="flex items-end gap-3">
-              {rowB.map((d) => (
-                <DisciplineKey key={d.id} d={d} onPick={pick} />
-              ))}
-              <Key
-                href={site.telegram}
-                variant="primary"
-                size="lg"
-                aria-label="Let's talk on Telegram"
-                capClassName={`${bigCap} h-24 w-[148px]`}
-              >
-                <CornerDownLeft width={24} height={24} strokeWidth={1.8} className="text-white" />
-                <span className="text-[12px] font-medium leading-4 tracking-[-0.12px] text-[#a9abb3]">return</span>
-              </Key>
-            </div>
-          </div>
-        </FitToWidth>
-        <p className="text-[14px] font-medium leading-5 tracking-[-0.14px] text-ink-2">
-          Ten disciplines, one designer. Pick a key.
-        </p>
+      <div className="mt-6 w-full md:mt-10">
+        <Wall />
       </div>
     </section>
   );

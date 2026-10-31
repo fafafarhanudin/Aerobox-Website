@@ -1,11 +1,6 @@
-
 import { Eyebrow, Key, Legend } from "@/components/ui";
-import { Marquee } from "@/components/marquee";
-import { MarqueeCard } from "@/components/project-card";
-import { projects, selectedWork } from "@/data/projects";
-
-const half = Math.ceil(selectedWork.length / 2);
-const rows = [selectedWork.slice(0, half), selectedWork.slice(half)];
+import { WorkCard } from "@/components/work/work-card";
+import { caseStudyCount, featured, works } from "@/data/work";
 
 export function SelectedWork() {
   const viewAll = (
@@ -15,49 +10,33 @@ export function SelectedWork() {
       className="w-full md:w-auto"
       capClassName="h-12 gap-2.5 pl-[18px] pr-3 text-[16px] font-medium leading-5 tracking-[-0.16px]"
     >
-      View all {projects.length} works
+      View all {works.length} projects
       <Legend>A</Legend>
     </Key>
   );
 
   return (
-    <section
-      id="work"
-      className="flex flex-col gap-8 border-b border-line py-14 md:gap-10 md:px-8 md:py-[72px] lg:px-0 lg:py-20"
-    >
-      <div className="flex items-end justify-between px-5 md:px-0 lg:px-[clamp(48px,8.33vw,120px)]">
+    <section id="work" className="flex scroll-mt-16 flex-col gap-10 border-b border-line px-5 py-14 md:px-8 md:py-[72px] lg:px-12 lg:py-24">
+      <div className="flex items-end justify-between gap-6">
         <div className="flex flex-col items-start gap-3">
-          <Eyebrow index="01" label="Portfolio" count={projects.length} />
-          <h2 className="font-heading text-[30px] leading-[36px] md:text-[36px] md:leading-[44px] tracking-[-0.72px] text-ink lg:text-[44px] lg:leading-[52px] lg:tracking-[-0.88px]">
-            Selected work
+          <Eyebrow index="01" label="Selected work" count={works.length} />
+          <h2 className="font-heading text-[30px] leading-[36px] tracking-[-0.72px] text-ink md:text-[36px] md:leading-[44px] lg:text-[44px] lg:leading-[52px] lg:tracking-[-0.88px]">
+            Products and websites, <span className="text-ink-soft">shipped.</span>
           </h2>
-          <p className="text-[16px] leading-[26px] tracking-[-0.16px] text-ink-2">
-            {selectedWork.length} hand-picked works on a slow loop. All {projects.length} works are one click away.
+          <p className="max-w-[560px] text-[16px] leading-[26px] tracking-[-0.16px] text-ink-2">
+            {caseStudyCount} case studies and the work around them. Open a project to see every screen at full size.
           </p>
         </div>
         <div className="hidden lg:block">{viewAll}</div>
       </div>
 
-      <div className="flex flex-col gap-1.5 md:gap-2">
-        {rows.map((row, r) => (
-          <Marquee
-            key={r}
-            label={r === 0 ? "Selected work" : "More selected work"}
-            duration={row.length * 7.5}
-            direction={r === 0 ? "left" : "right"}
-            fade="w-[72px] md:w-40"
-            className="w-full"
-          >
-            {row.map((w, i) => (
-              <div key={`${w.image}-${i}`} className="pb-1.5 pr-3 pt-1 md:pr-4">
-                <MarqueeCard {...w} priority={r === 0 && i < 3} />
-              </div>
-            ))}
-          </Marquee>
+      <div className="grid gap-x-6 gap-y-10 md:grid-cols-2 md:gap-y-12">
+        {featured.map((w, i) => (
+          <WorkCard key={w.slug} work={w} priority={i < 2} />
         ))}
       </div>
 
-      <div className="flex justify-center px-5 md:px-0 lg:hidden">{viewAll}</div>
+      <div className="flex justify-center lg:hidden">{viewAll}</div>
     </section>
   );
 }

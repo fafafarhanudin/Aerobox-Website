@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { DisciplineProvider } from "@/components/discipline";
 import { Hero } from "@/components/sections/hero";
 import { Clients } from "@/components/sections/clients";
 import { SelectedWork } from "@/components/sections/selected-work";
@@ -15,7 +14,7 @@ export const metadata: Metadata = { alternates: { canonical: "/" }, openGraph: {
 
 export default function Home() {
   return (
-    <DisciplineProvider>
+    <>
       <Hero />
       <Clients />
       <SelectedWork />
@@ -26,6 +25,6 @@ export default function Home() {
       <Collection />
       <Faq />
       <Contact />
-    </DisciplineProvider>
+    </>
   );
 }
