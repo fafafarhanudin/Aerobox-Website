@@ -21,17 +21,17 @@ const geistMono = Geist_Mono({
 });
 
 const description =
-  "Aerobox Design — Farhan designs websites, dashboards, mobile apps and brand systems for SaaS, AI, B2B and Web3 teams.";
+  "Farhan designs and builds websites, dashboards, mobile apps and brands for SaaS, AI, B2B and Web3 teams.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? site.url),
   title: {
-    default: "Aerobox — Designing world-class digital experiences",
+    default: "Aerobox — Design engineering by Farhan",
     template: "%s · Aerobox",
   },
   description,
   openGraph: {
-    title: "Aerobox — Designing world-class digital experiences",
+    title: "Aerobox — Design engineering by Farhan",
     description,
     siteName: "Aerobox",
     type: "website",

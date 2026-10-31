@@ -1,0 +1,242 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<style>
+  :root {
+    --bg: var(--figma-color-bg, #fff);
+    --bg2: var(--figma-color-bg-secondary, #f5f5f5);
+    --text: var(--figma-color-text, #16171b);
+    --muted: var(--figma-color-text-secondary, #6b6e78);
+    --line: var(--figma-color-border, #e5e5e8);
+    --accent: var(--figma-color-bg-brand, #2f6bff);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 12px/16px Inter, system-ui, sans-serif; color: var(--text); background: var(--bg); }
+  header { position: sticky; top: 0; z-index: 2; display: flex; flex-direction: column; gap: 8px; padding: 12px 12px 8px; background: var(--bg); border-bottom: 1px solid var(--line); }
+  .brand { display: flex; align-items: center; justify-content: space-between; font-weight: 600; font-size: 13px; }
+  .brand small { font: 500 10px/12px ui-monospace, monospace; letter-spacing: .06em; color: var(--muted); text-transform: uppercase; }
+  input[type="search"] { width: 100%; height: 32px; padding: 0 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg2); color: var(--text); font: inherit; outline: none; }
+  input[type="search"]:focus { border-color: var(--accent); }
+  .tabs, .opts { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+  .tabs button, .chip { flex: none; height: 26px; padding: 0 9px; border: 1px solid transparent; border-radius: 999px; background: none; color: var(--muted); font: 500 11px/1 inherit; font-family: inherit; cursor: pointer; }
+  .tabs button.on, .chip.on { background: var(--bg2); border-color: var(--line); color: var(--text); }
+  .opts { align-items: center; min-height: 26px; }
+  .opts label { display: flex; align-items: center; gap: 4px; color: var(--muted); font-size: 11px; flex: none; }
+  .opts input[type="color"] { width: 22px; height: 22px; padding: 0; border: 1px solid var(--line); border-radius: 6px; background: none; cursor: pointer; }
+  .sw { flex: none; width: 22px; height: 22px; border-radius: 999px; border: 2px solid transparent; cursor: pointer; padding: 0; }
+  .sw.on { border-color: var(--text); }
+  .sep { flex: none; width: 1px; height: 16px; background: var(--line); margin: 0 4px; }
+  main { display: grid; gap: 6px; padding: 10px 12px; }
+  main.g-6 { grid-template-columns: repeat(6, 1fr); }
+  main.g-3 { grid-template-columns: repeat(3, 1fr); }
+  main.g-2 { grid-template-columns: repeat(2, 1fr); }
+  .tile { position: relative; display: grid; place-items: center; aspect-ratio: 1; border: 1px solid var(--line); border-radius: 10px; background: var(--bg2); cursor: pointer; overflow: hidden; padding: 6px; }
+  .g-2 .tile { aspect-ratio: 6 / 5; }
+  .tile:hover { border-color: var(--accent); }
+  .tile img { max-width: 100%; max-height: 100%; }
+  .tile .name { position: absolute; left: 6px; bottom: 5px; right: 6px; font-size: 10px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; opacity: 0; transition: opacity .15s; }
+  .tile:hover .name { opacity: 1; }
+  .grad { width: 100%; height: 100%; border-radius: 6px; }
+  .more, .status { grid-column: 1 / -1; text-align: center; color: var(--muted); padding: 12px 0; }
+  .more button { height: 28px; padding: 0 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--text); font: inherit; cursor: pointer; }
+  footer { position: sticky; bottom: 0; display: flex; justify-content: space-between; padding: 8px 12px; border-top: 1px solid var(--line); background: var(--bg); color: var(--muted); font-size: 11px; }
+  footer a { color: inherit; }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">Aerobox Assets <small id="count"></small></div>
+  <input type="search" id="q" placeholder="Search icons, illustrations, logos…" autocomplete="off" />
+  <div class="tabs" id="tabs"></div>
+  <div class="opts" id="opts"></div>
+</header>
+<main id="grid"></main>
+<footer><span id="hint">Click to add · select a layer to apply gradients</span><a href="https://www.aeroboxstudio.com/library" target="_blank">aeroboxstudio.com</a></footer>
+<script>
+const BASE = "https://www.aeroboxstudio.com";
+const TABS = [["icon", "Icons"], ["isometric", "Isometric"], ["gradient", "Gradients"], ["brand", "Brands"], ["lockup", "Lockups"], ["mark", "Marks"], ["avatar", "Avatars"], ["flag", "Flags"]];
+const PAGE = 240;
+const state = { tab: "icon", q: "", shown: PAGE, cache: {}, meta: null,
+  icon: { style: "outline", stroke: 1.5, color: "#16171B", size: 24 },
+  iso: { palette: "Coral", face: "#F97316", accent: "#14B8A6", custom: false, shadow: true },
+  brand: { variant: "light" }, flag: { shape: "radius" } };
+const $ = (id) => document.getElementById(id);
+const post = (m) => parent.postMessage({ pluginMessage: m }, "*");
+const dataUrl = (svg) => "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+
+// ---------- builders ----------
+const iconSvg = (it, o = state.icon) => {
+  const sharp = o.style === "sharp";
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${o.size}" height="${o.size}" viewBox="0 0 24 24" fill="none" stroke="${o.color}" stroke-width="${o.stroke}" stroke-linecap="${sharp ? "square" : "round"}" stroke-linejoin="${sharp ? "miter" : "round"}">${sharp ? it.sharp : it.body}</svg>`;
+};
+const hex = (c) => [1, 3, 5].map((i) => parseInt(c.slice(i, i + 2), 16));
+const mix = (a, b, t) => "#" + hex(a).map((v, i) => Math.round(v + (hex(b)[i] - v) * t).toString(16).padStart(2, "0")).join("").toUpperCase();
+const isoTones = () => {
+  const o = state.iso;
+  if (o.custom) return [mix(o.face, "#FFFFFF", 0.72), mix(o.face, "#FFFFFF", 0.28), o.accent, o.face, mix(o.accent, "#000000", 0.3), mix(o.face, "#000000", 0.8), "#FFFFFF"];
+  return state.meta.isometricTones.palettes[o.palette];
+};
+const isoSvg = (it) => {
+  const base = state.meta.isometricTones.base, tones = isoTones();
+  let s = it.art;
+  base.forEach((c, i) => { s = s.split(c).join(tones[i]).split(c.toLowerCase()).join(tones[i]); });
+  s = s.replace(/stroke-width="1"/g, 'stroke-width="1.5"');
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" width="240" height="200">${s}</svg>`;
+};
+const isoPreview = (it) => {
+  const svg = isoSvg(it);
+  if (!state.iso.shadow) return svg;
+  const line = isoTones()[5];
+  return svg.replace('height="200">', `height="200"><defs><filter id="s" x="-50%" y="-50%" width="200%" height="200%"><feOffset in="SourceAlpha" dx="-7.79" dy="4.5" result="o"/><feFlood flood-color="${line}"/><feComposite in2="o" operator="in"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><g filter="url(#s)">`).replace(/<\/svg>$/, "</g></svg>");
+};
+const brandFile = (it) => { const f = it.files, v = state.brand.variant; return (v === "dark" && f.dark) || (v === "wordmark" && f.wm) || (v === "wordmark-dark" && (f["wm-dark"] || f.wm)) || f.light; };
+
+// ---------- CSS gradient → Figma paints ----------
+const splitTop = (s) => { const out = []; let depth = 0, cur = ""; for (const ch of s) { if (ch === "(") depth++; if (ch === ")") depth--; if (ch === "," && !depth) { out.push(cur.trim()); cur = ""; } else cur += ch; } if (cur.trim()) out.push(cur.trim()); return out; };
+const parseColor = (s) => {
+  s = s.trim();
+  if (s === "transparent") return null;
+  let m = s.match(/^#([0-9a-f]{3,8})$/i);
+  if (m) { let h = m[1]; if (h.length <= 4) h = [...h].map((c) => c + c).join(""); const n = (i) => parseInt(h.slice(i, i + 2), 16) / 255; return { r: n(0), g: n(2), b: n(4), a: h.length === 8 ? n(6) : 1 }; }
+  m = s.match(/^rgba?\(([^)]+)\)$/i);
+  if (m) { const p = m[1].split(/[ ,/]+/).filter(Boolean).map(parseFloat); return { r: p[0] / 255, g: p[1] / 255, b: p[2] / 255, a: p[3] ?? 1 }; }
+  return { r: 0, g: 0, b: 0, a: 1 };
+};
+const isStop = (s) => /^(#|rgb|transparent|hsl)/i.test(s.trim());
+function stops(list) {
+  const out = list.map((s) => { const m = s.trim().match(/^(.*?)(?:\s+(-?[\d.]+)%)?$/); return { color: parseColor(m[1]), pos: m[2] !== undefined ? parseFloat(m[2]) / 100 : null }; });
+  out.forEach((s, i) => { if (s.pos === null) s.pos = out.length === 1 ? 0 : i / (out.length - 1); });
+  // transparent fades to the neighbouring colour, not to black
+  out.forEach((s, i) => { if (!s.color) { const n = out[i - 1]?.color || out[i + 1]?.color || { r: 0, g: 0, b: 0 }; s.color = { r: n.r, g: n.g, b: n.b, a: 0 }; } });
+  return out.map((s) => ({ position: Math.min(1, Math.max(0, s.pos)), color: s.color }));
+}
+const pct = (v, fallback) => (v === undefined ? fallback : v === "center" ? 0.5 : v === "left" || v === "top" ? 0 : v === "right" || v === "bottom" ? 1 : parseFloat(v) / 100);
+const centerOf = (s) => { const m = s.match(/at\s+(\S+)(?:\s+(\S+))?/); return m ? [pct(m[1], 0.5), pct(m[2], 0.5)] : [0.5, 0.5]; };
+const DIRS = { "to top": 0, "to right": 90, "to bottom": 180, "to left": 270, "to top right": 45, "to right top": 45, "to bottom right": 135, "to right bottom": 135, "to bottom left": 225, "to left bottom": 225, "to top left": 315, "to left top": 315 };
+function layerPaint(layer) {
+  const m = layer.match(/^(repeating-)?(linear|radial|conic)-gradient\(([\s\S]*)\)$/);
+  if (!m) { const c = parseColor(layer); return c ? { type: "SOLID", color: { r: c.r, g: c.g, b: c.b }, opacity: c.a } : null; }
+  const kind = m[2], args = splitTop(m[3]);
+  const head = isStop(args[0]) ? "" : args.shift();
+  const gradientStops = stops(args);
+  if (kind === "linear") {
+    const deg = /deg/.test(head) ? parseFloat(head) : DIRS[head.trim()] ?? 180;
+    const t = (deg * Math.PI) / 180, dx = Math.sin(t), dy = -Math.cos(t), L = Math.abs(dx) + Math.abs(dy);
+    const sx = 0.5 - (dx * L) / 2, sy = 0.5 - (dy * L) / 2;
+    return { type: "GRADIENT_LINEAR", gradientStops, gradientTransform: [[dx / L, dy / L, -(dx * sx + dy * sy) / L], [-dy / L, dx / L, 0.5 - (-dy * 0.5 + dx * 0.5) / L]] };
+  }
+  const [cx, cy] = centerOf(head);
+  if (kind === "radial") {
+    const size = head.split(/\bat\b/)[0].match(/-?[\d.]+%/g);
+    const far = (c) => Math.max(c, 1 - c);
+    let rx = size ? parseFloat(size[0]) / 100 : far(cx) * Math.SQRT2;
+    let ry = size ? parseFloat(size[1] ?? size[0]) / 100 : far(cy) * Math.SQRT2;
+    if (/circle/.test(head) && !size) rx = ry = Math.hypot(far(cx), far(cy));
+    return { type: "GRADIENT_RADIAL", gradientStops, gradientTransform: [[1 / (2 * rx), 0, 0.5 - cx / (2 * rx)], [0, 1 / (2 * ry), 0.5 - cy / (2 * ry)]] };
+  }
+  const from = /from\s+(-?[\d.]+)deg/.exec(head);
+  const th = (((from ? parseFloat(from[1]) : 0) - 90) * Math.PI) / 180, a = Math.cos(th), b = Math.sin(th);
+  return { type: "GRADIENT_ANGULAR", gradientStops, gradientTransform: [[a, b, 0.5 - (a * cx + b * cy)], [-b, a, 0.5 - (-b * cx + a * cy)]] };
+}
+// CSS paints its first layer on top; Figma paints its last
+const cssToPaints = (css) => splitTop(css).map(layerPaint).filter(Boolean).reverse();
+
+// ---------- data ----------
+async function load(type) {
+  if (state.cache[type]) return state.cache[type];
+  const r = await fetch(`${BASE}/api/assets/${type}?preview=1`);
+  if (!r.ok) throw new Error(r.statusText);
+  state.cache[type] = (await r.json()).items;
+  return state.cache[type];
+}
+function matches(items) {
+  const words = state.q.toLowerCase().split(/\s+/).filter(Boolean);
+  return words.length ? items.filter((it) => { const h = `${it.id} ${it.name} ${it.category}`.toLowerCase(); return words.every((w) => h.includes(w)); }) : items;
+}
+
+// ---------- render ----------
+function tile(it) {
+  const t = state.tab;
+  let inner;
+  if (t === "icon") inner = `<img src="${dataUrl(iconSvg(it, { ...state.icon, size: 22 }))}" alt="">`;
+  else if (t === "isometric") inner = `<img src="${dataUrl(isoPreview(it))}" alt="">`;
+  else if (t === "gradient") inner = `<div class="grad" style="background:${esc(it.css)}"></div>`;
+  else if (t === "brand") inner = `<img loading="lazy" src="${BASE}/library/world/${brandFile(it)}" alt="">`;
+  else inner = `<img src="${dataUrl(it.svg)}" alt="">`;
+  return `<button class="tile" data-id="${esc(it.id)}" title="${esc(it.name)}">${inner}<span class="name">${esc(it.name)}</span></button>`;
+}
+let metaReady;
+async function render() {
+  const grid = $("grid");
+  if (state.tab === "isometric" && !state.meta) await metaReady;
+  grid.className = ["isometric", "gradient", "lockup"].includes(state.tab) ? (state.tab === "lockup" ? "g-2" : state.tab === "isometric" ? "g-2" : "g-3") : state.tab === "brand" ? "g-3" : "g-6";
+  grid.innerHTML = `<div class="status">Loading…</div>`;
+  try {
+    const all = matches(await load(state.tab));
+    const list = all.slice(0, state.shown);
+    grid.innerHTML = list.map(tile).join("") + (all.length > list.length ? `<div class="more"><button id="more">Show more · ${all.length - list.length} left</button></div>` : "") + (!all.length ? `<div class="status">Nothing matches “${esc(state.q)}”.</div>` : "");
+    $("more")?.addEventListener("click", () => { state.shown += PAGE; render(); });
+  } catch (e) {
+    grid.innerHTML = `<div class="status">Could not reach aeroboxstudio.com. Check your connection and try again.</div>`;
+  }
+}
+function opts() {
+  const o = $("opts"), t = state.tab;
+  const chips = (key, obj, values) => values.map(([v, label]) => `<button class="chip ${obj[key] === v ? "on" : ""}" data-key="${key}" data-v="${v}">${label}</button>`).join("");
+  if (t === "icon") o.innerHTML = chips("style", state.icon, [["outline", "Round"], ["sharp", "Sharp"]]) + `<span class="sep"></span>` + chips("stroke", state.icon, [[1, "1"], [1.5, "1.5"], [2, "2"]]) + `<span class="sep"></span>` + chips("size", state.icon, [[16, "16"], [24, "24"], [32, "32"], [48, "48"]]) + `<span class="sep"></span><label><input type="color" id="ic" value="${state.icon.color}"></label>`;
+  else if (t === "isometric") {
+    const pals = state.meta ? Object.entries(state.meta.isometricTones.palettes) : [];
+    o.innerHTML = pals.map(([name, c]) => `<button class="sw ${!state.iso.custom && state.iso.palette === name ? "on" : ""}" title="${name}" data-pal="${name}" style="background:linear-gradient(135deg, ${c[3]} 50%, ${c[2]} 50%)"></button>`).join("") +
+      `<span class="sep"></span><label title="Custom faces"><input type="color" id="face" value="${state.iso.face}"></label><label title="Custom accent"><input type="color" id="accent" value="${state.iso.accent}"></label><span class="sep"></span><button class="chip ${state.iso.shadow ? "on" : ""}" id="shadow">Shadow</button>`;
+  } else if (t === "brand") o.innerHTML = chips("variant", state.brand, [["light", "Light"], ["dark", "Dark"], ["wordmark", "Wordmark"], ["wordmark-dark", "Wordmark dark"]]);
+  else if (t === "flag") o.innerHTML = chips("shape", state.flag, [["radius", "Radius"], ["rectangle", "Rectangle"], ["square", "Square"], ["circle", "Circle"]]);
+  else o.innerHTML = "";
+  const group = { icon: state.icon, brand: state.brand, flag: state.flag }[t];
+  o.querySelectorAll(".chip[data-key]").forEach((b) => b.addEventListener("click", () => { const v = b.dataset.v; group[b.dataset.key] = isNaN(+v) ? v : +v; opts(); render(); }));
+  o.querySelectorAll("[data-pal]").forEach((b) => b.addEventListener("click", () => { state.iso.palette = b.dataset.pal; state.iso.custom = false; opts(); render(); }));
+  $("ic")?.addEventListener("change", (e) => { state.icon.color = e.target.value.toUpperCase(); render(); });
+  ["face", "accent"].forEach((k) => $(k)?.addEventListener("change", (e) => { state.iso[k] = e.target.value.toUpperCase(); state.iso.custom = true; opts(); render(); }));
+  $("shadow")?.addEventListener("click", () => { state.iso.shadow = !state.iso.shadow; opts(); render(); });
+}
+function tabs() {
+  $("tabs").innerHTML = TABS.map(([k, label]) => `<button class="${state.tab === k ? "on" : ""}" data-tab="${k}">${label}${state.meta ? ` <span style="opacity:.55">${state.meta.counts[k]}</span>` : ""}</button>`).join("");
+  $("tabs").querySelectorAll("button").forEach((b) => b.addEventListener("click", () => { state.tab = b.dataset.tab; state.shown = PAGE; tabs(); opts(); render(); }));
+}
+
+// ---------- insert ----------
+$("grid").addEventListener("click", async (e) => {
+  const el = e.target.closest(".tile");
+  if (!el) return;
+  const it = state.cache[state.tab].find((x) => x.id === el.dataset.id);
+  const t = state.tab;
+  try {
+    if (t === "gradient") return post({ type: "gradient", name: it.name, paints: cssToPaints(it.css) });
+    let svg, width;
+    if (t === "icon") svg = iconSvg(it);
+    else if (t === "isometric") { svg = isoSvg(it); width = 480; }
+    else if (t === "brand") { const r = await fetch(`${BASE}/library/world/${brandFile(it)}`); svg = await r.text(); width = 160; }
+    else svg = it.svg;
+    const shadow = t === "isometric" && state.iso.shadow ? isoTones()[5] : null;
+    post({ type: "svg", name: it.name, svg, width, shadow });
+  } catch (err) {
+    post({ type: "notify", text: `Could not load ${it.name}`, error: true });
+  }
+});
+let timer;
+$("q").addEventListener("input", (e) => { clearTimeout(timer); timer = setTimeout(() => { state.q = e.target.value; state.shown = PAGE; render(); }, 160); });
+
+(async () => {
+  tabs(); opts(); render();
+  try {
+    metaReady = fetch(`${BASE}/api/assets`).then((r) => r.json());
+    state.meta = await metaReady;
+    const total = Object.values(state.meta.counts).reduce((a, b) => a + b, 0);
+    $("count").textContent = `${total.toLocaleString("en-US")} assets`;
+    tabs(); opts();
+  } catch {}
+})();
+</script>
+</body>
+</html>

@@ -10,7 +10,7 @@ import { Testimonials } from "@/components/sections/testimonials";
 import { Faq } from "@/components/sections/faq";
 import { Contact } from "@/components/sections/contact";
 
-export const metadata: Metadata = { alternates: { canonical: "/" }, openGraph: { url: "/", siteName: "Aerobox", type: "website", title: "Aerobox — Designing world-class digital experiences", description: "Aerobox Design — Farhan designs websites, dashboards, mobile apps and brand systems for SaaS, AI, B2B and Web3 teams." } };
+export const metadata: Metadata = { alternates: { canonical: "/" }, openGraph: { url: "/", siteName: "Aerobox", type: "website", title: "Aerobox — Design engineering by Farhan", description: "Farhan designs and builds websites, dashboards, mobile apps and brands for SaaS, AI, B2B and Web3 teams." } };
 
 export default function Home() {
   return (

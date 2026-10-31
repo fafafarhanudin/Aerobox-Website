@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "library:dev": "npm --prefix library run dev",
-    "library:build": "npm --prefix library ci && npm --prefix library run build && rm -rf public/library && cp -R library/dist public/library"
+    "library:build": "npm --prefix library ci && npm --prefix library run build && rm -rf public/library && cp -R library/dist public/library",
+    "figma:zip": "mkdir -p public/downloads && rm -f public/downloads/aerobox-assets-figma.zip && cd figma-plugin && zip -q ../public/downloads/aerobox-assets-figma.zip manifest.json code.js ui.html README.md"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.2.0",
