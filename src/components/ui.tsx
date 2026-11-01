@@ -32,7 +32,8 @@ export function Key(props: KeyAsLink | KeyAsButton) {
 
   if (props.href !== undefined) {
     const { href, ...anchor } = rest as KeyAsLink;
-    const external = /^(https?:|mailto:)/.test(href);
+    // PDFs (the CV) open in a new tab like external links
+    const external = /^(https?:|mailto:)/.test(href) || href.endsWith(".pdf");
     // /library is a separate static app, so it needs a full page load rather than <Link>.
     if (href.startsWith("/library")) {
       return (

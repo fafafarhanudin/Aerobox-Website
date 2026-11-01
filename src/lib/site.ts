@@ -7,6 +7,8 @@ export const site = {
     process.env.NEXT_PUBLIC_UPWORK ??
     "https://www.upwork.com/freelancers/~0197d12036a1e14224?mp_source=share",
   email: "farhanwork.2009@gmail.com",
+  // latest CV; /cv redirects here (next.config.ts)
+  cv: "/cv/farhan-cv.pdf",
   availability: "Available for new projects — Q4 2026",
   bookingNote: "Currently booking projects for Q4 2026. Tell me what you're building and I'll reply with next steps.",
   inProgressCount: 2,

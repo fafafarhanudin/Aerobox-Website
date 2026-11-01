@@ -1,6 +1,7 @@
 import Image from "next/image";
-import { Eyebrow, Key, SocialLogo } from "@/components/ui";
-import { socials, type SocialKey } from "@/lib/site";
+import { ArrowUpRight } from "@/components/aero-icons";
+import { Eyebrow, Key, Legend, SocialLogo } from "@/components/ui";
+import { site, socials, type SocialKey } from "@/lib/site";
 
 const stats = [
   { value: "3+", label: "years designing products" },
@@ -65,20 +66,31 @@ export function About() {
           <Eyebrow index="04" label="About" />
         </div>
 
-        <figure className="flex flex-col rounded-[20px] border border-line bg-white p-2 [grid-area:portrait] lg:h-[453px]">
-          <div className="relative aspect-[318/290] w-full overflow-hidden rounded-[14px] lg:aspect-auto lg:flex-1">
+        <figure className="flex w-full max-w-[300px] flex-col self-start rounded-[20px] border border-line bg-white p-2 [grid-area:portrait]">
+          <div className="relative aspect-square w-full overflow-hidden rounded-[14px]">
             <Image
-              src="/assets/hero/avatar.png"
+              src="/assets/about/farhan-portrait.webp"
               alt="Farhan, founder of Aerobox Design"
               fill
-              sizes="(min-width: 1200px) 30vw, 45vw"
+              quality={90}
+              sizes="(min-width: 744px) 284px, 45vw"
               className="object-cover"
             />
           </div>
-          <figcaption className="flex flex-wrap items-center justify-between gap-x-2 px-2 pb-1.5 pt-3.5">
+          <figcaption className="flex flex-wrap items-center justify-between gap-x-2 px-2 pb-1 pt-3">
             <span className="text-[13px] font-medium leading-6 tracking-[-0.16px] text-ink md:text-[16px]">Farhan</span>
             <span className="text-[10px] leading-5 tracking-[-0.14px] text-ink-2 md:text-[14px]">Founder, Aerobox Design</span>
           </figcaption>
+          <Key
+            href={site.cv}
+            className="mt-2.5 w-full"
+            capClassName="w-full justify-between gap-2 py-2 pl-3.5 pr-2.5 text-[13px] font-medium leading-5 tracking-[-0.14px] md:text-[14px]"
+          >
+            View my CV
+            <Legend>
+              <ArrowUpRight width={12} height={12} strokeWidth={2} />
+            </Legend>
+          </Key>
         </figure>
 
         <dl className="flex flex-col justify-center gap-5 [grid-area:stats] lg:flex-row lg:justify-start">

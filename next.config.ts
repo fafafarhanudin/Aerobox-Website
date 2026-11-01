@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
   async headers() {
     return [{ source: "/library/world/:file*", headers: [{ key: "Access-Control-Allow-Origin", value: "*" }] }];
   },
+  async redirects() {
+    return [{ source: "/cv", destination: "/cv/farhan-cv.pdf", permanent: false }];
+  },
   async rewrites() {
     return [{ source: "/library", destination: "/library/index.html" }];
   },
