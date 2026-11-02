@@ -1,0 +1,14 @@
+{
+  "name": "Aerobox Assets",
+  "id": "aerobox-assets",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "editorType": ["figma", "figjam"],
+  "documentAccess": "dynamic-page",
+  "networkAccess": {
+    "allowedDomains": ["https://www.aeroboxstudio.com"],
+    "devAllowedDomains": ["http://localhost:3211"],
+    "reasoning": "Loads the free Aerobox Assets library (icons, isometric illustrations, gradients, logos, avatars and flags) from aeroboxstudio.com."
+  }
+}

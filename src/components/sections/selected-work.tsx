@@ -1,6 +1,25 @@
 import { Eyebrow, Key, Legend } from "@/components/ui";
 import { WorkCard } from "@/components/work/work-card";
-import { caseStudyCount, featured, screenCount } from "@/data/work";
+import { PortfolioCard, type PortfolioShot } from "@/components/work/portfolio-card";
+import { WorkTabs } from "@/components/sections/work-tabs";
+import { featured, screenCount } from "@/data/work";
+import sizes from "@/data/image-sizes.json";
+
+// dashboards from the Figma portfolio board (test-belajar-ai, node 3276:17522)
+const sizeMap: Record<string, number[]> = sizes;
+const portfolio: PortfolioShot[] = [
+  ["trackline", "Trackline", "Project management dashboard"],
+  ["nezuko", "Nezuko", "Sales and orders overview"],
+  ["axentra", "Axentra", "Team task board"],
+  ["visiora", "Visiora", "Social commerce analytics"],
+  ["findjobs", "Find.Jobs", "Job search for designers"],
+  ["incmax", "Incmax", "Team chat with AI suggestions"],
+  ["affinetes", "Affinetes", "AI evaluation console"],
+].map(([file, name, summary]) => {
+  const src = `/work/portfolio/${file}.webp`;
+  const [w, h] = sizeMap[src] ?? [2160, 1536];
+  return { name, summary, src, w, h };
+});
 
 export function SelectedWork() {
   const viewAll = (
@@ -24,17 +43,29 @@ export function SelectedWork() {
             Products and websites, <span className="text-ink-soft">shipped.</span>
           </h2>
           <p className="max-w-[560px] text-[16px] leading-[26px] tracking-[-0.16px] text-ink-2">
-            {caseStudyCount} case studies and the work around them. Open a project to see every screen at full size.
+            Recent dashboards first, or switch to the case studies to see whole projects screen by screen.
           </p>
         </div>
         <div className="hidden lg:block">{viewAll}</div>
       </div>
 
-      <div className="grid gap-x-6 gap-y-10 md:grid-cols-2 md:gap-y-12">
-        {featured.map((w, i) => (
-          <WorkCard key={w.slug} work={w} priority={i < 2} />
-        ))}
-      </div>
+      <WorkTabs
+        counts={[portfolio.length, featured.length]}
+        portfolio={
+          <div className="grid gap-x-6 gap-y-10 md:grid-cols-2 md:gap-y-12">
+            {portfolio.map((shot, i) => (
+              <PortfolioCard key={shot.src} shot={shot} priority={i < 2} />
+            ))}
+          </div>
+        }
+        cases={
+          <div className="grid gap-x-6 gap-y-10 md:grid-cols-2 md:gap-y-12">
+            {featured.map((w) => (
+              <WorkCard key={w.slug} work={w} />
+            ))}
+          </div>
+        }
+      />
 
       <div className="flex justify-center lg:hidden">{viewAll}</div>
     </section>

@@ -1506,3 +1506,43 @@ body {
 .fig-holder [data-drive] {
   transition: none;
 }
+
+/* "View" disc that follows the pointer over a work preview */
+.view-cursor {
+  position: relative;
+  display: block;
+  cursor: none;
+}
+.view-cursor__disc {
+  position: absolute;
+  left: var(--vx, 50%);
+  top: var(--vy, 50%);
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 96px;
+  height: 96px;
+  margin: -48px 0 0 -48px;
+  border-radius: 999px;
+  background: #fff;
+  color: #16171b;
+  font: 500 13px/1 var(--font-geist-mono), ui-monospace, monospace;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  box-shadow: 0 10px 30px -10px rgba(12, 14, 20, 0.45);
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.4);
+  transition: opacity 0.25s ease, transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.view-cursor:hover .view-cursor__disc {
+  opacity: 1;
+  transform: scale(1);
+}
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .view-cursor { cursor: pointer; }
+  .view-cursor__disc { display: none; }
+}
+@keyframes tab-in {
+  from { opacity: 0; transform: translateY(12px); }
+}
