@@ -1507,7 +1507,7 @@ body {
   transition: none;
 }
 
-/* "View" disc that follows the pointer over a work preview */
+/* "View" tag that trails the pointer over a work preview: a small ink pill with an arrow key */
 .view-cursor {
   position: relative;
   display: block;
@@ -1518,26 +1518,37 @@ body {
   left: var(--vx, 50%);
   top: var(--vy, 50%);
   z-index: 3;
-  display: grid;
-  place-items: center;
-  width: 96px;
-  height: 96px;
-  margin: -48px 0 0 -48px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 6px 6px 14px;
   border-radius: 999px;
-  background: #fff;
-  color: #16171b;
-  font: 500 13px/1 var(--font-geist-mono), ui-monospace, monospace;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  box-shadow: 0 10px 30px -10px rgba(12, 14, 20, 0.45);
+  background: #16171b;
+  color: #fff;
+  font: 500 13px/16px var(--font-geist-sans), system-ui, sans-serif;
+  letter-spacing: -0.13px;
+  white-space: nowrap;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08) inset, 0 12px 28px -12px rgba(12, 14, 20, 0.6);
   pointer-events: none;
   opacity: 0;
-  transform: scale(0.4);
-  transition: opacity 0.25s ease, transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transform: translate(14px, 14px) scale(0.85);
+  transform-origin: top left;
+  transition: opacity 0.2s ease, transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), left 0.12s linear, top 0.12s linear;
+}
+.view-cursor__disc i {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  background: #fff;
+  color: #16171b;
+  font-style: normal;
+  font-size: 12px;
 }
 .view-cursor:hover .view-cursor__disc {
   opacity: 1;
-  transform: scale(1);
+  transform: translate(14px, 14px) scale(1);
 }
 @media (hover: none), (prefers-reduced-motion: reduce) {
   .view-cursor { cursor: pointer; }

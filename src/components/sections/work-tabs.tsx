@@ -3,16 +3,16 @@
 import { useState, type ReactNode } from "react";
 
 /* Selected work shows the portfolio first; case studies are one click away. */
-export function WorkTabs({ portfolio, cases, counts }: { portfolio: ReactNode; cases: ReactNode; counts: [number, number] }) {
+export function WorkTabs({ portfolio, cases }: { portfolio: ReactNode; cases: ReactNode }) {
   const [tab, setTab] = useState<"portfolio" | "cases">("portfolio");
   const tabs = [
-    ["portfolio", "Portfolio", counts[0]],
-    ["cases", "Case studies", counts[1]],
+    ["portfolio", "Portfolio"],
+    ["cases", "Case studies"],
   ] as const;
   return (
     <div className="flex flex-col gap-8 md:gap-10">
       <div role="tablist" aria-label="Selected work" className="inline-flex self-start rounded-full border border-line bg-page p-1">
-        {tabs.map(([key, label, n]) => (
+        {tabs.map(([key, label]) => (
           <button
             key={key}
             role="tab"
@@ -23,7 +23,6 @@ export function WorkTabs({ portfolio, cases, counts }: { portfolio: ReactNode; c
             }`}
           >
             {label}
-            <span className="font-mono text-[12px] text-ink-3">{n}</span>
           </button>
         ))}
       </div>

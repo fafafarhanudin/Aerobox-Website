@@ -50,11 +50,10 @@ export function SelectedWork() {
       </div>
 
       <WorkTabs
-        counts={[portfolio.length, featured.length]}
         portfolio={
           <div className="grid gap-x-6 gap-y-10 md:grid-cols-2 md:gap-y-12">
             {portfolio.map((shot, i) => (
-              <PortfolioCard key={shot.src} shot={shot} priority={i < 2} />
+              <PortfolioCard key={shot.src} shot={shot} priority={i < 2} wide={i === 0} />
             ))}
           </div>
         }

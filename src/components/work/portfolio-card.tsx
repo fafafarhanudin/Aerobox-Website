@@ -7,7 +7,7 @@ import { ViewCursor } from "@/components/work/view-cursor";
 export type PortfolioShot = { name: string; summary: string; src: string; w: number; h: number };
 
 /* A portfolio piece without its own page: the card opens the screen full size in a dialog. */
-export function PortfolioCard({ shot, priority }: { shot: PortfolioShot; priority?: boolean }) {
+export function PortfolioCard({ shot, priority, wide }: { shot: PortfolioShot; priority?: boolean; wide?: boolean }) {
   const dialog = useRef<HTMLDialogElement>(null);
   useEffect(() => {
     const d = dialog.current;
@@ -18,16 +18,16 @@ export function PortfolioCard({ shot, priority }: { shot: PortfolioShot; priorit
 
   return (
     <>
-      <button type="button" onClick={() => dialog.current?.showModal()} className="group flex flex-col gap-3 rounded-[22px] text-left outline-offset-4" aria-label={`${shot.name}, ${shot.summary}. Open full size`}>
+      <button type="button" onClick={() => dialog.current?.showModal()} className={`group flex flex-col gap-3 rounded-[22px] text-left outline-offset-4 ${wide ? "md:col-span-2" : ""}`} aria-label={`${shot.name}, ${shot.summary}. Open full size`}>
         <ViewCursor>
-          <span className="relative block aspect-[4/3] overflow-hidden rounded-[20px] border border-line bg-page">
-            <span className="absolute inset-[6%] flex items-center justify-center">
+          <span className={`relative block overflow-hidden rounded-[20px] border border-line bg-page ${wide ? "aspect-[4/3] md:aspect-[16/8]" : "aspect-[4/3]"}`}>
+            <span className={`absolute flex items-center justify-center ${wide ? "inset-[6%] md:inset-[5%]" : "inset-[6%]"}`}>
               <Image
                 src={shot.src}
                 alt={`${shot.name} — ${shot.summary}`}
                 width={shot.w}
                 height={shot.h}
-                sizes="(min-width: 1024px) 600px, (min-width: 744px) 44vw, 88vw"
+                sizes={wide ? "(min-width: 1024px) 1100px, 90vw" : "(min-width: 1024px) 600px, (min-width: 744px) 44vw, 88vw"}
                 quality={85}
                 priority={priority}
                 className="h-auto max-h-full w-auto max-w-full rounded-[8px] shadow-[0_0_0_1px_rgba(12,14,20,.06),0_20px_40px_-18px_rgba(12,14,20,.35)] transition-transform duration-[700ms] ease-[cubic-bezier(.2,.8,.2,1)] group-hover:-translate-y-1.5 group-hover:scale-[1.02] motion-reduce:transition-none"
