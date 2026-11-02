@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { TransitionLink } from "@/components/view-transition";
-import { ViewCursor } from "@/components/work/view-cursor";
 import type { Work } from "@/data/work";
 
 /* A project card: the whole screen sits on a soft panel, never cropped. The image keeps its own proportions and is
@@ -10,7 +9,6 @@ export function WorkCard({ work, priority, sizes = "(min-width: 1024px) 600px, (
   const { cover } = work;
   return (
     <TransitionLink href={`/work/${work.slug}`} className="group flex flex-col gap-3 rounded-[22px] outline-offset-4" aria-label={`${work.name}, ${work.summary}`}>
-      <ViewCursor>
       <span className="relative block aspect-[4/3] overflow-hidden rounded-[20px] border border-line bg-page" data-vt-name={`work-${work.slug}`}>
         <span className="absolute inset-[6%] flex items-center justify-center">
           <Image
@@ -34,7 +32,6 @@ export function WorkCard({ work, priority, sizes = "(min-width: 1024px) 600px, (
           )}
         </span>
       </span>
-      </ViewCursor>
       <span className="flex items-center justify-between gap-4 px-1">
         <span className="flex min-w-0 items-center gap-2.5">
           <span className="size-1.5 shrink-0 rounded-full bg-ink" aria-hidden="true" />

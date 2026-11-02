@@ -15,6 +15,7 @@ const portfolio: PortfolioShot[] = [
   ["findjobs", "Find.Jobs", "Job search for designers"],
   ["incmax", "Incmax", "Team chat with AI suggestions"],
   ["affinetes", "Affinetes", "AI evaluation console"],
+  ["filenns", "Filenns", "File storage with AI tags"],
 ].map(([file, name, summary]) => {
   const src = `/work/portfolio/${file}.webp`;
   const [w, h] = sizeMap[src] ?? [2160, 1536];
@@ -53,7 +54,7 @@ export function SelectedWork() {
         portfolio={
           <div className="grid gap-x-6 gap-y-10 md:grid-cols-2 md:gap-y-12">
             {portfolio.map((shot, i) => (
-              <PortfolioCard key={shot.src} shot={shot} priority={i < 2} wide={i === 0} />
+              <PortfolioCard key={shot.src} shot={shot} priority={i < 2} />
             ))}
           </div>
         }
