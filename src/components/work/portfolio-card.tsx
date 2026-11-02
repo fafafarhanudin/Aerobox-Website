@@ -15,7 +15,7 @@ export function PortfolioCard({ shot, priority }: { shot: PortfolioShot; priorit
             width={shot.w}
             height={shot.h}
             sizes="(min-width: 1024px) 600px, (min-width: 744px) 44vw, 88vw"
-            quality={80}
+            quality={90}
             priority={priority}
             draggable={false}
             className="pointer-events-none h-auto max-h-full w-auto max-w-full rounded-[8px] shadow-[0_0_0_1px_rgba(12,14,20,.06),0_20px_40px_-18px_rgba(12,14,20,.35)]"
